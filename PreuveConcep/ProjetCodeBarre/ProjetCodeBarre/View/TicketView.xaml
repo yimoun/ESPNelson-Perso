@@ -1,0 +1,44 @@
+﻿<Window x:Class="ProjetCodeBarre.View.TicketView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ProjetCodeBarre.View"
+        xmlns:viewmodel="clr-namespace:ProjetCodeBarre.ViewModel"
+        d:DataContext="{d:DesignInstance Type=viewmodel:TicketVM}"
+        mc:Ignorable="d"
+        Title="Ticket de Stationnement"
+        Height="450" Width="800"  WindowStartupLocation="CenterScreen">
+   
+    
+    <Grid>
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+            <!-- Nom de l'hopital-->
+            <TextBlock Text="{Binding TicketTest.HospitalName}" FontSize="16" FontWeight="Bold" TextAlignment="Center"/>
+            <!-- Logo de l'hopital-->
+            <Image Source="{Binding TicketTest.HospitalLogoPath}" Height="60" Width="120" Margin="10"/>
+            <!-- Heure d'arrivée-->
+            <TextBlock Text="{Binding TicketTest.ArrivalTime, StringFormat='Arrivée : {0:HH:mm:ss}'}"
+                       FontSize="14" Margin="5"/>
+            <!-- Icentifiant du ticket-->
+            <TextBlock Text="{Binding TicketTest.Id}" FontSize="14" FontWeight="Bold" Margin="5"/>
+            <!-- Code-barres-->
+            <Image Source="{Binding BarcodeImage}" Height="100" Width="300" Margin="10"/>
+            <!-- Bouton pour générer un nouveau ticket-->
+            <Button Content="Nouveau Ticket"
+                    Command="{Binding GenerateNewTicketCommand}"
+                    Width="200" Height="30" Margin="10"/>
+            
+
+            <!-- Le scanner enverra les données ici -->
+            <!--Le scanner remplit automatiquement ce champ comme un clavier.-->
+            <TextBox Name="HiddenScannerInput"
+                     Opacity="0"
+                     Width="1" Height="1"
+                     TextChanged="HiddenScannerInput_TextChanged"
+                     Focusable="True"/>
+
+        </StackPanel>
+        
+    </Grid>
+</Window>
