@@ -1,7 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
-using System.Collections.Generic;
-using System.Net.Sockets;
-using System.Reflection.Emit;
+﻿using Microsoft.EntityFrameworkCore;
+using StationnementAPI.Models;
 
 namespace StationnementAPI.Data.Context
 {
@@ -13,19 +11,45 @@ namespace StationnementAPI.Data.Context
         public DbSet<Tarification> Tarifications { get; set; }
         public DbSet<Ticket> Tickets { get; set; }
         public DbSet<Abonnement> Abonnements { get; set; }
+        public DbSet<Paiement> Paiements { get; set; }
         public DbSet<Configuration> Configurations { get; set; }
+       // public DbSet<Rapport> Rapports { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Utilisateur>()
-                .HasMany(u => u.Tickets)
-                .WithOne(t => t.Utilisateur)
-                .HasForeignKey(t => t.UtilisateurId);
+            // Définition explicite des noms de table
+            modelBuilder.Entity<Utilisateur>().ToTable("Utilisateur");
+            modelBuilder.Entity<Tarification>().ToTable("Tarification");
+            modelBuilder.Entity<Ticket>().ToTable("Ticket");
+            modelBuilder.Entity<Abonnement>().ToTable("Abonnement");
+            modelBuilder.Entity<Paiement>().ToTable("Paiement");
+            modelBuilder.Entity<Configuration>().ToTable("Configuration");
+           // modelBuilder.Entity<Rapport>().ToTable("Rapport");
 
-            modelBuilder.Entity<Utilisateur>()
-                .HasMany(u => u.Abonnements)
-                .WithOne(a => a.Utilisateur)
-                .HasForeignKey(a => a.UtilisateurId);
+            // Définition des relations
+            modelBuilder.Entity<Abonnement>()
+                .HasOne(a => a.Utilisateur)
+                .WithMany()
+                .HasForeignKey(a => a.UtilisateurId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Paiement>()
+                .HasOne(p => p.Ticket)
+                .WithOne()
+                .HasForeignKey<Paiement>(p => p.TicketId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Paiement>()
+                .HasOne(p => p.Abonnement)
+                .WithOne()
+                .HasForeignKey<Paiement>(p => p.AbonnementId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Paiement>()
+                .HasOne(p => p.Tarification)
+                .WithMany()
+                .HasForeignKey(p => p.TarificationId)
+                .OnDelete(DeleteBehavior.SetNull);
         }
     }
 }
