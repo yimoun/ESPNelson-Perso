@@ -13,7 +13,7 @@
 
         public async Task Invoke(HttpContext context)
         {
-            if (!context.Request.Headers.TryGetValue("X-Api-Key", out var extractedApiKey))
+            if (!context.Request.Headers.TryGetValue("ApiKey", out var extractedApiKey))
             {
                 context.Response.StatusCode = 401; // Unauthorized
                 await context.Response.WriteAsync("Clé API manquante.");

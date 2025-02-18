@@ -16,6 +16,13 @@ namespace StationnementAPI.Controllers
             _context = context;
         }
 
+        private string GenerateTicketId()
+        {
+            string guid = Guid.NewGuid().ToString("N").ToUpper(); // Supprime les tirets et met en majuscule
+            return guid.Substring(0, 12); // Prend les 12 premiers caractères
+        }
+
+
         [HttpPost("generer")]
         public async Task<ActionResult<Ticket>> GenererTicket()
         {
@@ -24,7 +31,7 @@ namespace StationnementAPI.Controllers
 
             var ticket = new Ticket
             {
-                Id = Guid.NewGuid().ToString(),  // Génération automatique de l'ID unique
+                Id = GenerateTicketId(),
                 TempsArrive = heureLocale
             };
 

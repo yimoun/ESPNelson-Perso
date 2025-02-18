@@ -11,8 +11,9 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using ESPNelson.ViewModel;
 
-namespace ESPNelson.Views
+namespace ESPNelson.View
 {
     /// <summary>
     /// Logique d'interaction pour BorneEntreeView.xaml
@@ -22,6 +23,7 @@ namespace ESPNelson.Views
         public BorneEntreeView()
         {
             InitializeComponent();
+            this.DataContext = new BorneEntreeVM();
         }
     }
 }

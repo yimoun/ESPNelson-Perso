@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ESPNelson.Models
+namespace ESPNelson.Model
 {
     public class Ticket
     {
