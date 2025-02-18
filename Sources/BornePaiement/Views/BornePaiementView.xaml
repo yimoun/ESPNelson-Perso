@@ -1,0 +1,34 @@
+﻿<UserControl x:Class="ESPNelson.BornePaiement.Views.BornePaiementView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:ESPNelson.BornePaiement.Views"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
+
+    <Grid>
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20">
+
+            <TextBlock Text="Borne de Paiement"
+                       FontSize="22" FontWeight="Bold"
+                       TextAlignment="Center" Margin="0,10"/>
+
+            <TextBox Text="{Binding TicketId, UpdateSourceTrigger=PropertyChanged}" 
+                     Width="250" Height="40"
+                     Hint="Scannez ou entrez le numéro du ticket"/>
+
+            <Button Content="Scanner Ticket"
+                    Command="{Binding ScanTicketCommand}"
+                    Style="{StaticResource MaterialDesignRaisedButton}"
+                    Margin="10"/>
+
+            <TextBlock Text="Montant à payer :"
+                       FontSize="16" FontWeight="SemiBold" Margin="0,10"/>
+            <TextBlock Text="{Binding MontantAPayer, StringFormat='{}{0:C}'}"
+                       FontSize="18"/>
+
+            <Button Content="Payer"
+                    Command="{Binding SimulerPaiementCommand}"
+                    Style="{StaticResource MaterialDesignRaisedButton}"
+                    Margin="10"/>
+        </StackPanel>
+    </Grid>
+</UserControl>
