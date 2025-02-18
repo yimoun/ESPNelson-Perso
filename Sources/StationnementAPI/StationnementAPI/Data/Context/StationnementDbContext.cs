@@ -13,7 +13,7 @@ namespace StationnementAPI.Data.Context
         public DbSet<Abonnement> Abonnements { get; set; }
         public DbSet<Paiement> Paiements { get; set; }
         public DbSet<Configuration> Configurations { get; set; }
-       // public DbSet<Rapport> Rapports { get; set; }
+        public DbSet<Rapport> Rapports { get; set; } 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -24,14 +24,14 @@ namespace StationnementAPI.Data.Context
             modelBuilder.Entity<Abonnement>().ToTable("Abonnement");
             modelBuilder.Entity<Paiement>().ToTable("Paiement");
             modelBuilder.Entity<Configuration>().ToTable("Configuration");
-           // modelBuilder.Entity<Rapport>().ToTable("Rapport");
+            modelBuilder.Entity<Rapport>().ToTable("Rapport"); 
 
             // Définition des relations
             modelBuilder.Entity<Abonnement>()
-                .HasOne(a => a.Utilisateur)
-                .WithMany()
-                .HasForeignKey(a => a.UtilisateurId)
-                .OnDelete(DeleteBehavior.Cascade);
+                 .HasOne(a => a.Utilisateur)
+                 .WithMany(u => u.Abonnements)
+                 .HasForeignKey(a => a.UtilisateurId)
+                 .OnDelete(DeleteBehavior.Cascade);  // Suppression en cascade si nécessaire
 
             modelBuilder.Entity<Paiement>()
                 .HasOne(p => p.Ticket)
@@ -45,11 +45,19 @@ namespace StationnementAPI.Data.Context
                 .HasForeignKey<Paiement>(p => p.AbonnementId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<Paiement>()
-                .HasOne(p => p.Tarification)
+            modelBuilder.Entity<Ticket>()
+               .Property(t => t.TempsArrive)
+               .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+            modelBuilder.Entity<Rapport>()
+                .HasOne(r => r.Utilisateur)
                 .WithMany()
-                .HasForeignKey(p => p.TarificationId)
-                .OnDelete(DeleteBehavior.SetNull);
+                .HasForeignKey(r => r.UtilisateurId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Utilisateur>()
+                .HasIndex(u => u.Email)
+                .IsUnique();  // ✅ Assure l'unicité de l'email
         }
     }
 }

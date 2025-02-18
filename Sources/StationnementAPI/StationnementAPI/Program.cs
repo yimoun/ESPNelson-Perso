@@ -2,6 +2,7 @@ using Pomelo.EntityFrameworkCore.MySql;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using StationnementAPI.Data.Context;
+using StationnementAPI.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,13 +17,21 @@ builder.Services.AddDbContext<StationnementDbContext>(options =>
     )
 );
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
+    });
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 
 var app = builder.Build();
+
+// Ajout du middleware de sécurité API Key
+app.UseMiddleware<ApiKeyMiddleware>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

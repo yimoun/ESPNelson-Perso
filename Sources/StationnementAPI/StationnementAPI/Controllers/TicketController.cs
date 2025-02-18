@@ -19,10 +19,13 @@ namespace StationnementAPI.Controllers
         [HttpPost("generer")]
         public async Task<ActionResult<Ticket>> GenererTicket()
         {
+            // Conversion UTC vers fuseau horaire local
+            var heureLocale = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time"));
+
             var ticket = new Ticket
             {
-                Id = Guid.NewGuid().ToString(),  //Génération automatique de l'ID unique
-                TempsArrive = DateTime.UtcNow
+                Id = Guid.NewGuid().ToString(),  // Génération automatique de l'ID unique
+                TempsArrive = heureLocale
             };
 
             _context.Tickets.Add(ticket);
@@ -53,6 +56,11 @@ namespace StationnementAPI.Controllers
         }
 
 
+        /// <summary>
+        /// Par exemple à la borne de sortie pour valider si un ticket a été payé
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet("{id}")]
         public async Task<ActionResult<Ticket>> GetTicket(string id)
         {

@@ -25,20 +25,20 @@ CREATE TABLE Tarification (
     DureeMax INT NOT NULL
 );
 
--- 🟢 Table Ticket
+-- Table Ticket
 CREATE TABLE Ticket (
     Id VARCHAR(36) PRIMARY KEY,  -- UUID au lieu d'Auto-Incrément
-    TempsArrive DATETIME NOT NULL DEFAULT NOW(),
+    TempsArrive DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, 
     EstPaye BOOLEAN DEFAULT FALSE,
-    TempsSortie DATETIME NULL,
-    EstConverti BOOLEAN DEFAULT FALSE  -- Indique si le ticket a été utilisé pour souscrire à un abonnement
+    TempsSortie DATETIME NULL,  -- L'heure de sortie sera mise à jour via l'API
+    EstConverti BOOLEAN DEFAULT FALSE  
 );
 
 -- Table Abonnement
 CREATE TABLE Abonnement (
     Id INT PRIMARY KEY AUTO_INCREMENT,
     UtilisateurId INT NOT NULL,
-    DateDebut DATETIME NOT NULL DEFAULT NOW(),
+    DateDebut DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     DateFin DATETIME NOT NULL,
     FOREIGN KEY (UtilisateurId) REFERENCES Utilisateur(Id) ON DELETE CASCADE
 );
@@ -49,7 +49,7 @@ CREATE TABLE Paiement (
     TicketId VARCHAR(36) NULL,
     AbonnementId INT NULL,
     Montant DECIMAL(10,2) NOT NULL,
-    DatePaiement DATETIME NOT NULL DEFAULT NOW(),
+    DatePaiement DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     TarificationId INT NULL,
     FOREIGN KEY (TicketId) REFERENCES Ticket(Id) ON DELETE CASCADE,
     FOREIGN KEY (AbonnementId) REFERENCES Abonnement(Id) ON DELETE CASCADE,
@@ -63,13 +63,13 @@ CREATE TABLE Configuration (
     DureeGratuite INT NOT NULL,
     TaxeFederale DECIMAL(10,2) NOT NULL,
     TaxeProvinciale DECIMAL(10,2) NOT NULL,
-    DateModification DATETIME NOT NULL DEFAULT NOW()
+    DateModification DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Table Rapport
 CREATE TABLE Rapport (
     Id INT PRIMARY KEY AUTO_INCREMENT,
-    DateGeneration DATETIME NOT NULL DEFAULT NOW(),
+    DateGeneration DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     DateDebut DATETIME NOT NULL,
     DateFin DATETIME NOT NULL,
     Fichier VARCHAR(205) NULL,
@@ -77,13 +77,12 @@ CREATE TABLE Rapport (
     FOREIGN KEY (UtilisateurId) REFERENCES Utilisateur(Id) ON DELETE CASCADE
 );
 
--- Insertion des tarifcation prédéfinies
+-- Insertion des tarifications prédéfinies
 INSERT INTO Tarification (Niveau, Prix, DureeMin, DureeMax)
 VALUES 
 ('Tarif horaire', 0, 0, 2),
 ('Demi-journée', 6.25, 1, 4),
 ('Journée complète', 10.75, 4, 24);
-
 
 -- Vue pour afficher uniquement les abonnements actifs
 DROP VIEW IF EXISTS Vue_AbonnementsActifs;

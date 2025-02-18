@@ -10,24 +10,19 @@ namespace StationnementAPI.Models
         public int Id { get; set; }
 
         public string? TicketId { get; set; }
-
         public int? AbonnementId { get; set; }
 
         [Required]
-        public decimal Montant { get; set; }
+        [Column(TypeName = "decimal(10,2)")]
+        public decimal Montant { get; set; } // Calculé à partir de la tarification applicable
 
         [Required]
-        public DateTime DatePaiement { get; set; } = DateTime.Now;
-
-        public int? TarificationId { get; set; }
+        public DateTime DatePaiement { get; set; } = DateTime.UtcNow; // Enregistre l'instant du paiement
 
         [ForeignKey("TicketId")]
         public Ticket Ticket { get; set; }
 
         [ForeignKey("AbonnementId")]
-        public Abonnement Abonnement { get; set; }
-
-        [ForeignKey("TarificationId")]
-        public Tarification Tarification { get; set; }
+        public Abonnement? Abonnement { get; set; }
     }
 }

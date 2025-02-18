@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using StationnementAPI.Data.Context;
 
@@ -11,9 +12,11 @@ using StationnementAPI.Data.Context;
 namespace StationnementAPI.Migrations
 {
     [DbContext(typeof(StationnementDbContext))]
-    partial class StationnementDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250218001424_InitialMigration")]
+    partial class InitialMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -99,6 +102,9 @@ namespace StationnementAPI.Migrations
 
                     b.Property<string>("TicketId")
                         .HasColumnType("varchar(255)");
+
+                    b.Property<int?>("UtilisateurId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -224,9 +230,6 @@ namespace StationnementAPI.Migrations
                         .HasColumnType("varchar(205)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("Email")
-                        .IsUnique();
 
                     b.ToTable("Utilisateur", (string)null);
                 });

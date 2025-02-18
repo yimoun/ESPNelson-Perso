@@ -12,8 +12,8 @@ using StationnementAPI.Data.Context;
 namespace StationnementAPI.Migrations
 {
     [DbContext(typeof(StationnementDbContext))]
-    [Migration("20250217001137_InitialMigration")]
-    partial class InitialMigration
+    [Migration("20250218014111_AddUniqueConstraintToEmail")]
+    partial class AddUniqueConstraintToEmail
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -46,14 +46,9 @@ namespace StationnementAPI.Migrations
                     b.Property<int>("UtilisateurId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("UtilisateurId1")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("UtilisateurId");
-
-                    b.HasIndex("UtilisateurId1");
 
                     b.ToTable("Abonnement", (string)null);
                 });
@@ -73,10 +68,10 @@ namespace StationnementAPI.Migrations
                         .HasColumnType("datetime(6)");
 
                     b.Property<decimal>("TaxeFederal")
-                        .HasColumnType("decimal(65,30)");
+                        .HasColumnType("decimal(10,2)");
 
                     b.Property<decimal>("TaxeProvincial")
-                        .HasColumnType("decimal(65,30)");
+                        .HasColumnType("decimal(10,2)");
 
                     b.Property<int>("UtilisateurId")
                         .HasColumnType("int");
@@ -103,10 +98,7 @@ namespace StationnementAPI.Migrations
                         .HasColumnType("datetime(6)");
 
                     b.Property<decimal>("Montant")
-                        .HasColumnType("decimal(65,30)");
-
-                    b.Property<int?>("TarificationId")
-                        .HasColumnType("int");
+                        .HasColumnType("decimal(10,2)");
 
                     b.Property<string>("TicketId")
                         .HasColumnType("varchar(255)");
@@ -116,12 +108,40 @@ namespace StationnementAPI.Migrations
                     b.HasIndex("AbonnementId")
                         .IsUnique();
 
-                    b.HasIndex("TarificationId");
-
                     b.HasIndex("TicketId")
                         .IsUnique();
 
                     b.ToTable("Paiement", (string)null);
+                });
+
+            modelBuilder.Entity("StationnementAPI.Models.Rapport", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("DateDebut")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime>("DateFin")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime>("DateGeneration")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Fichier")
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("UtilisateurId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UtilisateurId");
+
+                    b.ToTable("Rapport", (string)null);
                 });
 
             modelBuilder.Entity("StationnementAPI.Models.Tarification", b =>
@@ -144,7 +164,7 @@ namespace StationnementAPI.Migrations
                         .HasColumnType("varchar(50)");
 
                     b.Property<decimal>("Prix")
-                        .HasColumnType("decimal(65,30)");
+                        .HasColumnType("decimal(10,2)");
 
                     b.HasKey("Id");
 
@@ -163,7 +183,9 @@ namespace StationnementAPI.Migrations
                         .HasColumnType("tinyint(1)");
 
                     b.Property<DateTime>("TempsArrive")
-                        .HasColumnType("datetime(6)");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime(6)")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<DateTime?>("TempsSortie")
                         .HasColumnType("datetime(6)");
@@ -206,20 +228,19 @@ namespace StationnementAPI.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Email")
+                        .IsUnique();
+
                     b.ToTable("Utilisateur", (string)null);
                 });
 
             modelBuilder.Entity("StationnementAPI.Models.Abonnement", b =>
                 {
                     b.HasOne("StationnementAPI.Models.Utilisateur", "Utilisateur")
-                        .WithMany()
+                        .WithMany("Abonnements")
                         .HasForeignKey("UtilisateurId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("StationnementAPI.Models.Utilisateur", null)
-                        .WithMany("Abonnements")
-                        .HasForeignKey("UtilisateurId1");
 
                     b.Navigation("Utilisateur");
                 });
@@ -242,11 +263,6 @@ namespace StationnementAPI.Migrations
                         .HasForeignKey("StationnementAPI.Models.Paiement", "AbonnementId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("StationnementAPI.Models.Tarification", "Tarification")
-                        .WithMany()
-                        .HasForeignKey("TarificationId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
                     b.HasOne("StationnementAPI.Models.Ticket", "Ticket")
                         .WithOne()
                         .HasForeignKey("StationnementAPI.Models.Paiement", "TicketId")
@@ -254,9 +270,18 @@ namespace StationnementAPI.Migrations
 
                     b.Navigation("Abonnement");
 
-                    b.Navigation("Tarification");
-
                     b.Navigation("Ticket");
+                });
+
+            modelBuilder.Entity("StationnementAPI.Models.Rapport", b =>
+                {
+                    b.HasOne("StationnementAPI.Models.Utilisateur", "Utilisateur")
+                        .WithMany()
+                        .HasForeignKey("UtilisateurId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Utilisateur");
                 });
 
             modelBuilder.Entity("StationnementAPI.Models.Utilisateur", b =>

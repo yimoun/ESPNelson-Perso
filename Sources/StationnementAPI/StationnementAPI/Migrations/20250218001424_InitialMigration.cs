@@ -23,7 +23,7 @@ namespace StationnementAPI.Migrations
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     Niveau = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    Prix = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
+                    Prix = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
                     DureeMin = table.Column<int>(type: "int", nullable: false),
                     DureeMax = table.Column<int>(type: "int", nullable: false)
                 },
@@ -83,8 +83,7 @@ namespace StationnementAPI.Migrations
                     DateFin = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     Type = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    UtilisateurId = table.Column<int>(type: "int", nullable: false),
-                    UtilisateurId1 = table.Column<int>(type: "int", nullable: true)
+                    UtilisateurId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -95,11 +94,6 @@ namespace StationnementAPI.Migrations
                         principalTable: "Utilisateur",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Abonnement_Utilisateur_UtilisateurId1",
-                        column: x => x.UtilisateurId1,
-                        principalTable: "Utilisateur",
-                        principalColumn: "Id");
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -110,8 +104,8 @@ namespace StationnementAPI.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     CapaciteMax = table.Column<int>(type: "int", nullable: false),
-                    TaxeFederal = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
-                    TaxeProvincial = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
+                    TaxeFederal = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
+                    TaxeProvincial = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
                     DateModification = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     UtilisateurId = table.Column<int>(type: "int", nullable: false)
                 },
@@ -128,6 +122,31 @@ namespace StationnementAPI.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "Rapport",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    DateGeneration = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    DateDebut = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    DateFin = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    Fichier = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    UtilisateurId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Rapport", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Rapport_Utilisateur_UtilisateurId",
+                        column: x => x.UtilisateurId,
+                        principalTable: "Utilisateur",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "Paiement",
                 columns: table => new
                 {
@@ -136,9 +155,9 @@ namespace StationnementAPI.Migrations
                     TicketId = table.Column<string>(type: "varchar(255)", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     AbonnementId = table.Column<int>(type: "int", nullable: true),
-                    Montant = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
-                    DatePaiement = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    TarificationId = table.Column<int>(type: "int", nullable: true)
+                    UtilisateurId = table.Column<int>(type: "int", nullable: true),
+                    Montant = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
+                    DatePaiement = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -149,12 +168,6 @@ namespace StationnementAPI.Migrations
                         principalTable: "Abonnement",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Paiement_Tarification_TarificationId",
-                        column: x => x.TarificationId,
-                        principalTable: "Tarification",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.SetNull);
                     table.ForeignKey(
                         name: "FK_Paiement_Ticket_TicketId",
                         column: x => x.TicketId,
@@ -170,11 +183,6 @@ namespace StationnementAPI.Migrations
                 column: "UtilisateurId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Abonnement_UtilisateurId1",
-                table: "Abonnement",
-                column: "UtilisateurId1");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Configuration_UtilisateurId",
                 table: "Configuration",
                 column: "UtilisateurId");
@@ -186,15 +194,15 @@ namespace StationnementAPI.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Paiement_TarificationId",
-                table: "Paiement",
-                column: "TarificationId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Paiement_TicketId",
                 table: "Paiement",
                 column: "TicketId",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Rapport_UtilisateurId",
+                table: "Rapport",
+                column: "UtilisateurId");
         }
 
         /// <inheritdoc />
@@ -207,10 +215,13 @@ namespace StationnementAPI.Migrations
                 name: "Paiement");
 
             migrationBuilder.DropTable(
-                name: "Abonnement");
+                name: "Rapport");
 
             migrationBuilder.DropTable(
                 name: "Tarification");
+
+            migrationBuilder.DropTable(
+                name: "Abonnement");
 
             migrationBuilder.DropTable(
                 name: "Ticket");

@@ -1,5 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
-
+﻿using Microsoft.EntityFrameworkCore;
+using StationnementAPI.Models.ModelsDTO;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Security.Cryptography;
 
 namespace StationnementAPI.Models
 {
@@ -8,26 +11,35 @@ namespace StationnementAPI.Models
         [Key]
         public int Id { get; set; }
 
-        [Required]
-        [MaxLength(205)]
+        [Required, MaxLength(205)]
         public string NomUtilisateur { get; set; }
 
-        [Required]
-        [MaxLength(205)]
+        [Required, MaxLength(205)]
         public string MotDePasse { get; set; }
 
-        [Required]
-        [MaxLength(205)]
-        public string Role { get; set; } = "visiteur";  //Admin, Abonné, Visiteur (par défaut)
+        [Required, MaxLength(205)]
+        public string Role { get; set; } = "visiteur"; // Admin, Abonné, Visiteur (par défaut)
 
-        [Required]
-        [MaxLength(205)]
+        [Required, MaxLength(205), EmailAddress] 
         public string Email { get; set; }
 
-        //Pour les abonnés : un code-barre pour son badge d'abonnement.
+
         public string? BadgeId { get; set; }
 
         // Un utilisateur peut avoir plusieurs abonnements
+        [InverseProperty("Utilisateur")]
         public ICollection<Abonnement>? Abonnements { get; set; }
+
+        public static string GenerateBadgeId()
+        {
+            using (var rng = RandomNumberGenerator.Create())
+            {
+                var bytes = new byte[8];
+                rng.GetBytes(bytes);
+                return BitConverter.ToString(bytes).Replace("-", "").Substring(0, 10);
+            }
+        }
+
+       
     }
 }
