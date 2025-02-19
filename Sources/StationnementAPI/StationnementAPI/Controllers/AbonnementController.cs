@@ -29,10 +29,15 @@ namespace StationnementAPI.Controllers
             if (string.IsNullOrEmpty(paiementDto.Email))
                 return BadRequest("L'email est requis pour enregistrer un nouvel abonné.");
 
-            if (string.IsNullOrEmpty(paiementDto.TypeAbonnement) ||
-                (paiementDto.TypeAbonnement.ToLower() != "mensuel" && paiementDto.TypeAbonnement.ToLower() != "hebdomadaire"))
+            //Récupérer tous les abonnements existants pour valider les types disponibles
+            var abonnements = await GetAllAbonnment();
+
+            var typesDisponibles = abonnements.Select(a => a.Type.ToLower()).Distinct().ToList();
+
+            //Vérifier si le type d'abonnement demandé existe bien
+            if (!typesDisponibles.Contains(paiementDto.TypeAbonnement.ToLower()))
             {
-                return BadRequest("Type d'abonnement invalide. Choisissez 'mensuel' ou 'hebdomadaire'.");
+                return BadRequest($"Type d'abonnement invalide. Les types disponibles sont : {string.Join(", ", typesDisponibles)}.");
             }
 
             var ticket = await _context.Tickets.FindAsync(paiementDto.TicketId);
@@ -40,14 +45,13 @@ namespace StationnementAPI.Controllers
                 return NotFound("Ticket non trouvé.");
             if (ticket.EstConverti)
                 return Conflict("Ce ticket a déjà été utilisé pour un abonnement.");
-            
 
             var existingUser = await _context.Utilisateurs.FirstOrDefaultAsync(u => u.Email == paiementDto.Email);
             if (existingUser != null)
                 return Conflict("Cet email est déjà associé à un abonné.");
 
-            if(!ticket.EstConverti)
-                ticket.EstConverti = true;  //Afin de ne plus l'utiliser dans le future pour souscrire à un abonnment !
+            if (!ticket.EstConverti)
+                ticket.EstConverti = true;
 
             var utilisateur = new Utilisateur
             {
@@ -59,6 +63,7 @@ namespace StationnementAPI.Controllers
             _context.Utilisateurs.Add(utilisateur);
             await _context.SaveChangesAsync();
 
+            // Déterminer la durée et le montant en fonction du type d'abonnement
             int dureeJours = paiementDto.TypeAbonnement.ToLower() == "hebdomadaire" ? 7 : 30;
             decimal montant = paiementDto.TypeAbonnement.ToLower() == "mensuel" ? 50 : 15;
 
@@ -82,12 +87,21 @@ namespace StationnementAPI.Controllers
             return Created($"api/abonnements/{abonnement.Id}", new
             {
                 Message = "Abonnement souscrit avec succès.",
-                UtilisateurId = utilisateur.Id,
+                AbonnmentId = abonnement.Id,
                 TypeAbonnement = abonnement.Type,
                 DateDebut = abonnement.DateDebut,
                 DateFin = abonnement.DateFin,
                 MontantPaye = paiement.Montant
             });
+        }
+
+
+        [HttpGet("tous-les-abonnments")]
+        private async Task<IEnumerable<Abonnement>> GetAllAbonnment()
+        {
+            IEnumerable<Abonnement> abonnements = await _context.Abonnements.ToListAsync(); 
+
+            return abonnements; 
         }
 
         [HttpGet("actifs")]
