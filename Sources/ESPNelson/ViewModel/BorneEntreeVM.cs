@@ -1,11 +1,16 @@
 ﻿using System;
-using System.Drawing;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using ESPNelson.Model;
+using iText.Kernel.Pdf;
+using iText.Layout;
+using iText.Layout.Element;
+using iText.IO.Image;
+using iText.IO.Font.Constants;
+using iText.Kernel.Font;
 using ZXing;
 using ZXing.Common;
 
@@ -13,19 +18,14 @@ namespace ESPNelson.ViewModel
 {
     public partial class BorneEntreeVM : ObservableObject
     {
-        private Ticket _ticketActuel;
-        public Ticket TicketActuel
-        {
-            get => _ticketActuel;
-            set
-            {
-                SetProperty(ref _ticketActuel, value);
-                OnPropertyChanged(nameof(TicketActuel)); 
-            }
-        }
+        private const string NomHopital = "CIUSS Saguenay Hôpital de Chicoutimi";
+        private const string AdresseHopital = "930 Jacques-Cartier Est, Chicoutimi, QC";
+        private const string ContactHopital = "Tél: +1 234 567 890 | contact@hopitalchicoutimi.ca";
+        private const string LogoPath = "Images/logo_hopital.png"; // À placer dans le projet
+        private const string PdfSavePath = "Tickets"; // Dossier pour les PDFs
 
-
-
+        [ObservableProperty]
+        private Ticket ticketActuel;
 
         [ObservableProperty]
         private BitmapImage barcodeImage;
@@ -47,8 +47,20 @@ namespace ESPNelson.ViewModel
             {
                 Console.WriteLine($"✅ Ticket généré : {nouveauTicket.Id}");
 
-                TicketActuel = nouveauTicket; // Met à jour la propriété observable
-                BarcodeImage = GenerateBarcode(nouveauTicket.Id);
+                TicketActuel = null; // 🚀 Force la notification
+                OnPropertyChanged(nameof(TicketActuel));
+
+                TicketActuel = nouveauTicket;   // Réaffectation pour déclencher la notification
+                OnPropertyChanged(nameof(TicketActuel)); // Notifier manuellement
+
+
+                System.Drawing.Bitmap barcodeBitmap = GenerateBarcode(nouveauTicket.Id);
+
+                if (barcodeBitmap != null)
+                {
+                    BarcodeImage = ConvertBitmapToBitmapImage(barcodeBitmap);
+                    GenererTicketPDF(nouveauTicket, barcodeBitmap);
+                }
             }
             else
             {
@@ -56,34 +68,27 @@ namespace ESPNelson.ViewModel
             }
         }
 
-
-        private BitmapImage GenerateBarcode(string text)
+        private System.Drawing.Bitmap GenerateBarcode(string text)
         {
-            if (string.IsNullOrWhiteSpace(text))
-            {
-                Console.WriteLine("⚠️ ID de ticket invalide pour génération de code-barres !");
-                return null;
-            }
-
-            var writer = new BarcodeWriterPixelData
-            {
-                Format = BarcodeFormat.CODE_128, // Format lisible par un lecteur standard
-                Options = new EncodingOptions
-                {
-                    Width = 600, // Augmentation de la largeur
-                    Height = 200, // Augmentation de la hauteur
-                    Margin = 5, // Marge pour éviter que le code-barres touche les bords
-                    PureBarcode = true
-                }
-            };
-
             try
             {
+                var writer = new BarcodeWriterPixelData
+                {
+                    Format = BarcodeFormat.CODE_128,
+                    Options = new EncodingOptions
+                    {
+                        Width = 600,
+                        Height = 200,
+                        Margin = 5,
+                        PureBarcode = true
+                    }
+                };
+
                 var pixelData = writer.Write(text);
 
-                using (Bitmap bitmap = new Bitmap(pixelData.Width, pixelData.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb))
+                using (var bitmap = new System.Drawing.Bitmap(pixelData.Width, pixelData.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb))
                 {
-                    var bitmapData = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height),
+                    var bitmapData = bitmap.LockBits(new System.Drawing.Rectangle(0, 0, bitmap.Width, bitmap.Height),
                         System.Drawing.Imaging.ImageLockMode.WriteOnly, bitmap.PixelFormat);
 
                     try
@@ -95,7 +100,7 @@ namespace ESPNelson.ViewModel
                         bitmap.UnlockBits(bitmapData);
                     }
 
-                    return ConvertBitmapToBitmapImage(bitmap);
+                    return new System.Drawing.Bitmap(bitmap);
                 }
             }
             catch (Exception ex)
@@ -105,7 +110,7 @@ namespace ESPNelson.ViewModel
             }
         }
 
-        private BitmapImage ConvertBitmapToBitmapImage(Bitmap bitmap)
+        private BitmapImage ConvertBitmapToBitmapImage(System.Drawing.Bitmap bitmap)
         {
             using (MemoryStream memory = new MemoryStream())
             {
@@ -117,10 +122,76 @@ namespace ESPNelson.ViewModel
                 bitmapImage.StreamSource = memory;
                 bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
                 bitmapImage.EndInit();
-                bitmapImage.Freeze(); // Empêche les erreurs liées au threading dans WPF
+                bitmapImage.Freeze();
 
                 return bitmapImage;
             }
         }
+
+        private void GenererTicketPDF(Ticket ticket, System.Drawing.Bitmap barcodeBitmap)
+        {
+            try
+            {
+                if (!Directory.Exists(PdfSavePath))
+                    Directory.CreateDirectory(PdfSavePath);
+
+                string pdfFilePath = Path.Combine(PdfSavePath, $"Ticket_{ticket.Id}.pdf");
+
+                // Supprimer l'ancien fichier
+                if (File.Exists(pdfFilePath))
+                {
+                    Console.WriteLine($"⚠️ Suppression de l'ancien fichier PDF : {pdfFilePath}");
+                    File.Delete(pdfFilePath);
+                }
+
+                // Vérifier si on peut créer un fichier
+                using (FileStream fsTest = new FileStream(pdfFilePath, FileMode.CreateNew, FileAccess.Write))
+                {
+                    Console.WriteLine($"✅ Test d'écriture du fichier PDF réussi : {pdfFilePath}");
+                }
+
+                // Forcer la création correcte du PDF
+                using (FileStream stream = new FileStream(pdfFilePath, FileMode.Create, FileAccess.Write, FileShare.None))
+                using (PdfWriter writer = new PdfWriter(stream))
+                using (PdfDocument pdf = new PdfDocument(writer))
+                {
+                    Document document = new Document(pdf);
+
+                    PdfFont boldFont = PdfFontFactory.CreateFont(StandardFonts.HELVETICA_BOLD);
+                    PdfFont regularFont = PdfFontFactory.CreateFont(StandardFonts.HELVETICA);
+
+                    document.Add(new Paragraph(NomHopital).SetFont(boldFont).SetFontSize(18)
+                        .SetTextAlignment(iText.Layout.Properties.TextAlignment.CENTER));
+
+                    document.Add(new Paragraph(AdresseHopital).SetFont(regularFont).SetFontSize(12)
+                        .SetTextAlignment(iText.Layout.Properties.TextAlignment.CENTER));
+
+                    document.Add(new Paragraph($"📅 Heure d'Arrivée : {ticket.TempsArrive:dd/MM/yyyy HH:mm:ss}")
+                        .SetFont(regularFont).SetFontSize(14));
+
+                    document.Add(new Paragraph($"🎫 Numéro du Ticket : {ticket.Id}")
+                        .SetFont(boldFont).SetFontSize(16));
+
+                    document.Add(new Paragraph(" "));
+
+                    document.Add(new Paragraph("📢 Présentez ce ticket à la borne de paiement avant de quitter le parking.")
+                        .SetFont(regularFont).SetFontSize(12)
+                        .SetTextAlignment(iText.Layout.Properties.TextAlignment.CENTER));
+
+                    // **Forcer l’écriture et fermer le PDF proprement**
+                    document.Flush();
+                    pdf.Close();
+                }
+
+                Console.WriteLine($"✅ PDF généré avec succès : {pdfFilePath}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ Erreur lors de la génération du PDF : {ex.Message}");
+            }
+        }
+
+
+
     }
 }

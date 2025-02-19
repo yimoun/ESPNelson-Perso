@@ -8,6 +8,10 @@ using System.Threading.Tasks;
 
 namespace BornePaiement.Attributes
 {
+    /// <summary>
+    /// Filtre que les requêtes à l'API contiennent une clé valide
+    /// </summary>
+
     [AttributeUsage(AttributeTargets.Class)]
     public class ApiKeyAttribute : Attribute, IAsyncActionFilter
     {

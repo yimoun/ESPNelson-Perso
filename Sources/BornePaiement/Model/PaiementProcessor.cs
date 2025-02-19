@@ -1,11 +1,11 @@
-﻿using BornePaiement.Models;
+﻿using BornePaiement.Model;
 using Newtonsoft.Json;
 using System;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BornePaiement.Models
+namespace BornePaiement.Model
 {
     public static class PaiementProcessor
     {

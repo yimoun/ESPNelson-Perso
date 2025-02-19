@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Newtonsoft.Json;
 
 
 namespace StationnementAPI.Models
@@ -12,6 +13,7 @@ namespace StationnementAPI.Models
 
         [Required]
         [Column(TypeName = "datetime(6)")]
+        [JsonProperty("TempsArrive")]
         public DateTime TempsArrive { get; set; }
 
         public bool EstPaye { get; set; } = false;

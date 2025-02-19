@@ -1,20 +1,16 @@
-﻿using System.Diagnostics;
+﻿using System;
 using System.Net.Http;
 using System.Net.Http.Headers;
 
-namespace ESPNelson.Model
+namespace BornePaiement.Model
 {
-
-    /// <summary>
-    /// Initialisation du client HTTP au démarrage, définition de l'URL de base de StationnmentAPI et ajout des en-têtes JSON
-    /// </summary>
     public static class APIHelper
     {
         public static HttpClient APIClient { get; private set; }
 
         static APIHelper()
         {
-            InitializeClient(); // Initialisation automatique
+            InitializeClient();
         }
 
         public static void InitializeClient()
@@ -26,13 +22,9 @@ namespace ESPNelson.Model
                     BaseAddress = new Uri("https://localhost:7185/api/")
                 };
                 APIClient.DefaultRequestHeaders.Accept.Clear();
-
-                //Ajout de l'APIKey + Identifiant du programme
-                APIClient.DefaultRequestHeaders.Add("ApiKey", "CLE_API_BORNE_ENTREE");
-                APIClient.DefaultRequestHeaders.Add("X-Client-Type", "BorneEntree");
+                APIClient.DefaultRequestHeaders.Add("ApiKey", "CLE_API_BORNE_PAIEMENT"); // Clé API spécifique à BornePaiement
+                APIClient.DefaultRequestHeaders.Add("X-Client-Type", "BornePaiement");
                 APIClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-                Debug.WriteLine($"Clé API envoyée : {APIClient.DefaultRequestHeaders.GetValues("ApiKey").FirstOrDefault()}");
             }
         }
     }

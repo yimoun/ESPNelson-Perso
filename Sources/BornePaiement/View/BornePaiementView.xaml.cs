@@ -12,7 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace BornePaiement.Views
+namespace BornePaiement.View
 {
     /// <summary>
     /// Logique d'interaction pour BornePaiementView.xaml

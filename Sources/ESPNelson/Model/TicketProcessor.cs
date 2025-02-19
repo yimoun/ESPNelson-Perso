@@ -8,7 +8,7 @@ namespace ESPNelson.Model
 {
     public static class TicketProcessor
     {
-        private const string ApiKey = "MY_SECRET_API_KEY_12345";
+        private const string ApiKey = "CLE_API_BORNE_ENTREE";
 
         public static async Task<Ticket> GenerateTicketAsync()
         {
@@ -28,7 +28,8 @@ namespace ESPNelson.Model
                 if (response.IsSuccessStatusCode)
                 {
                     string json = await response.Content.ReadAsStringAsync();
-                    return JsonConvert.DeserializeObject<Ticket>(json);
+                    Ticket ticketTest = JsonConvert.DeserializeObject<Ticket>(json);
+                    return ticketTest;
                 }
                 else
                 {

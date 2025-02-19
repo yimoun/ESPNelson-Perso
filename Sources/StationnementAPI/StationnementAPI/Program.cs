@@ -31,7 +31,7 @@ builder.Services.AddSwaggerGen();
 var app = builder.Build();
 
 // Ajout du middleware de sécurité API Key
-app.UseMiddleware<ApiKeyMiddleware>();
+//app.UseMiddleware<ApiKeyMiddleware>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
