@@ -23,7 +23,7 @@ namespace StationnementAPI.Controllers
         /// Calculer le montant du paiement sans l'effectuer
         /// </summary>
         [HttpGet("calculer-montant/{ticketId}")]
-        public async Task<ActionResult<decimal>> CalculerMontantTicket(string ticketId)
+        public async Task<ActionResult<object>> CalculerMontantTicket(string ticketId)
         {
             var ticket = await _context.Tickets.FindAsync(ticketId);
             if (ticket == null)
@@ -35,10 +35,17 @@ namespace StationnementAPI.Controllers
             if (ticket.EstConverti)
                 return BadRequest("Ce ticket a déjà été converti en abonnement.");
 
-            // Déterminer la durée de stationnement
-            var tempsSortie = DateTime.UtcNow; // Simulation du temps de sortie(sans l'enregistrer dans la BD)
+            //Déterminer la durée de stationnement
+            var tempsSortie = DateTime.UtcNow; // Simulation du temps de sortie
             var dureeStationnement = (tempsSortie - ticket.TempsArrive).TotalHours;
 
+            //Cas spécial : dépassement des 24h
+            if (dureeStationnement > 24)
+            {
+                return StatusCode(403, "⛔ La durée de stationnement dépasse les 24h autorisées. Veuillez contacter l'administration.");
+            }
+
+            //Vérifier la tarification applicable
             var tarification = await _context.Tarifications
                 .FirstOrDefaultAsync(t => dureeStationnement >= t.DureeMin && dureeStationnement <= t.DureeMax);
 
@@ -52,6 +59,9 @@ namespace StationnementAPI.Controllers
                 TarificationAppliquee = tarification.Niveau
             });
         }
+
+
+
 
         /// <summary>
         /// Effectuer le paiement d'un ticket

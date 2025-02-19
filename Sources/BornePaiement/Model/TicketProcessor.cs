@@ -39,5 +39,42 @@ namespace BornePaiement.Model
 
             return Math.Round(montant, 2);
         }
+
+
+        public static async Task<(decimal Montant, double Duree, string TarificationAppliquee, bool DureeDepassee)> CalculerMontantAsync(string ticketId)
+        {
+            using (HttpResponseMessage response = await APIHelper.APIClient.GetAsync($"paiements/calculer-montant/{ticketId}"))
+            {
+                if (response.StatusCode == System.Net.HttpStatusCode.Forbidden) // 403 = Durée dépassée
+                {
+                    return (0, 0, "⛔ La durée de stationnement dépasse les 24h autorisées.", true);
+                }
+
+                if (response.IsSuccessStatusCode)
+                {
+                    string json = await response.Content.ReadAsStringAsync();
+                    var result = JsonSerializer.Deserialize<MontantResponse>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                    return (result.Montant, result.DureeStationnement, result.TarificationAppliquee, false);
+                }
+                else
+                {
+                    Console.WriteLine($"❌ Erreur API : {response.StatusCode} - {response.ReasonPhrase}");
+                    return (0, 0, "Erreur", false);
+                }
+            }
+        }
+
     }
+
+    // Modèle pour stocker la réponse JSON
+    public class MontantResponse
+    {
+        public decimal Montant { get; set; }
+        public double DureeStationnement { get; set; }
+        public string TarificationAppliquee { get; set; }
+
+        public MontantResponse() { }
+    }
+
 }

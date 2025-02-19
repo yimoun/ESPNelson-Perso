@@ -1,33 +1,25 @@
 ﻿<Window x:Class="BornePaiement.View.BornePaiementView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:viewmodel="clr-namespace:BornePaiement.ViewModel"
-        Title="Borne de Paiement" Height="300" Width="400">
-
-    <Window.DataContext>
-        <viewmodel:BornePaiementVM />
-    </Window.DataContext>
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        Title="Borne de Paiement"
+        WindowStartupLocation="CenterScreen"
+        Height="500" Width="600">
 
     <Grid>
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20">
-            <TextBlock Text="Borne de Paiement" FontSize="20" FontWeight="Bold" TextAlignment="Center" />
 
-            <!-- Simule un placeholder -->
-            <Grid>
-                <TextBox Text="{Binding TicketId, UpdateSourceTrigger=PropertyChanged}" Width="200" />
-                <TextBlock Text="Scanner le ticket ici..."
-                           Foreground="Gray"
-                           VerticalAlignment="Center"
-                           HorizontalAlignment="Left"
-                           Margin="5,0,0,0"
-                           IsHitTestVisible="False"
-                           Visibility="{Binding TicketId, Converter={StaticResource StringToVisibilityConverter}}"/>
-            </Grid>
+            <TextBlock Text="Sélectionnez votre type d'accès" FontSize="22" FontWeight="Bold" TextAlignment="Center" Margin="0,10"/>
 
-            <Button Content="Valider Ticket" Command="{Binding ScanTicketCommand}" Margin="10" />
+            <!-- Boutons pour sélectionner Visiteur ou Abonné -->
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <Button Content="Visiteur" Command="{Binding SetModeVisiteurCommand}" Width="100" Margin="10"/>
+                <Button Content="Abonné" Command="{Binding SetModeAbonneCommand}" Width="100" Margin="10"/>
+            </StackPanel>
 
-            <TextBlock Text="Montant à payer :" FontSize="16" FontWeight="SemiBold" Margin="5"/>
-            <TextBlock Text="{Binding MontantAPayer, StringFormat=C}" FontSize="18" />
+            <!-- Contenu qui change en fonction du mode sélectionné -->
+            <Frame Content="{Binding SelectedView}" Width="500" Height="300"/>
+
         </StackPanel>
     </Grid>
 </Window>

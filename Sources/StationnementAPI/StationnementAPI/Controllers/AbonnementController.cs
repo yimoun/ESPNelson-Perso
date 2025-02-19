@@ -40,10 +40,14 @@ namespace StationnementAPI.Controllers
                 return NotFound("Ticket non trouvé.");
             if (ticket.EstConverti)
                 return Conflict("Ce ticket a déjà été utilisé pour un abonnement.");
+            
 
             var existingUser = await _context.Utilisateurs.FirstOrDefaultAsync(u => u.Email == paiementDto.Email);
             if (existingUser != null)
                 return Conflict("Cet email est déjà associé à un abonné.");
+
+            if(!ticket.EstConverti)
+                ticket.EstConverti = true;  //Afin de ne plus l'utiliser dans le future pour souscrire à un abonnment !
 
             var utilisateur = new Utilisateur
             {
