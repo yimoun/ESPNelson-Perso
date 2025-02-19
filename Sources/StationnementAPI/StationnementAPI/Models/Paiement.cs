@@ -10,7 +10,9 @@ namespace StationnementAPI.Models
         public int Id { get; set; }
 
         public string? TicketId { get; set; }
-        public int? AbonnementId { get; set; }
+
+        [Column(TypeName = "varchar(255)")] // ✅ S'assure que MySQL traite bien cette colonne comme un string
+        public string AbonnementId { get; set; }
 
         [Required]
         [Column(TypeName = "decimal(10,2)")]

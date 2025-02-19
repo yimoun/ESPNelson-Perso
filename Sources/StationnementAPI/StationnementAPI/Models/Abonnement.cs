@@ -7,7 +7,7 @@ namespace StationnementAPI.Models
     public class Abonnement
     {
         [Key]
-        public int Id { get; set; }
+        public string Id { get; set; } = Guid.NewGuid().ToString(); //Génération automatique de l'ID unique
 
         [Required]
         public DateTime DateDebut { get; set; } = DateTime.UtcNow; // UTC pour la cohérence

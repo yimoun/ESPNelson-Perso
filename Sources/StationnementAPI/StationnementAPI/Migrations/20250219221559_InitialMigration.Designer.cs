@@ -12,8 +12,8 @@ using StationnementAPI.Data.Context;
 namespace StationnementAPI.Migrations
 {
     [DbContext(typeof(StationnementDbContext))]
-    [Migration("20250218014111_AddUniqueConstraintToEmail")]
-    partial class AddUniqueConstraintToEmail
+    [Migration("20250219221559_InitialMigration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -27,11 +27,8 @@ namespace StationnementAPI.Migrations
 
             modelBuilder.Entity("StationnementAPI.Models.Abonnement", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+                    b.Property<string>("Id")
+                        .HasColumnType("varchar(255)");
 
                     b.Property<DateTime>("DateDebut")
                         .HasColumnType("datetime(6)");
@@ -91,8 +88,9 @@ namespace StationnementAPI.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("AbonnementId")
-                        .HasColumnType("int");
+                    b.Property<string>("AbonnementId")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
 
                     b.Property<DateTime>("DatePaiement")
                         .HasColumnType("datetime(6)");
@@ -203,9 +201,6 @@ namespace StationnementAPI.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("BadgeId")
-                        .HasColumnType("longtext");
-
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(205)
@@ -261,7 +256,8 @@ namespace StationnementAPI.Migrations
                     b.HasOne("StationnementAPI.Models.Abonnement", "Abonnement")
                         .WithOne()
                         .HasForeignKey("StationnementAPI.Models.Paiement", "AbonnementId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("StationnementAPI.Models.Ticket", "Ticket")
                         .WithOne()

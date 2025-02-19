@@ -63,8 +63,6 @@ namespace StationnementAPI.Migrations
                     Role = table.Column<string>(type: "varchar(205)", maxLength: 205, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Email = table.Column<string>(type: "varchar(205)", maxLength: 205, nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    BadgeId = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
@@ -77,8 +75,8 @@ namespace StationnementAPI.Migrations
                 name: "Abonnement",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Id = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     DateDebut = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     DateFin = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     Type = table.Column<string>(type: "longtext", nullable: false)
@@ -154,8 +152,8 @@ namespace StationnementAPI.Migrations
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     TicketId = table.Column<string>(type: "varchar(255)", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    AbonnementId = table.Column<int>(type: "int", nullable: true),
-                    UtilisateurId = table.Column<int>(type: "int", nullable: true),
+                    AbonnementId = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     Montant = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
                     DatePaiement = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
@@ -203,6 +201,12 @@ namespace StationnementAPI.Migrations
                 name: "IX_Rapport_UtilisateurId",
                 table: "Rapport",
                 column: "UtilisateurId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Utilisateur_Email",
+                table: "Utilisateur",
+                column: "Email",
+                unique: true);
         }
 
         /// <inheritdoc />

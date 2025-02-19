@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using BornePaiement.ViewModel;
 
 namespace BornePaiement.View
 {
@@ -22,6 +23,7 @@ namespace BornePaiement.View
         public BornePaiementView()
         {
             InitializeComponent();
+            this.DataContext = new BornePaiementVM();
         }
     }
 }

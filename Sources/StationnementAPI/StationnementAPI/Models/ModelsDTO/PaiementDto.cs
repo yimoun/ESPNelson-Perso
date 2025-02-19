@@ -6,7 +6,7 @@
         public string? Email { get; set; } // Email de l'utilisateur
         public string? TypeAbonnement { get; set; } // Mensuel ou Hebdomadaire
 
-        public Paiement DtoToPaiement(decimal montant, int abonnementId)
+        public Paiement DtoToPaiement(decimal montant, string abonnementId)
         {
             return new Paiement
             {

@@ -54,7 +54,6 @@ namespace StationnementAPI.Controllers
                 NomUtilisateur = paiementDto.Email.Split('@')[0],
                 MotDePasse = "MotDePasseTemporaire123!",
                 Email = paiementDto.Email,
-                BadgeId = Utilisateur.GenerateBadgeId(),
                 Role = "abonne"
             };
             _context.Utilisateurs.Add(utilisateur);
@@ -65,6 +64,7 @@ namespace StationnementAPI.Controllers
 
             var abonnement = new Abonnement
             {
+                Id = GenerateAbonnmentId(),
                 UtilisateurId = utilisateur.Id,
                 DateDebut = DateTime.UtcNow,
                 DateFin = DateTime.UtcNow.AddDays(dureeJours),
@@ -83,7 +83,6 @@ namespace StationnementAPI.Controllers
             {
                 Message = "Abonnement souscrit avec succès.",
                 UtilisateurId = utilisateur.Id,
-                BadgeId = utilisateur.BadgeId,
                 TypeAbonnement = abonnement.Type,
                 DateDebut = abonnement.DateDebut,
                 DateFin = abonnement.DateFin,
@@ -99,6 +98,12 @@ namespace StationnementAPI.Controllers
                 .ToListAsync();
 
             return Ok(abonnements);
+        }
+
+        private string GenerateAbonnmentId()
+        {
+            string guid = Guid.NewGuid().ToString("N").ToUpper(); // Supprime les tirets et met en majuscule
+            return guid.Substring(0, 10); // Prend les 10 premiers caractères
         }
 
     }

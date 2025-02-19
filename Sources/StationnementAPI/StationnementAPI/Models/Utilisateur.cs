@@ -24,21 +24,11 @@ namespace StationnementAPI.Models
         public string Email { get; set; }
 
 
-        public string? BadgeId { get; set; }
-
         // Un utilisateur peut avoir plusieurs abonnements
         [InverseProperty("Utilisateur")]
         public ICollection<Abonnement>? Abonnements { get; set; }
 
-        public static string GenerateBadgeId()
-        {
-            using (var rng = RandomNumberGenerator.Create())
-            {
-                var bytes = new byte[8];
-                rng.GetBytes(bytes);
-                return BitConverter.ToString(bytes).Replace("-", "").Substring(0, 10);
-            }
-        }
+       
 
        
     }

@@ -5,21 +5,22 @@
       Title="Paiement - Visiteur">
 
     <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20">
+
         <TextBlock Text="Scan du ticket" FontSize="20" FontWeight="Bold" Margin="0,10"/>
-
-        <!-- Correction : Utilisation de HintAssist.Hint -->
         <TextBox Text="{Binding TicketId}" Width="200" Margin="5" 
-                 md:HintAssist.Hint="Scannez votre ticket..." />
-
+                 md:HintAssist.Hint="Scannez votre ticket..."/>
         <Button Content="Confirmer" Command="{Binding TraiterTicketCommand}" Width="150" Margin="10"/>
 
-        <TextBlock Text="Ou souscrivez à un abonnement" FontSize="16" FontWeight="Bold" Margin="10"/>
+        <TextBlock Text="Souscrivez à un abonnement" FontSize="16" FontWeight="Bold" Margin="10"/>
 
         <TextBox Text="{Binding Email}" Width="200" Margin="5" 
-                 md:HintAssist.Hint="Entrez votre email" />
-
+                 md:HintAssist.Hint="Entrez votre email"/>
         <ComboBox ItemsSource="{Binding AbonnementsDisponibles}" SelectedItem="{Binding SelectedAbonnement}" Width="200"/>
-
         <Button Content="Souscrire" Command="{Binding SouscrireAbonnementCommand}" Width="150" Margin="10"/>
+
+        <!-- Bouton Téléchargement Badge - Visible uniquement si souscription réussie -->
+        <Button Content="Télécharger Badge" Command="{Binding TelechargerBadgeCommand}" Width="200" Margin="10"
+                Visibility="{Binding AbonnementSouscrit, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
     </StackPanel>
 </Page>
