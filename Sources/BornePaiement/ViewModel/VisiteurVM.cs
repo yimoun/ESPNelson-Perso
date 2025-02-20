@@ -1,176 +1,71 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using System.Collections.ObjectModel;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
+using System.Windows.Input;
 using BornePaiement.Model;
-using System.IO;
-using System.Reflection.Metadata;
-using System.Windows.Documents;
-using ZXing.OneD;
-using System;
-using System.Windows.Media.Imaging;
-using iText.Kernel.Pdf;
-using iText.Layout;
-using iText.Layout.Element;
-using iText.IO.Image;
-using iText.IO.Font.Constants;
-using iText.Kernel.Font;
-using ZXing;
-using ZXing.Common;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 
 namespace BornePaiement.ViewModel
 {
     public partial class VisiteurVM : ObservableObject
     {
-        [ObservableProperty] private string ticketId;
-        [ObservableProperty] private string email;
-        [ObservableProperty] private ObservableCollection<string> abonnementsDisponibles;
-        [ObservableProperty] private string selectedAbonnement;
-        [ObservableProperty] private bool abonnementSouscrit;  // ✅ Pour afficher le bouton de téléchargement
-        [ObservableProperty] private AbonnementResponse abonnementActuel;
+        [ObservableProperty] private bool ticketValide = false;  // ✅ Pour gérer l'affichage dynamique
+        [ObservableProperty] private bool ticketInvalide = false;
+        [ObservableProperty] private string ticketInfo;
 
+        private string ticketScanne = ""; // 🔹 Stocke temporairement le scan
 
-
-        public IRelayCommand TraiterTicketCommand { get; }
-        public IRelayCommand SouscrireAbonnementCommand { get; }
-        public IRelayCommand TelechargerBadgeCommand { get; } // ✅ Ajout du bouton de téléchargement
+        public IRelayCommand ConfirmerPaiementCommand { get; }
 
         public VisiteurVM()
         {
-            TraiterTicketCommand = new RelayCommand(async () => await TraiterTicket());
-            SouscrireAbonnementCommand = new RelayCommand(async () => await SouscrireAbonnement());
-            TelechargerBadgeCommand = new RelayCommand(async () => await TelechargerBadge());
-
-            abonnementsDisponibles = new ObservableCollection<string> { "Mensuel", "Trimestriel", "Annuel" };
-            AbonnementSouscrit = false;  // ✅ Caché par défaut
+            ConfirmerPaiementCommand = new RelayCommand(async () => await ConfirmerPaiement());
         }
 
-        private async Task TraiterTicket()
+        public async void KeyPressed(object sender, KeyEventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(TicketId))
+            if (e.Key == Key.Enter) // 🎯 Lorsque l'utilisateur a scanné son ticket
             {
-                MessageBox.Show("Veuillez scanner un ticket valide avant de souscrire.");
-                return;
-            }
-
-            var (montant, duree, tarification, dureeDepassee) = await TicketProcessor.CalculerMontantAsync(TicketId);
-
-            if (dureeDepassee)
-            {
-                MessageBox.Show("⛔ Durée de stationnement dépassée ! Veuillez contacter l'administration.");
-                return;
-            }
-
-            MessageBox.Show($"Ticket validé : Durée {duree} heures\nTarif : {tarification}");
-        }
-
-        private async Task SouscrireAbonnement()
-        {
-            if (string.IsNullOrWhiteSpace(TicketId))
-            {
-                MessageBox.Show("Veuillez scanner un ticket valide avant de souscrire.");
-                return;
-            }
-
-            if (string.IsNullOrWhiteSpace(Email) || string.IsNullOrWhiteSpace(SelectedAbonnement))
-            {
-                MessageBox.Show("Veuillez entrer un email valide et choisir un abonnement.");
-                return;
-            }
-
-            var abonnementInfo = await AbonnementProcessor.SouscrireAsync(Email, selectedAbonnement, TicketId);
-            
-
-            if (abonnementInfo != null)
-            {
-                MessageBox.Show($"✅ Souscription réussie !\nAbonnement : {abonnementInfo.TypeAbonnement}\nDate début : {abonnementInfo.DateDebut}\nDate fin : {abonnementInfo.DateFin}");
-
-                // 🔹 Affichage du bouton de téléchargement
-                abonnementSouscrit = true;
-
-                // 🔹 Stocker les infos pour la génération du badge
-                AbonnementActuel = abonnementInfo;
+                await VerifierTicket(ticketScanne);
+                ticketScanne = ""; // Réinitialiser le scan après traitement
             }
             else
             {
-                MessageBox.Show("❌ Échec de la souscription. Vérifiez les informations saisies.");
+                ticketScanne += e.Key.ToString().Replace("D", "").Replace("NumPad", ""); // 🔹 Capture les chiffres
             }
         }
 
-        private async Task TelechargerBadge()
+        private async Task VerifierTicket(string ticketId)
         {
-            if (!AbonnementSouscrit)
-            {
-                MessageBox.Show("Veuillez souscrire à un abonnement avant de télécharger votre badge.");
+            if (string.IsNullOrWhiteSpace(ticketId))
                 return;
-            }
 
-            try
+            var (montant, duree, tarification, dureeDepassee) = await TicketProcessor.CalculerMontantAsync(ticketId);
+
+            if (dureeDepassee)
             {
-                string dossierBadges = "Badges";
-                if (!Directory.Exists(dossierBadges))
-                    Directory.CreateDirectory(dossierBadges);
-
-                string pdfFilePath = Path.Combine(dossierBadges, $"Badge_{AbonnementActuel.AbonnmentId}.pdf");
-
-                // Générer un QR Code pour l'abonnement
-                System.Drawing.Bitmap qrCodeBitmap = GenerateQrCode(AbonnementActuel.AbonnmentId);
-                string qrCodePath = Path.Combine(dossierBadges, $"QR_{AbonnementActuel.AbonnmentId}.png");
-                qrCodeBitmap.Save(qrCodePath, System.Drawing.Imaging.ImageFormat.Png);
-
-                // Générer le fichier PDF du badge
-                using (PdfWriter writer = new PdfWriter(pdfFilePath))
-                using (PdfDocument pdf = new PdfDocument(writer))
-                {
-                    Document document = new Document(pdf);
-
-                    PdfFont boldFont = PdfFontFactory.CreateFont(StandardFonts.HELVETICA_BOLD);
-                    PdfFont regularFont = PdfFontFactory.CreateFont(StandardFonts.HELVETICA);
-
-                    document.Add(new Paragraph("Badge d'Abonnement")
-                        .SetFont(boldFont)
-                        .SetFontSize(20)
-                        .SetTextAlignment(iText.Layout.Properties.TextAlignment.CENTER));
-
-                    document.Add(new Paragraph($"ID Abonnement : {AbonnementActuel.AbonnmentId}")
-                        .SetFont(regularFont)
-                        .SetFontSize(14));
-
-                    document.Add(new Paragraph($"Type : {AbonnementActuel.TypeAbonnement}")
-                        .SetFont(regularFont)
-                        .SetFontSize(14));
-
-                    document.Add(new Paragraph($"Date Début : {AbonnementActuel.DateDebut:dd/MM/yyyy}")
-                        .SetFont(regularFont)
-                        .SetFontSize(14));
-
-                    document.Add(new Paragraph($"Date Fin : {AbonnementActuel.DateFin:dd/MM/yyyy}")
-                        .SetFont(regularFont)
-                        .SetFontSize(14));
-
-                    // Ajouter le QR Code dans le PDF
-                    if (File.Exists(qrCodePath))
-                    {
-                        Image qrCodeImg = new Image(ImageDataFactory.Create(qrCodePath));
-                        qrCodeImg.SetWidth(150);
-                        document.Add(qrCodeImg);
-                    }
-
-                    document.Add(new Paragraph("Présentez ce badge aux bornes pour entrer et sortir du stationnement.")
-                        .SetFont(regularFont)
-                        .SetFontSize(12)
-                        .SetTextAlignment(iText.Layout.Properties.TextAlignment.CENTER));
-
-                    document.Close();
-                }
-
-                MessageBox.Show($"✅ Badge généré : {pdfFilePath}");
+                TicketInfo = "⛔ Durée de stationnement dépassée ! Contactez l'administration.";
+                TicketInvalide = true;
+                TicketValide = false;
             }
-            catch (Exception ex)
+            else if (montant > 0)
             {
-                MessageBox.Show($"❌ Erreur lors de la génération du badge : {ex.Message}");
+                TicketInfo = $"✅ Ticket valide !\nMontant : {montant:C}\nDurée : {duree}h\nTarif : {tarification}";
+                TicketValide = true;
+                TicketInvalide = false;
             }
+            else
+            {
+                TicketInfo = "❌ Ticket invalide ou introuvable.";
+                TicketInvalide = true;
+                TicketValide = false;
+            }
+        }
+
+        private async Task ConfirmerPaiement()
+        {
+            MessageBox.Show("💳 Paiement confirmé !");
         }
     }
 }
+
+  

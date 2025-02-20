@@ -15,14 +15,33 @@ using System.Windows.Shapes;
 
 namespace BornePaiement.View
 {
-    /// <summary>
-    /// Logique d'interaction pour VisiteurPage.xaml
-    /// </summary>
-    public partial class VisiteurPage : Page
+    public partial class VisiteurPage : UserControl
     {
         public VisiteurPage()
         {
             InitializeComponent();
+            //this.DataContext = new VisiteurVM();
+
+            // 🔹 Capture les événements clavier au niveau de la fenêtre principale
+            this.Loaded += (s, e) =>
+            {
+                Window parentWindow = Window.GetWindow(this);
+                if (parentWindow != null)
+                {
+                    parentWindow.KeyDown += Page_KeyDown;
+                }
+            };
+        }
+
+        /// <summary>
+        /// Capture les événements clavier pour détecter un scan
+        /// </summary>
+        private void Page_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (DataContext is VisiteurVM vm)
+            {
+                vm.KeyPressed(sender, e);
+            }
         }
     }
 }

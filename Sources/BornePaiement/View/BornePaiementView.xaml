@@ -18,7 +18,7 @@
             </StackPanel>
 
             <!-- Contenu qui change en fonction du mode sélectionné -->
-            <Frame Content="{Binding SelectedView}" Width="500" Height="300"/>
+            <ContentControl  Content="{Binding SelectedView, Mode=TwoWay}" Width="500" Height="300"/>
 
         </StackPanel>
     </Grid>

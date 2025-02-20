@@ -75,13 +75,14 @@ namespace BornePaiement.ViewModel
     public partial class BornePaiementVM : ObservableObject
     {
         [ObservableProperty]
-        private Page selectedView; // Stocke la page actuelle (Visiteur ou Abonné)
+        private UserControl selectedView; // Stocke la page actuelle (Visiteur ou Abonné)
 
         public IRelayCommand SetModeVisiteurCommand { get; }
         public IRelayCommand SetModeAbonneCommand { get; }
 
         public BornePaiementVM()
         {
+
             SetModeVisiteurCommand = new RelayCommand(() => SelectedView = new VisiteurPage());
             SetModeAbonneCommand = new RelayCommand(() => SelectedView = new AbonnePage());
         }

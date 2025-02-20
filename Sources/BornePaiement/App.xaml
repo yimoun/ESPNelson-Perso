@@ -7,6 +7,7 @@
              StartupUri="View/BornePaiementView.xaml">
 
     <Application.Resources>
-        <conv:StringToVisibilityConverter x:Key="StringToVisibilityConverter"/>
+        <!--<conv:StringToVisibilityConverter x:Key="StringToVisibilityConverter"/>-->
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
     </Application.Resources>
 </Application>

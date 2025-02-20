@@ -12,17 +12,40 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using BornePaiement.ViewModel;
 
 namespace BornePaiement.View
 {
     /// <summary>
     /// Logique d'interaction pour AbonnePage.xaml
     /// </summary>
-    public partial class AbonnePage : Page
+    public partial class AbonnePage : UserControl
     {
         public AbonnePage()
         {
             InitializeComponent();
+            this.DataContext = new  AbonneVM();
+
+            // 🔹 Capture les événements clavier au niveau de la fenêtre principale
+            this.Loaded += (s, e) =>
+            {
+                Window parentWindow = Window.GetWindow(this);
+                if (parentWindow != null)
+                {
+                    parentWindow.KeyDown += Page_KeyDown;
+                }
+            };
+        }
+
+        /// <summary>
+        /// Capture les événements clavier pour détecter un scan
+        /// </summary>
+        private void Page_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (DataContext is VisiteurVM vm)
+            {
+                vm.KeyPressed(sender, e);
+            }
         }
     }
 }
