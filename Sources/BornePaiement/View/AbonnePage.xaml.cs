@@ -26,26 +26,26 @@ namespace BornePaiement.View
             InitializeComponent();
             this.DataContext = new  AbonneVM();
 
-            // 🔹 Capture les événements clavier au niveau de la fenêtre principale
-            this.Loaded += (s, e) =>
-            {
-                Window parentWindow = Window.GetWindow(this);
-                if (parentWindow != null)
-                {
-                    parentWindow.KeyDown += Page_KeyDown;
-                }
-            };
+            //// 🔹 Capture les événements clavier au niveau de la fenêtre principale
+            //this.Loaded += (s, e) =>
+            //{
+            //    Window parentWindow = Window.GetWindow(this);
+            //    if (parentWindow != null)
+            //    {
+            //        parentWindow.KeyDown += Page_KeyDown;
+            //    }
+            //};
         }
 
-        /// <summary>
-        /// Capture les événements clavier pour détecter un scan
-        /// </summary>
-        private void Page_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (DataContext is VisiteurVM vm)
-            {
-                vm.KeyPressed(sender, e);
-            }
-        }
+        ///// <summary>
+        ///// Capture les événements clavier pour détecter un scan
+        ///// </summary>
+        //private void Page_KeyDown(object sender, KeyEventArgs e)
+        //{
+        //    if (DataContext is VisiteurVM vm)
+        //    {
+        //        vm.KeyPressed(sender, e);
+        //    }
+        //}
     }
 }

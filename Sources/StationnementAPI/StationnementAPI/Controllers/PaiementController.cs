@@ -36,7 +36,7 @@ namespace StationnementAPI.Controllers
                 return BadRequest("Ce ticket a déjà été converti en abonnement.");
 
             //Déterminer la durée de stationnement
-            var tempsSortie = DateTime.UtcNow; // Simulation du temps de sortie
+            var tempsSortie = DateTime.Now; // Simulation du temps de sortie
             var dureeStationnement = (tempsSortie - ticket.TempsArrive).TotalHours;
 
             //Cas spécial : dépassement des 24h

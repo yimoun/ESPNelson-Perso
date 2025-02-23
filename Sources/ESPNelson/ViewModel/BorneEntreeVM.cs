@@ -123,7 +123,8 @@ namespace ESPNelson.ViewModel
                 }
 
 
-                gfx.DrawString($"Date et Heure d'Arrivée: {TicketActuel.TempsArrive:dd/MM/yyyy HH:mm:ss}", fontNormal, XBrushes.Black, new XPoint((page.Width.Point - gfx.MeasureString($"Date et Heure d'Arrivée: {TicketActuel.TempsArrive:dd/MM/yyyy HH:mm:ss}", fontNormal).Width) / 2, (page.Height.Point / 2) + 60));
+
+                gfx.DrawString($"Date et Heure d'Arrivée: {TicketActuel.TempsArrive:dd/MM/yyyy HH:mm:ss}", fontNormal, XBrushes.DarkBlue, new XPoint((page.Width.Point - gfx.MeasureString($"Date et Heure d'Arrivée: {TicketActuel.TempsArrive:dd/MM/yyyy HH:mm:ss}", fontNormal).Width) / 2, (page.Height.Point / 2) + 60));
 
                 // Dessiner le code-barres en haut et en bas du ticket
                 using (MemoryStream memory = new MemoryStream())

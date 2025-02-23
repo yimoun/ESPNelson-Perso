@@ -3,6 +3,7 @@ using System;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
+using System.Net.Http.Json;
 
 namespace BornePaiement.Model
 {
@@ -41,40 +42,74 @@ namespace BornePaiement.Model
         }
 
 
-        public static async Task<(decimal Montant, double Duree, string TarificationAppliquee, bool DureeDepassee)> CalculerMontantAsync(string ticketId)
+        //public static async Task<(decimal Montant, double Duree, string TarificationAppliquee, bool DureeDepassee,
+        //    bool estPaye, bool estConverti, string messageErreur)> CalculerMontantAsync(string ticketId)
+        //    {
+        //        using (HttpResponseMessage response = await APIHelper.APIClient.GetAsync($"paiements/calculer-montant/{ticketId}"))
+        //        {
+
+        //            if (!response.IsSuccessStatusCode)
+        //            {
+        //                return (0, 0, null, false, false, false, "Erreur lors de la récupération des informations du ticket.");
+        //            }
+
+        //             if (response.StatusCode == System.Net.HttpStatusCode.Forbidden) // 403 = Durée dépassée
+        //            {
+        //                return (0, 0, "⛔ La durée de stationnement dépasse les 24h autorisées.", true);
+        //            }
+
+        //            if (response.IsSuccessStatusCode)
+        //            {
+        //                string json = await response.Content.ReadAsStringAsync();
+        //                var result = JsonSerializer.Deserialize<MontantResponse>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+        //                return (result.Montant, result.DureeStationnement, result.TarificationAppliquee, false);
+        //            }
+        //            else
+        //            {
+        //                Console.WriteLine($"❌ Erreur API : {response.StatusCode} - {response.ReasonPhrase}");
+        //                return (0, 0, "Erreur", false);
+        //            }
+        //        }
+        // }
+
+        public static async Task<(decimal montant, double duree, string tarification, bool dureeDepassee, bool estPaye, bool estConverti, string messageErreur)> CalculerMontantAsync(string ticketId)
         {
-            using (HttpResponseMessage response = await APIHelper.APIClient.GetAsync($"paiements/calculer-montant/{ticketId}"))
+            try
             {
-                if (response.StatusCode == System.Net.HttpStatusCode.Forbidden) // 403 = Durée dépassée
+                // Appeler l'API
+                var response = await APIHelper.APIClient.GetAsync($"paiements/calculer-montant/{ticketId}");
+
+                // Vérifier si la réponse est réussie
+                if (!response.IsSuccessStatusCode)
                 {
-                    return (0, 0, "⛔ La durée de stationnement dépasse les 24h autorisées.", true);
+                    return (0, 0, null, false, false, false, "Erreur lors de la récupération des informations du ticket.");
                 }
 
-                if (response.IsSuccessStatusCode)
-                {
-                    string json = await response.Content.ReadAsStringAsync();
-                    var result = JsonSerializer.Deserialize<MontantResponse>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                // Désérialiser la réponse JSON
+                var result = await response.Content.ReadFromJsonAsync<CalculMontantResponse>();
 
-                    return (result.Montant, result.DureeStationnement, result.TarificationAppliquee, false);
-                }
-                else
-                {
-                    Console.WriteLine($"❌ Erreur API : {response.StatusCode} - {response.ReasonPhrase}");
-                    return (0, 0, "Erreur", false);
-                }
+                // Retourner les résultats
+                return (result.Montant, result.DureeStationnement, result.TarificationAppliquee, result.DureeDepassee, result.EstPaye, result.EstConverti, result.MessageErreur);
+            }
+            catch (Exception ex)
+            {
+                // Gérer les erreurs
+                return (0, 0, null, false, false, false, $"Erreur : {ex.Message}");
             }
         }
 
     }
 
-    // Modèle pour stocker la réponse JSON
-    public class MontantResponse
+    public class CalculMontantResponse
     {
         public decimal Montant { get; set; }
         public double DureeStationnement { get; set; }
         public string TarificationAppliquee { get; set; }
-
-        public MontantResponse() { }
+        public bool DureeDepassee { get; set; }
+        public bool EstPaye { get; set; }
+        public bool EstConverti { get; set; }
+        public string MessageErreur { get; set; }
     }
 
 }
