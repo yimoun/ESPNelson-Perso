@@ -36,28 +36,6 @@ namespace StationnementAPI.Controllers
                 });
             }
 
-            // Vérifier si le ticket a déjà été payé
-            if (ticket.EstPaye)
-            {
-                return BadRequest(new
-                {
-                    Message = "Ce ticket a déjà été payé.",
-                    TicketId = ticketId,
-                    TempsArrive = ticket.TempsArrive,
-                    TempsSortie = ticket.TempsSortie
-                });
-            }
-
-            // Vérifier si le ticket a déjà été converti en abonnement
-            if (ticket.EstConverti)
-            {
-                return BadRequest(new
-                {
-                    Message = "Ce ticket a déjà été converti en abonnement.",
-                    TicketId = ticketId,
-                    TempsArrive = ticket.TempsArrive
-                });
-            }
 
             // Déterminer la durée de stationnement
             var tempsSortie = DateTime.Now; // Simulation du temps de sortie
@@ -117,6 +95,8 @@ namespace StationnementAPI.Controllers
                 TarificationAppliquee = tarification.Niveau,
                 TempsArrivee = ticket.TempsArrive,
                 TempsSortie = tempsSortie,
+                EstPaye = ticket.EstPaye,   
+                EstConverti = ticket.EstConverti,   
                 TaxeFederal = configuration.TaxeFederal,
                 TaxeProvincial = configuration.TaxeProvincial
             });

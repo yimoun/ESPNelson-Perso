@@ -38,12 +38,12 @@
                 </StackPanel>
 
                 <!-- Bouton pour sélectionenr la langue -->
-                <Label Grid.Column="0" x:Name="label_Language" Background="GreenYellow"/>
+                <!--<Label Grid.Column="0" x:Name="label_Language" Background="GreenYellow"/>
                 <ComboBox x:Name="languageComboBox" Grid.Column="1" SelectionChanged="LanguageComboBox_SelectionChanged"
                             SelectedValue="{Binding Language, RelativeSource={RelativeSource AncestorType=Window}, Mode=TwoWay}">
                     <ComboBoxItem Content="Français" Tag="fr" />
                     <ComboBoxItem Content="English" Tag="en" />
-                </ComboBox>
+                </ComboBox>-->
             </StackPanel>
         </materialDesign:Card>
     </Grid>

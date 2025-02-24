@@ -5,6 +5,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using System.Net.Http.Json;
 using System.Reflection.Metadata;
+using System.ComponentModel.DataAnnotations;
 
 namespace BornePaiement.Model
 {
@@ -87,16 +88,80 @@ namespace BornePaiement.Model
             }
         }
 
-        public class PaiementResponse
+
+        public class Abonnement
         {
-            public string Message { get; set; }
-            public decimal MontantTotal { get; set; }
-            public decimal Taxes { get; set; }
-            public decimal MontantAvecTaxes { get; set; }
-            public DateTime? TempsArrivee { get; set; }
-            public DateTime? TempsSortie { get; set; }
+            public string Id { get; set; } = Guid.NewGuid().ToString(); //Génération automatique de l'ID unique
+
+            [Required]
+            public DateTime DateDebut { get; set; } = DateTime.UtcNow; // UTC pour la cohérence
+
+            [Required]
+            public DateTime DateFin { get; set; }
+
+            [Required]
+            public string Type { get; set; }  // Mensuel, Annuel, etc.
+
+
+            public int UtilisateurId { get; set; }  // Clé étrangère vers Utilisateur
+
         }
 
+
+        public static async Task<(bool success, string message, AbonnementResponse abonnement)> SouscrireAbonnementAsync(string ticketId, string email, string typeAbonnement)
+        {
+            try
+            {
+                // Préparer les données pour la souscription
+                var souscriptionDto = new
+                {
+                    TicketId = ticketId,
+                    Email = email,
+                    TypeAbonnement = typeAbonnement
+                };
+
+                // Appeler l'API pour souscrire à un abonnement
+                var response = await APIHelper.APIClient.PostAsJsonAsync("abonnements/souscrire", souscriptionDto);
+
+                // Vérifier si la réponse est réussie
+                if (!response.IsSuccessStatusCode)
+                {
+                    return (false, "Erreur lors de la souscription à l'abonnement.", null);
+                }
+
+                // Désérialiser la réponse JSON
+                var result = await response.Content.ReadFromJsonAsync<AbonnementResponse>();
+
+                // Retourner les résultats
+                return (true, result.Message, result);
+            }
+            catch (Exception ex)
+            {
+                // Gérer les erreurs
+                return (false, $"Erreur : {ex.Message}", null);
+            }
+        }
+
+
+    }
+    public class PaiementResponse
+    {
+        public string Message { get; set; }
+        public decimal MontantTotal { get; set; }
+        public decimal Taxes { get; set; }
+        public decimal MontantAvecTaxes { get; set; }
+        public DateTime? TempsArrivee { get; set; }
+        public DateTime? TempsSortie { get; set; }
+    }
+
+    public class AbonnementResponse
+    {
+        public string Message { get; set; }
+        public string AbonnementId { get; set; }
+        public string TypeAbonnement { get; set; }
+        public DateTime DateDebut { get; set; }
+        public DateTime DateFin { get; set; }
+        public decimal MontantPaye { get; set; }
     }
 
     public class CalculMontantResponse
@@ -109,6 +174,8 @@ namespace BornePaiement.Model
         public bool DureeDepassee { get; set; }
         public bool EstPaye { get; set; }
         public bool EstConverti { get; set; }
+        public decimal TaxeFederal {  get; set; }
+        public decimal TaxeProvincial { get; set; }
         public string MessageErreur { get; set; }
 
 

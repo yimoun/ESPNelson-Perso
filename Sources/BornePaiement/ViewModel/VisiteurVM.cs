@@ -10,6 +10,7 @@ using System;
 using System.Windows.Media.Imaging;
 using PdfSharp.Drawing;
 using PdfSharp.Pdf;
+using BornePaiement.View;
 
 namespace BornePaiement.ViewModel
 {
@@ -45,45 +46,25 @@ namespace BornePaiement.ViewModel
         [ObservableProperty]
         private DateTime? tempsSortie;
 
+        [ObservableProperty]
+        private string email;
+
+        [ObservableProperty]
+        private string typeAbonnement;
+
+        [ObservableProperty]
+        private bool afficherBoutonTicketAbonnement;
+
         public IRelayCommand ConfirmerPaiementCommand { get; }
         public IRelayCommand GenererRecuCommand { get; }
+        public IRelayCommand SouscrireAbonnementCommand { get; }
 
         public VisiteurVM()
         {
             ConfirmerPaiementCommand = new RelayCommand(async () => await ConfirmerPaiement());
             GenererRecuCommand = new RelayCommand(GenererRecu);
+            SouscrireAbonnementCommand = new RelayCommand(async () => await SouscrireAbonnement());
         }
-
-        //public async void KeyPressed(object sender, KeyEventArgs e)
-        //{
-        //    // Ignorer les touches spéciales (Shift, Ctrl, Alt, etc.)
-        //    if (e.Key == Key.LeftShift || e.Key == Key.RightShift ||
-        //        e.Key == Key.LeftCtrl || e.Key == Key.RightCtrl ||
-        //        e.Key == Key.LeftAlt || e.Key == Key.RightAlt ||
-        //        e.Key == Key.CapsLock || e.Key == Key.Tab ||
-        //        e.Key == Key.Escape || e.Key == Key.Back)
-        //    {
-        //        return;
-        //    }
-
-        //    if (e.Key == Key.Enter) // 🎯 Lorsque l'utilisateur a scanné son ticket
-        //    {
-        //        await VerifierTicket(ticketScanne);
-        //        ticketScanne = ""; // Réinitialiser le scan après traitement
-        //    }
-        //    else
-        //    {
-        //        // Capturer uniquement les chiffres
-        //        if (e.Key >= Key.D0 && e.Key <= Key.D9) // Chiffres de 0 à 9
-        //        {
-        //            ticketScanne += e.Key.ToString().Replace("D", "");
-        //        }
-        //        else if (e.Key >= Key.NumPad0 && e.Key <= Key.NumPad9) // Chiffres du pavé numérique
-        //        {
-        //            ticketScanne += e.Key.ToString().Replace("NumPad", "");
-        //        }
-        //    }
-        //}
 
         public async Task VerifierTicket(string ticketId)
         {
@@ -94,6 +75,18 @@ namespace BornePaiement.ViewModel
             var (montant, duree, tarification, tempsArrivee, tempsSortie, dureeDepassee, estPaye, estConverti, messageErreur) 
                 = await TicketProcessor.CalculerMontantAsync(ticketId);
 
+            // Afficher une MessageBox pour les cas spécifiques
+            if (estPaye)
+            {
+                MessageBox.Show("Ce ticket a déjà été payé.", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+            else if (estConverti)
+            {
+                MessageBox.Show("Ce ticket a déjà été converti en abonnement.", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
             if (!string.IsNullOrEmpty(messageErreur))
             {
                 // Cas d'erreur (ticket déjà payé, déjà converti, ou autre erreur)
@@ -101,24 +94,22 @@ namespace BornePaiement.ViewModel
                 TicketInvalide = true;
                 TicketValide = false;
 
-                // Afficher une MessageBox pour les cas spécifiques
-                if (estPaye)
+                if(dureeDepassee)
                 {
-                    MessageBox.Show("Ce ticket a déjà été payé.", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
+                    // Cas de dépassement de durée
+                    TicketInfo = "⛔ Durée de stationnement dépassée ! Contactez l'administration.";
+                    TicketInvalide = true;
+                    TicketValide = false;
                 }
-                else if (estConverti)
+                else
                 {
-                    MessageBox.Show("Ce ticket a déjà été converti en abonnement.", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
+                    // Cas d'erreur inconnue
+                    TicketInfo = "❌ Ticket invalide ou introuvable.";
+                    TicketInvalide = true;
+                    TicketValide = false;
                 }
             }
-            else if (dureeDepassee)
-            {
-                // Cas de dépassement de durée
-                TicketInfo = "⛔ Durée de stationnement dépassée ! Contactez l'administration.";
-                TicketInvalide = true;
-                TicketValide = false;
-            }
-            else if (montant > 0)
+            else if (montant >= 0)
             {
                 // Cas normal : ticket valide
                 TicketInfo = $"Montant : {montant:C} $\n Temps d'arrivée: {tempsArrivee}\nDurée : {duree}h\nTarif : {tarification}";
@@ -126,13 +117,7 @@ namespace BornePaiement.ViewModel
                 TicketInvalide = false;
                 ticketScanne = ticketId;
             }
-            else
-            {
-                // Cas d'erreur inconnue
-                TicketInfo = "❌ Ticket invalide ou introuvable.";
-                TicketInvalide = true;
-                TicketValide = false;
-            }
+            
         }
 
         private async Task ConfirmerPaiement()
@@ -160,7 +145,7 @@ namespace BornePaiement.ViewModel
 
         private void GenererRecu()
         {
-            if (MontantTotal == 0 || TempsArrivee == null || TempsSortie == null)
+            if (TempsArrivee == null || TempsSortie == null)
             {
                 MessageBox.Show("Aucune information de paiement disponible pour générer le reçu.", "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
@@ -197,7 +182,21 @@ namespace BornePaiement.ViewModel
 
                 // Montant et taxes
                 gfx.DrawString($"Montant total: {MontantTotal:C}", fontNormal, XBrushes.Black, new XPoint(20, 210));
-                gfx.DrawString($"Taxes (fédéral: {Taxes / MontantTotal * 100}%, provincial: {Taxes / MontantTotal * 100}%): {Taxes:C}", fontNormal, XBrushes.Black, new XPoint(20, 230));
+
+                // Calculer les pourcentages des taxes uniquement si MontantTotal n'est pas zéro
+                string taxesInfo;
+                if (MontantTotal != 0)
+                {
+                    taxesInfo = $"Taxes (fédéral: {Taxes / MontantTotal * 100}%, provincial: {Taxes / MontantTotal * 100}%): {Taxes:C}";
+                }
+                else
+                {
+                    taxesInfo = "Taxes non applicables (montant total nul).";
+                }
+
+                // Dessiner les informations sur les taxes
+                gfx.DrawString(taxesInfo, fontNormal, XBrushes.Black, new XPoint(20, 230));
+
                 gfx.DrawString($"Montant avec taxes: {MontantAvecTaxes:C}", fontNormal, XBrushes.Black, new XPoint(20, 250));
 
                 // Message de remerciement
@@ -209,6 +208,32 @@ namespace BornePaiement.ViewModel
             // Ouvrir le PDF généré
             Process.Start(new ProcessStartInfo(pdfFilePath) { UseShellExecute = true });
             MessageBox.Show("Reçu généré avec succès !", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        private async Task SouscrireAbonnement()
+        {
+            if (string.IsNullOrEmpty(ticketScanne))
+            {
+                MessageBox.Show("Veuillez d'abord scanner un ticket.", "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            
+
+            // Créer et afficher la fenêtre contextuelle
+            var popupVM = new AbonnementPopupVM(ticketScanne);
+            var popup = new AbonnementPopup(ticketScanne)
+            {
+                DataContext = popupVM
+            };
+
+            popup.ShowDialog();
+        }
+
+        private async Task GenererTicketAbonnement()
+        {
+            // Logique pour générer le ticket d'abonnement
+            MessageBox.Show("Ticket d'abonnement généré avec succès !", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
         }
     }
 }

@@ -19,16 +19,16 @@ namespace BornePaiement.ViewModel
 
         private async Task VerifierAbonnement()
         {
-            var actif = await AbonnementProcessor.VerifierAbonnementAsync(AbonnementId);
+            //var actif = await AbonnementProcessor.VerifierAbonnementAsync(AbonnementId);
 
-            if (actif)
-            {
-                MessageBox.Show("✅ Abonnement actif ! Vous pouvez passer.");
-            }
-            else
-            {
-                MessageBox.Show("❌ Abonnement introuvable ou expiré.");
-            }
+            //if (actif)
+            //{
+            //    MessageBox.Show("✅ Abonnement actif ! Vous pouvez passer.");
+            //}
+            //else
+            //{
+            //    MessageBox.Show("❌ Abonnement introuvable ou expiré.");
+            //}
         }
     }
 }

@@ -37,6 +37,10 @@
                     Width="200"  Margin="0,20, 0, 0" FontSize="16" 
                     Visibility="{Binding TicketValide, Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
+            <Button Content="S'abonner" Command="{Binding SouscrireAbonnementCommand}" 
+                    Width="200" Margin="0,20" FontSize="16" 
+                    Visibility="{Binding TicketValide, Converter={StaticResource BooleanToVisibilityConverter}}"/>  
+
             <!-- Bouton pour générer le reçu -->
             <Button Content="Générer le reçu" Command="{Binding GenererRecuCommand}" 
                     Width="200" Margin="0,20" FontSize="16" 

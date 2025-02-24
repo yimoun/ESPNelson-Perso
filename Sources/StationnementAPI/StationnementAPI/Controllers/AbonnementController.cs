@@ -29,17 +29,6 @@ namespace StationnementAPI.Controllers
             if (string.IsNullOrEmpty(paiementDto.Email))
                 return BadRequest("L'email est requis pour enregistrer un nouvel abonné.");
 
-            //Récupérer tous les abonnements existants pour valider les types disponibles
-            var abonnements = await GetAllAbonnment();
-
-            var typesDisponibles = abonnements.Select(a => a.Type.ToLower()).Distinct().ToList();
-
-            //Vérifier si le type d'abonnement demandé existe bien
-            if (!typesDisponibles.Contains(paiementDto.TypeAbonnement.ToLower()))
-            {
-                return BadRequest($"Type d'abonnement invalide. Les types disponibles sont : {string.Join(", ", typesDisponibles)}.");
-            }
-
             var ticket = await _context.Tickets.FindAsync(paiementDto.TicketId);
             if (ticket == null)
                 return NotFound("Ticket non trouvé.");
@@ -50,8 +39,7 @@ namespace StationnementAPI.Controllers
             if (existingUser != null)
                 return Conflict("Cet email est déjà associé à un abonné.");
 
-            if (!ticket.EstConverti)
-                ticket.EstConverti = true;
+            
 
             var utilisateur = new Utilisateur
             {
@@ -61,12 +49,13 @@ namespace StationnementAPI.Controllers
                 Role = "abonne"
             };
             _context.Utilisateurs.Add(utilisateur);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(); // 🔥 Sauvegarder pour générer l'Id !
 
-            // Déterminer la durée et le montant en fonction du type d'abonnement
+            // Maintenant l'Id est généré, on peut créer l'abonnement
+
+                // Déterminer la durée et le montant en fonction du type d'abonnement
             int dureeJours = paiementDto.TypeAbonnement.ToLower() == "hebdomadaire" ? 7 : 30;
-            decimal montant = paiementDto.TypeAbonnement.ToLower() == "mensuel" ? 50 : 15;
-
+            
             var abonnement = new Abonnement
             {
                 Id = GenerateAbonnmentId(),
@@ -76,13 +65,32 @@ namespace StationnementAPI.Controllers
                 Type = paiementDto.TypeAbonnement.ToLower()
             };
             _context.Abonnements.Add(abonnement);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(); // 🔥 Sauvegarder pour générer l'Id !
 
-            ticket.EstConverti = true;
+            // Maintenant l'Id est généré, on peut créer l'abonnement
+           
+            decimal montant = paiementDto.TypeAbonnement.ToLower() == "mensuel" ? 50 : 15;
 
             var paiement = paiementDto.DtoToPaiement(montant, abonnement.Id);
             _context.Paiements.Add(paiement);
-            await _context.SaveChangesAsync();
+            ticket.EstConverti = true;  //le ticket cosidéré comme converti en abonnement
+
+
+            try
+            {
+                await _context.SaveChangesAsync();  //Dernier pour enregistrer le paiement 
+            }
+            catch (DbUpdateException ex)
+            {
+                // Log l'exception interne pour plus de détails
+                var innerException = ex.InnerException;
+                while (innerException != null)
+                {
+                    Console.WriteLine(innerException.Message);
+                    innerException = innerException.InnerException;
+                }
+                return StatusCode(500, "Une erreur s'est produite lors de l'enregistrement en base de données.");
+            }
 
             return Created($"api/abonnements/{abonnement.Id}", new
             {

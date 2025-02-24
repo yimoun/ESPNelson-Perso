@@ -118,27 +118,21 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ArrivalDateTime" xml:space="preserve">
-    <value>Date et heure d'arrivée:</value>
-    <comment>Date and time of arrival:</comment>
+    <value>Date and time of arrival:</value>
   </data>
   <data name="DownloadTicket" xml:space="preserve">
-    <value>Télécharger le ticket</value>
-    <comment>Download ticket</comment>
+    <value>Download ticket</value>
   </data>
   <data name="GenerateTicket" xml:space="preserve">
-    <value>Générer un ticket</value>
-    <comment>Generate a ticket</comment>
+    <value>Generate a ticket</value>
   </data>
   <data name="Language" xml:space="preserve">
-    <value>Sélectionner la langue</value>
-    <comment>Select language</comment>
+    <value>Select language</value>
   </data>
   <data name="TicketNumber" xml:space="preserve">
-    <value>Numéro de ticket:</value>
-    <comment>Ticket number:</comment>
+    <value>Ticket number:</value>
   </data>
   <data name="Title" xml:space="preserve">
-    <value>Borne d'entrée</value>
-    <comment>Entry Station</comment>
+    <value>Entry Station</value>
   </data>
 </root>
