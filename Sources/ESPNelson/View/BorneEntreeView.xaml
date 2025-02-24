@@ -11,35 +11,39 @@
         <materialDesign:Card Padding="20" Margin="20">
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" >
 
-                <TextBlock Text=" Borne d'Entrée "
+                <Label x:Name="label_Title" 
                            FontSize="22" FontWeight="Bold"
-                           TextAlignment="Center" Margin="0,10" Foreground="Blue"/>
+                           VerticalContentAlignment="Center" Margin="0,10" Foreground="Blue"/>
 
                 <!-- Affichage du Code-Barres -->
                 <Image Source="{Binding BarcodeImage}" Width="300" Height="100" Margin="10"/>
 
                 <!-- Boutons Material Design -->
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" >
-                    <Button Content="Générer un Ticket" Command="{Binding GenerateNewTicketCommand}" Background="{DynamicResource PrimaryHueMidBrush}" 
+                    <Button x:Name="label_GenerateTicket"  Command="{Binding GenerateNewTicketCommand}" Background="{DynamicResource PrimaryHueMidBrush}" 
                             Foreground="Black" FontWeight="Bold" Padding="10,5" Margin="0,0,80,0"/>
 
-                    <Button Content="Télécharger le ticket" Command="{Binding DownloadTicketPDFCommand}" Background="{DynamicResource PrimaryHueMidBrush}"
+                    <Button x:Name="label_DownloadTicket" Command="{Binding DownloadTicketPDFCommand}" Background="{DynamicResource PrimaryHueMidBrush}"
                             Foreground="Black" FontWeight="Bold" Padding="10,5"/>
                 </StackPanel>
 
                 <!-- Affichage des informations du Ticket -->
                 <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
-                    <TextBlock Text="Numéro du Ticket : " FontSize="16" FontWeight="SemiBold"/>
+                    <Label x:Name="label_TicketNumber" FontSize="16" FontWeight="SemiBold"/>
                     <TextBlock Text="{Binding TicketActuel.Id}" FontSize="18" FontWeight="Bold" Foreground="#F44336"/>
 
-                    <TextBlock Text="Date et Heure d'Arrivée :" FontSize="16" FontWeight="SemiBold"/>
+                    <Label x:Name="label_ArrivalDateTime"  FontSize="16" FontWeight="SemiBold"/>
                     <TextBlock Text="{Binding TicketActuel.TempsArrive, StringFormat='{}{0:dd/MM/yyyy HH:mm:ss}'}" 
                                FontSize="18" FontWeight="Bold" Foreground="#3F51B5"/>
                 </StackPanel>
 
-                <!-- Bouton d'impression -->
-                <Button Content="🖨️ Imprimer Ticket" Command="{Binding PrintTicketCommand}"
-                        Style="{StaticResource MaterialDesignRaisedButton}" Background="#FF9800" Foreground="White" Padding="10,5"/>
+                <!-- Bouton pour sélectionenr la langue -->
+                <Label Grid.Column="0" x:Name="label_Language" Background="GreenYellow"/>
+                <ComboBox x:Name="languageComboBox" Grid.Column="1" SelectionChanged="LanguageComboBox_SelectionChanged"
+                            SelectedValue="{Binding Language, RelativeSource={RelativeSource AncestorType=Window}, Mode=TwoWay}">
+                    <ComboBoxItem Content="Français" Tag="fr" />
+                    <ComboBoxItem Content="English" Tag="en" />
+                </ComboBox>
             </StackPanel>
         </materialDesign:Card>
     </Grid>
