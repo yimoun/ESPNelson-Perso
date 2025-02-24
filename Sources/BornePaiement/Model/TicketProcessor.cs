@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Net.Http.Json;
 using System.Reflection.Metadata;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace BornePaiement.Model
 {
@@ -154,15 +155,7 @@ namespace BornePaiement.Model
         public DateTime? TempsSortie { get; set; }
     }
 
-    public class AbonnementResponse
-    {
-        public string Message { get; set; }
-        public string AbonnementId { get; set; }
-        public string TypeAbonnement { get; set; }
-        public DateTime DateDebut { get; set; }
-        public DateTime DateFin { get; set; }
-        public decimal MontantPaye { get; set; }
-    }
+    
 
     public class CalculMontantResponse
     {

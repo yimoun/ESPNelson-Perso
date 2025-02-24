@@ -6,6 +6,7 @@ using StationnementAPI.Models.ModelsDTO;
 using System;
 using System.Threading.Tasks;
 using StationnementAPI.Models.ModelsDTO;
+using System.Net.Sockets;
 
 namespace StationnementAPI.Controllers
 {
@@ -95,7 +96,7 @@ namespace StationnementAPI.Controllers
             return Created($"api/abonnements/{abonnement.Id}", new
             {
                 Message = "Abonnement souscrit avec succès.",
-                AbonnmentId = abonnement.Id,
+                AbonnementId = abonnement.Id,
                 TypeAbonnement = abonnement.Type,
                 DateDebut = abonnement.DateDebut,
                 DateFin = abonnement.DateFin,
@@ -104,22 +105,26 @@ namespace StationnementAPI.Controllers
         }
 
 
-        [HttpGet("tous-les-abonnments")]
-        private async Task<IEnumerable<Abonnement>> GetAllAbonnment()
+       
+        [HttpGet("actifs/{id}")]
+        public async Task<ActionResult<object>> GetAbonnement(string id)
         {
-            IEnumerable<Abonnement> abonnements = await _context.Abonnements.ToListAsync(); 
+            var abonnement = await _context.Abonnements.FindAsync(id);
+            if (abonnement == null)
+                return NotFound("Aucun abonnement existant pour ce ticket !");
 
-            return abonnements; 
-        }
+            if (abonnement.DateFin < DateTime.Now)
+                return BadRequest("Cet abonnement n'est plus actif rendu à cette date");
 
-        [HttpGet("actifs")]
-        public async Task<ActionResult> GetAbonnementsActifs()
-        {
-            var abonnements = await _context.Abonnements
-                .Where(a => a.DateFin > DateTime.UtcNow)
-                .ToListAsync();
-
-            return Ok(abonnements);
+            return Ok(new
+            {
+                Message = "",
+                AbonnementId = abonnement.Id,
+                TypeAbonnement = abonnement.Type,
+                DateDebut = abonnement.DateDebut,
+                DateFin = abonnement.DateFin,
+                MontantPaye = 0
+            });
         }
 
         private string GenerateAbonnmentId()

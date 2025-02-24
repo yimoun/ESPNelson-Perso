@@ -9,6 +9,7 @@
 
     <UserControl.DataContext>
         <vm:VisiteurVM />
+   
     </UserControl.DataContext>
 
     <Grid>

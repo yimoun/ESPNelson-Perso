@@ -129,6 +129,8 @@ namespace BornePaiement.ViewModel
                 TicketInfo = $"✅ Paiement effectué !\nMontant : {montantAvecTaxes:C}\nTaxes : {taxes:C}\nDurée : {Math.Round((tempsSortie - tempsArrivee).Value.TotalHours, 2)}h";
                 PaiementEffectue = true;
                 AfficherBoutonRecu = true;
+                // Forcer la mise à jour de la propriété
+                OnPropertyChanged(nameof(AfficherBoutonRecu));
 
                 //Informations à metrre dans le recu de paiement
                 MontantTotal = montantTotal;
@@ -142,6 +144,7 @@ namespace BornePaiement.ViewModel
                 AfficherBoutonRecu = false;
             }
         }
+
 
         private void GenererRecu()
         {

@@ -28,10 +28,9 @@ namespace BornePaiement.ViewModel
         private DateTime dateDebut;
         private DateTime dateFin;
         private string abonnementId;
+        private const string PdfSavePath = "Abonnments";
         private static readonly string LogoPath = Path.Combine(Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).Parent.Parent.Parent.FullName, "img", "logo_ciuss.jpg");
-        [ObservableProperty]
-        private BitmapImage barcodeImage;
-
+        
         [ObservableProperty]
         private ObservableCollection<string> typesAbonnement = new ObservableCollection<string>();
 
@@ -39,6 +38,9 @@ namespace BornePaiement.ViewModel
         private bool afficherBoutonTicketAbonnement = false;
 
         private string _ticketScanne;
+
+        [ObservableProperty]
+        private BitmapImage barcodeImage;
 
         public AbonnementPopupVM(string ticketScanne)
         {
@@ -83,6 +85,14 @@ namespace BornePaiement.ViewModel
                 dateDebut = abonnement.DateDebut;
                 dateFin = abonnement.DateFin;
                 abonnementId = abonnement.AbonnementId;
+
+
+                //pour l'insérer par la suite dans le ticket d'abonnment
+                Bitmap barcodeBitmap = GenerateBarcode(abonnementId);
+                if (barcodeBitmap != null)
+                {
+                    BarcodeImage = ConvertBitmapToBitmapImage(barcodeBitmap);
+                }
             }
             else
             {
@@ -115,6 +125,18 @@ namespace BornePaiement.ViewModel
                 return null;
             }
         }
+
+
+        //private XImage ConvertBitmapToXImage(Bitmap bitmap)
+        //{
+        //    using (MemoryStream memory = new MemoryStream())
+        //    {
+        //        bitmap.Save(memory, System.Drawing.Imaging.ImageFormat.Png);
+        //        memory.Position = 0;
+        //        return XImage.FromStream(memory);
+        //    }
+        //}
+
 
         private BitmapImage ConvertBitmapToBitmapImage(Bitmap bitmap)
         {
@@ -149,7 +171,7 @@ namespace BornePaiement.ViewModel
             }
 
             // Nom du fichier PDF
-            string pdfFilePath = Path.Combine(pdfSavePath, $"TicketAbonnement_{DateTime.Now:yyyyMMdd_HHmmss}.pdf");
+            string pdfFilePath = Path.Combine(PdfSavePath, $"Abonnement_{abonnementId}.pdf");
 
             // Créer le document PDF
             using (PdfDocument document = new PdfDocument())
@@ -180,31 +202,24 @@ namespace BornePaiement.ViewModel
                 // Informations de l'hôpital
                 gfx.DrawString("Hôpital de Chicoutimi", fontNormal, XBrushes.Black, new XPoint(20, 130));
 
-                // Générer le code-barres
-                Bitmap barcodeBitmap = GenerateBarcode(abonnementId);
-                if (barcodeBitmap != null)
+                // Dessiner le code-barres en haut et en bas du ticket
+                using (MemoryStream memory = new MemoryStream())
                 {
-                    // Convertir le Bitmap en XImage
-                    using (MemoryStream memory = new MemoryStream())
-                    {
-                        barcodeBitmap.Save(memory, System.Drawing.Imaging.ImageFormat.Png);
-                        memory.Position = 0;
-                        XImage barcodeXImage = XImage.FromStream(memory);
-                        gfx.DrawImage(barcodeXImage, (page.Width.Point - 300) / 2, 140, 300, 100); // Positionner le code-barres
-                    }
-                }
-                else
-                {
-                    MessageBox.Show("Erreur lors de la génération du code-barres.", "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
+                    BarcodeImage.StreamSource.Position = 0;
+                    BarcodeImage.StreamSource.CopyTo(memory);
+                    memory.Position = 0;
+                    XImage barcodeXImage = XImage.FromStream(memory);
+                    gfx.DrawImage(barcodeXImage, (page.Width.Point - 300) / 2, 140, 300, 100); // Positionner le code-barres
                 }
 
-                // Informations de l'abonnement
-                gfx.DrawString($"Type d'abonnement: {TypeAbonnement}", fontNormal, XBrushes.Black, new XPoint(20, 180));
-                gfx.DrawString($"Date de début: {dateDebut:dd/MM/yyyy}", fontNormal, XBrushes.Black, new XPoint(20, 200));
-                gfx.DrawString($"Date de fin: {dateFin:dd/MM/yyyy}", fontNormal, XBrushes.Black, new XPoint(20, 220));
+
+                // Informations de l'abonnement (déplacées après le code-barres)
+                gfx.DrawString($"Type d'abonnement: {TypeAbonnement}", fontNormal, XBrushes.Black, new XPoint(20, 250));
+                gfx.DrawString($"Date de début: {dateDebut:dd/MM/yyyy}", fontNormal, XBrushes.Black, new XPoint(20, 270));
+                gfx.DrawString($"Date de fin: {dateFin:dd/MM/yyyy}", fontNormal, XBrushes.Black, new XPoint(20, 290));
 
                 // Message de remerciement
-                gfx.DrawString("Merci pour votre confiance !", fontNormal, XBrushes.DarkGreen, new XPoint((page.Width.Point - gfx.MeasureString("Merci pour votre confiance !", fontNormal).Width) / 2, 260));
+                gfx.DrawString("Merci pour votre confiance !", fontNormal, XBrushes.DarkGreen, new XPoint((page.Width.Point - gfx.MeasureString("Merci pour votre confiance !", fontNormal).Width) / 2, 330));
 
                 // Sauvegarder le document
                 document.Save(pdfFilePath);

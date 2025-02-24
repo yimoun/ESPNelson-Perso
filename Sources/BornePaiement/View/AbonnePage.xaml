@@ -1,15 +1,34 @@
 ﻿<UserControl  x:Class="BornePaiement.View.AbonnePage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes">
+      xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+      xmlns:local="clr-namespace:BornePaiement.View"
+      xmlns:vm="clr-namespace:BornePaiement.ViewModel"
+      KeyDown="UserControl_KeyDown">
+
+    <UserControl.DataContext>
+        <vm:AbonneVM />
+
+    </UserControl.DataContext>
 
     <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20">
 
-        <TextBlock Text="Scan du badge d'abonnement" FontSize="20" FontWeight="Bold" Margin="0,10"/>
+        <!-- Titre -->
+        <TextBlock Text="Mode Abonné" FontSize="22" FontWeight="Bold" TextAlignment="Center" Margin="0,10"/>
 
-        <TextBox Text="{Binding AbonnementId}" Width="200" Margin="5" 
-                 md:HintAssist.Hint="Scannez votre badge..." />
+        <!-- Instructions pour scanner le ticket -->
+        <TextBlock Text="Veuillez scanner votre ticket de'abonnement" FontSize="16" TextAlignment="Center" Margin="0,20"/>
+        <TextBox x:Name="HiddenScannerInput" Visibility="Collapsed" KeyDown="HiddenScannerInput_KeyDown"/>
 
-        <Button Content="Vérifier" Command="{Binding VerifierAbonnementCommand}" Width="150" Margin="10"/>
+        <!-- Zone d'affichage des informations de l'abonnement -->
+        <Border BorderBrush="Gray" BorderThickness="1" Padding="10" Margin="0,10">
+            <StackPanel>
+                <TextBlock Text="{Binding AbonnementInfo}" FontSize="14" TextAlignment="Center" Margin="0,5"/>
+                <TextBlock Text="⛔ Ticket invalide" FontSize="14" Foreground="Red" TextAlignment="Center" 
+                   Visibility="{Binding AbonnmentInvalide, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                <TextBlock Text="✅ Ticket valide" FontSize="14" Foreground="Green" TextAlignment="Center" 
+                   Visibility="{Binding AbonnmentValide, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+            </StackPanel>
+        </Border>
     </StackPanel>
 </UserControl>

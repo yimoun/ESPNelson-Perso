@@ -10,25 +10,57 @@ namespace BornePaiement.ViewModel
     {
         [ObservableProperty] private string abonnementId;
 
-        public IRelayCommand VerifierAbonnementCommand { get; }
+        [ObservableProperty] private bool abonnmentValide = false;  // ✅ Pour gérer l'affichage dynamique
+        [ObservableProperty] private bool abonnmentInvalide = false;
+        [ObservableProperty] private string abonnementInfo;
+
+
 
         public AbonneVM()
         {
-            VerifierAbonnementCommand = new RelayCommand(async () => await VerifierAbonnement());
+
         }
 
-        private async Task VerifierAbonnement()
+
+
+        public async Task VerifierTicketabonnment(string abonnementId)
         {
-            //var actif = await AbonnementProcessor.VerifierAbonnementAsync(AbonnementId);
+            if (string.IsNullOrWhiteSpace(abonnementId))
+                return;
 
-            //if (actif)
-            //{
-            //    MessageBox.Show("✅ Abonnement actif ! Vous pouvez passer.");
-            //}
-            //else
-            //{
-            //    MessageBox.Show("❌ Abonnement introuvable ou expiré.");
-            //}
+            // 🔥 Récupérer l'abonnement depuis l'API
+            var abonnementResponse = await AbonnementProcessor.GetAbonnementAsync(abonnementId);
+
+            if (!string.IsNullOrEmpty(abonnementResponse.Message))
+            {
+                // 🛑 Cas d'erreur : abonnement inexistant, expiré ou erreur API
+                AbonnementInfo = abonnementResponse.Message;
+                AbonnmentInvalide = true;
+                AbonnmentValide = false;
+
+                // ⚠️ Afficher un MessageBox pour informer l'utilisateur
+                MessageBox.Show(abonnementResponse.Message, "Erreur d'Abonnement", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            else
+            {
+                // ✅ Cas normal : abonnement valide
+                AbonnementInfo = $"✅ Abonnement valide !\n\n" +
+                                 $"ID : {abonnementResponse.AbonnementId}\n" +
+                                 $"Type : {abonnementResponse.TypeAbonnement}\n" +
+                                 $"Début : {abonnementResponse.DateDebut:dd/MM/yyyy}\n" +
+                                 $"Fin : {abonnementResponse.DateFin:dd/MM/yyyy}\n" +
+                                 $"Montant Payé : {abonnementResponse.MontantPaye:C}";
+
+                AbonnmentValide = true;
+                AbonnmentInvalide = false;
+
+                //On catch l'id de l'abonnment pour la suite 
+                abonnementId = abonnementResponse.AbonnementId;
+
+                // ✅ Afficher une confirmation via MessageBox
+                //MessageBox.Show("L'abonnement est valide et actif.", "Abonnement Confirmé", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
         }
+
     }
 }
