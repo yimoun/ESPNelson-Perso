@@ -12,7 +12,7 @@
     </UserControl.DataContext>
 
     <Grid>
-        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20">
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20" Height="500">
 
             <!-- Titre -->
             <TextBlock Text="Mode Visiteur" FontSize="22" FontWeight="Bold" TextAlignment="Center" Margin="0,10"/>
@@ -34,8 +34,13 @@
 
             <!-- Bouton pour simuler le paiement -->
             <Button Content="Simuler le paiement" Command="{Binding ConfirmerPaiementCommand}" 
-                    Width="200" Margin="0,20" FontSize="16" 
+                    Width="200"  Margin="0,20, 0, 0" FontSize="16" 
                     Visibility="{Binding TicketValide, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+            <!-- Bouton pour générer le reçu -->
+            <Button Content="Générer le reçu" Command="{Binding GenererRecuCommand}" 
+                    Width="200" Margin="0,20" FontSize="16" 
+                    Visibility="{Binding AfficherBoutonRecu, Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
         </StackPanel>
     </Grid>

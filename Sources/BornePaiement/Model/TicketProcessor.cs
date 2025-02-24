@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Net.Http.Json;
+using System.Reflection.Metadata;
 
 namespace BornePaiement.Model
 {
@@ -26,54 +27,9 @@ namespace BornePaiement.Model
             }
         }
 
-        public static decimal CalculerMontant(Ticket ticket)
-        {
-            if (ticket == null || ticket.TempsArrive == null)
-                return 0;
 
-            DateTime heureArrivee = ticket.TempsArrive.Value;
-            DateTime heureSortie = DateTime.Now;
-
-            TimeSpan dureeStationnement = heureSortie - heureArrivee;
-            decimal tarifHoraire = 2.50m; // Exemple : 2,50$ par heure
-            decimal montant = (decimal)dureeStationnement.TotalHours * tarifHoraire;
-
-            return Math.Round(montant, 2);
-        }
-
-
-        //public static async Task<(decimal Montant, double Duree, string TarificationAppliquee, bool DureeDepassee,
-        //    bool estPaye, bool estConverti, string messageErreur)> CalculerMontantAsync(string ticketId)
-        //    {
-        //        using (HttpResponseMessage response = await APIHelper.APIClient.GetAsync($"paiements/calculer-montant/{ticketId}"))
-        //        {
-
-        //            if (!response.IsSuccessStatusCode)
-        //            {
-        //                return (0, 0, null, false, false, false, "Erreur lors de la récupération des informations du ticket.");
-        //            }
-
-        //             if (response.StatusCode == System.Net.HttpStatusCode.Forbidden) // 403 = Durée dépassée
-        //            {
-        //                return (0, 0, "⛔ La durée de stationnement dépasse les 24h autorisées.", true);
-        //            }
-
-        //            if (response.IsSuccessStatusCode)
-        //            {
-        //                string json = await response.Content.ReadAsStringAsync();
-        //                var result = JsonSerializer.Deserialize<MontantResponse>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
-        //                return (result.Montant, result.DureeStationnement, result.TarificationAppliquee, false);
-        //            }
-        //            else
-        //            {
-        //                Console.WriteLine($"❌ Erreur API : {response.StatusCode} - {response.ReasonPhrase}");
-        //                return (0, 0, "Erreur", false);
-        //            }
-        //        }
-        // }
-
-        public static async Task<(decimal montant, double duree, string tarification, bool dureeDepassee, bool estPaye, bool estConverti, string messageErreur)> CalculerMontantAsync(string ticketId)
+        public static async Task<(decimal montant, double duree, string tarification, DateTime? tempsArrivee, DateTime? tempsSortie, bool dureeDepassee,
+            bool estPaye, bool estConverti, string messageErreur)> CalculerMontantAsync(string ticketId)
         {
             try
             {
@@ -83,20 +39,62 @@ namespace BornePaiement.Model
                 // Vérifier si la réponse est réussie
                 if (!response.IsSuccessStatusCode)
                 {
-                    return (0, 0, null, false, false, false, "Erreur lors de la récupération des informations du ticket.");
+                    return (0, 0, null, null, null, false, false, false, "Erreur lors de la récupération des informations du ticket.");
                 }
 
                 // Désérialiser la réponse JSON
                 var result = await response.Content.ReadFromJsonAsync<CalculMontantResponse>();
 
                 // Retourner les résultats
-                return (result.Montant, result.DureeStationnement, result.TarificationAppliquee, result.DureeDepassee, result.EstPaye, result.EstConverti, result.MessageErreur);
+                return (result.Montant, result.DureeStationnement, result.TarificationAppliquee, result.TempsArrivee, result.TempsSortie,
+                    result.DureeDepassee, result.EstPaye, result.EstConverti, result.MessageErreur);
             }
             catch (Exception ex)
             {
                 // Gérer les erreurs
-                return (0, 0, null, false, false, false, $"Erreur : {ex.Message}");
+                return (0, 0, null, null, null, false, false, false, $"Erreur : {ex.Message}");
             }
+        }
+
+
+        public static async Task<(bool success, string message, decimal montantTotal, decimal taxes, decimal montantAvecTaxes, DateTime? tempsArrivee,
+            DateTime? tempsSortie)> PayerTicketAsync(string ticketId)
+        {
+            try
+            {
+                // Préparer les données pour le paiement
+                var paiementDto = new { TicketId = ticketId };
+
+                // Appeler l'API pour effectuer le paiement
+                var response = await APIHelper.APIClient.PostAsJsonAsync("paiements/payer-ticket", paiementDto);
+
+                // Vérifier si la réponse est réussie
+                if (!response.IsSuccessStatusCode)
+                {
+                    return (false, "Erreur lors du paiement du ticket.", 0, 0, 0, null, null);
+                }
+
+                // Désérialiser la réponse JSON
+                var result = await response.Content.ReadFromJsonAsync<PaiementResponse>();
+
+                // Retourner les résultats
+                return (true, result.Message, result.MontantTotal, result.Taxes, result.MontantAvecTaxes, result.TempsArrivee, result.TempsSortie);
+            }
+            catch (Exception ex)
+            {
+                // Gérer les erreurs
+                return (false, $"Erreur : {ex.Message}", 0, 0, 0, null, null);
+            }
+        }
+
+        public class PaiementResponse
+        {
+            public string Message { get; set; }
+            public decimal MontantTotal { get; set; }
+            public decimal Taxes { get; set; }
+            public decimal MontantAvecTaxes { get; set; }
+            public DateTime? TempsArrivee { get; set; }
+            public DateTime? TempsSortie { get; set; }
         }
 
     }
@@ -106,10 +104,15 @@ namespace BornePaiement.Model
         public decimal Montant { get; set; }
         public double DureeStationnement { get; set; }
         public string TarificationAppliquee { get; set; }
+        public  DateTime? TempsArrivee { get; set; }
+        public DateTime? TempsSortie { get; set; }
         public bool DureeDepassee { get; set; }
         public bool EstPaye { get; set; }
         public bool EstConverti { get; set; }
         public string MessageErreur { get; set; }
+
+
+       public CalculMontantResponse() { }
     }
 
 }

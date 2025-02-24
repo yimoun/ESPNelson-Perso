@@ -25,41 +25,102 @@ namespace StationnementAPI.Controllers
         [HttpGet("calculer-montant/{ticketId}")]
         public async Task<ActionResult<object>> CalculerMontantTicket(string ticketId)
         {
+            // Rechercher le ticket dans la base de données
             var ticket = await _context.Tickets.FindAsync(ticketId);
             if (ticket == null)
-                return NotFound("Ticket non trouvé");
+            {
+                return NotFound(new
+                {
+                    Message = "Ticket non trouvé",
+                    TicketId = ticketId
+                });
+            }
 
+            // Vérifier si le ticket a déjà été payé
             if (ticket.EstPaye)
-                return BadRequest("Ce ticket a déjà été payé.");
+            {
+                return BadRequest(new
+                {
+                    Message = "Ce ticket a déjà été payé.",
+                    TicketId = ticketId,
+                    TempsArrive = ticket.TempsArrive,
+                    TempsSortie = ticket.TempsSortie
+                });
+            }
 
+            // Vérifier si le ticket a déjà été converti en abonnement
             if (ticket.EstConverti)
-                return BadRequest("Ce ticket a déjà été converti en abonnement.");
+            {
+                return BadRequest(new
+                {
+                    Message = "Ce ticket a déjà été converti en abonnement.",
+                    TicketId = ticketId,
+                    TempsArrive = ticket.TempsArrive
+                });
+            }
 
-            //Déterminer la durée de stationnement
+            // Déterminer la durée de stationnement
             var tempsSortie = DateTime.Now; // Simulation du temps de sortie
             var dureeStationnement = (tempsSortie - ticket.TempsArrive).TotalHours;
 
-            //Cas spécial : dépassement des 24h
+            // Cas spécial : dépassement des 24h
             if (dureeStationnement > 24)
             {
-                return StatusCode(403, "⛔ La durée de stationnement dépasse les 24h autorisées. Veuillez contacter l'administration.");
+                return StatusCode(403, new
+                {
+                    Message = "⛔ La durée de stationnement dépasse les 24h autorisées. Veuillez contacter l'administration.",
+                    DureeStationnement = Math.Round(dureeStationnement, 2),
+                    TempsArrive = ticket.TempsArrive,
+                    TempsSortie = tempsSortie
+                });
             }
 
-            //Vérifier la tarification applicable
+            // Vérifier la tarification applicable
             var tarification = await _context.Tarifications
                 .FirstOrDefaultAsync(t => dureeStationnement >= t.DureeMin && dureeStationnement <= t.DureeMax);
 
             if (tarification == null)
-                return BadRequest("Aucune tarification trouvée pour la durée du stationnement.");
+            {
+                return BadRequest(new
+                {
+                    Message = "Aucune tarification trouvée pour la durée du stationnement.",
+                    DureeStationnement = Math.Round(dureeStationnement, 2)
+                });
+            }
 
+
+            // Récupérer les taxes les plus récentes
+            var configuration = await _context.Configurations
+                .OrderByDescending(c => c.DateModification)
+                .FirstOrDefaultAsync();
+
+            if (configuration == null)
+            {
+                return BadRequest(new
+                {
+                    Message = "Aucune configuration trouvée pour les taxes."
+                });
+            }
+
+            // Calculer le montant total avec taxes
+            decimal montantTotal = tarification.Prix;
+            decimal taxes = montantTotal * (configuration.TaxeFederal + configuration.TaxeProvincial) / 100;
+            decimal montantAvecTaxes = montantTotal + taxes;
+
+            // Retourner les informations de calcul du montant
             return Ok(new
             {
-                Montant = tarification.Prix,
+                Montant = montantTotal,
+                Taxes = taxes,
+                MontantAvecTaxes = montantAvecTaxes,
                 DureeStationnement = Math.Round(dureeStationnement, 2),
-                TarificationAppliquee = tarification.Niveau
+                TarificationAppliquee = tarification.Niveau,
+                TempsArrivee = ticket.TempsArrive,
+                TempsSortie = tempsSortie,
+                TaxeFederal = configuration.TaxeFederal,
+                TaxeProvincial = configuration.TaxeProvincial
             });
         }
-
 
 
 
@@ -87,7 +148,11 @@ namespace StationnementAPI.Controllers
             if (montantResponse.Result is BadRequestObjectResult || montantResponse.Result is NotFoundObjectResult)
                 return montantResponse.Result; // Retourne l'erreur appropriée
 
-            decimal montant = ((OkObjectResult)montantResponse.Result).Value is { } value ? (decimal)value.GetType().GetProperty("Montant")?.GetValue(value) : 0;
+
+            var montantResult = ((OkObjectResult)montantResponse.Result).Value;
+            decimal montantTotal = (decimal)montantResult.GetType().GetProperty("Montant")?.GetValue(montantResult);
+            decimal taxes = (decimal)montantResult.GetType().GetProperty("Taxes")?.GetValue(montantResult);
+            decimal montantAvecTaxes = (decimal)montantResult.GetType().GetProperty("MontantAvecTaxes")?.GetValue(montantResult);
 
             // Mettre à jour le statut du ticket et enregistrer le paiement
             ticket.EstPaye = true;
@@ -96,14 +161,22 @@ namespace StationnementAPI.Controllers
             var paiement = new Paiement
             {
                 TicketId = ticket.Id,
-                Montant = montant,
+                Montant = montantAvecTaxes,
                 DatePaiement = ticket.TempsSortie.Value
             };
 
             _context.Paiements.Add(paiement);
             await _context.SaveChangesAsync();
 
-            return Ok($"Paiement du ticket effectué. Montant : {montant}$");
+            return Ok(new
+            {
+                Message = $"Paiement du ticket effectué. Montant : {montantAvecTaxes}$",
+                MontantTotal = montantTotal,
+                Taxes = taxes,
+                MontantAvecTaxes = montantAvecTaxes,
+                TempsArrivee = ticket.TempsArrive,
+                TempsSortie = ticket.TempsSortie
+            });
         }
     }
 }
