@@ -5,11 +5,11 @@ using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using BornePaiement.Models;
+using ESPNelson.Model;
 using Microsoft.AspNetCore.Mvc;
 
 
-namespace BornePaiement.Model
+namespace ESPNelson.Model
 {
     public static class AbonnementProcessor
     {
@@ -21,7 +21,7 @@ namespace BornePaiement.Model
 
                 if (response.IsSuccessStatusCode)
                 {
-                    // ✅ Désérialisation en AbonnementResponse (cas succès)
+                    //Désérialisation en AbonnementResponse (cas succès)
                     return JsonSerializer.Deserialize<AbonnementResponse>(json, new JsonSerializerOptions
                     {
                         PropertyNameCaseInsensitive = true

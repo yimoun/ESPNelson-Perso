@@ -2,7 +2,10 @@
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-      Title="VisiteurView">
+      Title="AbonneView"
+      KeyDown="Page_KeyDown">
+    
+    
 
     <StackPanel Margin="16">
         <TextBlock
@@ -10,6 +13,6 @@
             Text="Bienvenue ABONNÉS" />
         <TextBlock
             Margin="0,8,0,0"
-            Text="Contenu spécifique pour les ABONNÉS" />
+            Text="Veiller scanner votre ticket d'abonnement" />
     </StackPanel>
 </Page>

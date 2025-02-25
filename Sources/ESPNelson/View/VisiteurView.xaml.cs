@@ -23,6 +23,7 @@ namespace ESPNelson.View
         public VisiteurView()
         {
             InitializeComponent();
+            
         }
     }
 }
