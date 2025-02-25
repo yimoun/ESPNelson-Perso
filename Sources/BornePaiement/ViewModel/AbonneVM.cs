@@ -28,17 +28,17 @@ namespace BornePaiement.ViewModel
             if (string.IsNullOrWhiteSpace(abonnementId))
                 return;
 
-            // 🔥 Récupérer l'abonnement depuis l'API
+            // Récupérer l'abonnement depuis l'API
             var abonnementResponse = await AbonnementProcessor.GetAbonnementAsync(abonnementId);
 
             if (!string.IsNullOrEmpty(abonnementResponse.Message))
             {
-                // 🛑 Cas d'erreur : abonnement inexistant, expiré ou erreur API
+                // Cas d'erreur : abonnement inexistant, expiré ou erreur API
                 AbonnementInfo = abonnementResponse.Message;
                 AbonnmentInvalide = true;
                 AbonnmentValide = false;
 
-                // ⚠️ Afficher un MessageBox pour informer l'utilisateur
+                // Afficher un MessageBox pour informer l'utilisateur
                 MessageBox.Show(abonnementResponse.Message, "Erreur d'Abonnement", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             else
@@ -48,8 +48,7 @@ namespace BornePaiement.ViewModel
                                  $"ID : {abonnementResponse.AbonnementId}\n" +
                                  $"Type : {abonnementResponse.TypeAbonnement}\n" +
                                  $"Début : {abonnementResponse.DateDebut:dd/MM/yyyy}\n" +
-                                 $"Fin : {abonnementResponse.DateFin:dd/MM/yyyy}\n" +
-                                 $"Montant Payé : {abonnementResponse.MontantPaye:C}";
+                                 $"Fin : {abonnementResponse.DateFin:dd/MM/yyyy}\n";
 
                 AbonnmentValide = true;
                 AbonnmentInvalide = false;

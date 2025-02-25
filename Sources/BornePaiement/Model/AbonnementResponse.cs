@@ -11,7 +11,7 @@ namespace BornePaiement.Model
     {
         public string Message { get; set; }
 
-        /*our forcer la correspondance dans le noms de propriétés, pour éviter des erreurs de désérialisation
+        /*pour forcer la correspondance dans le noms de propriétés, pour éviter des erreurs de désérialisation
          * dans le cas où les noms des propriétés ne sont pas les meme avec ceux de l'objet retourné par L'API
          * */
         [JsonPropertyName("AbonnementId")]
