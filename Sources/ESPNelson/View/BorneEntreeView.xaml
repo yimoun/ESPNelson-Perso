@@ -5,11 +5,10 @@
         Title="Borne d'Entrée"
         WindowStartupLocation="CenterScreen"
         Width="640" Height="480"
+        MinWidth="640" MinHeight="480"
         Background="LightGreen"
-        ResizeMode="CanResizeWithGrip">
-    <!-- Permettre le redimensionnement de la fenêtre -->
+        ResizeMode="CanResize">
 
-    <!-- Définir les ressources de la fenêtre -->
     <Window.Resources>
         <!-- Animation pour la transition -->
         <Storyboard x:Key="FadeInAnimation">
@@ -17,105 +16,54 @@
                 Storyboard.TargetProperty="Opacity"
                 From="0" To="1" Duration="0:0:0.5" />
         </Storyboard>
-
-        <!-- Style pour les boutons ronds -->
-        <Style x:Key="RoundTabButtonStyle" TargetType="TabItem">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="TabItem">
-                        <Grid>
-                            <Border
-                                Background="{TemplateBinding Background}"
-                                CornerRadius="50"
-                                Width="80"
-                                Height="80"
-                                VerticalAlignment="Center"
-                                HorizontalAlignment="Center"
-                                Margin="0,20">
-                                <ContentPresenter
-                                    Content="{TemplateBinding Header}"
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Center" />
-                            </Border>
-                        </Grid>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
     </Window.Resources>
 
-    <Grid>
-        <!-- Définir les lignes pour organiser les éléments -->
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <!-- Ligne pour le logo et le titre -->
-            <RowDefinition Height="Auto" />
-            <!-- Ligne pour le sous-titre -->
-            <RowDefinition Height="*" />
-            <!-- Ligne pour le contenu principal -->
-        </Grid.RowDefinitions>
+    <DockPanel>
+        <!-- Barre supérieure pour la sélection de la langue -->
+        <Border DockPanel.Dock="Top" Width="auto" Height="70" HorizontalAlignment="Center" BorderThickness="0,0,0,1" BorderBrush="LightGray">
+            <StackPanel Orientation="Horizontal">
+                <Label  Content="BORNE D'ENTRÉE" Foreground="Blue"  FontSize="50" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                <TextBlock Text="Langue :" FontSize="25" FontWeight="Bold" VerticalAlignment="Center" Margin="20,0,0,0"/>
+                <ComboBox x:Name="languageComboBox" Width="120">
+                    <ComboBoxItem Content="Français" Tag="fr"/>
+                    <ComboBoxItem Content="English" Tag="en"/>
+                </ComboBox>
+            </StackPanel>
+        </Border>
 
-        <!-- Titre -->
-        <Label Content="HÔPITAL DE CHICOUTIMI" Foreground="Blue" FontSize="40" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,20,0,10" />
-    
+        <!-- Panneau de navigation à gauche -->
+        <Border Width="150" Padding="10" BorderThickness="0,0,1,0" BorderBrush="LightGray">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <!-- Bouton Visiteur -->
+                <Button x:Name="btnVisiteur" Width="120" Height="80" Background="White" Click="BtnVisiteur_Click">
+                    <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
+                        <materialDesign:PackIcon Kind="Account" Width="40" Height="50"/>
+                        <TextBlock Text="Visiteur"/>
+                    </StackPanel>
+                </Button>
 
-        <!-- Sous-titre -->
-        <Label Grid.Row="1" Content="BORNE D'ENTRÉE" Foreground="DarkBlue"  FontSize="25" HorizontalAlignment="Center" Margin="0,10,0,20" />
+                <!-- Bouton Abonné -->
+                <Button x:Name="btnAbonne" Width="120" Height="80" Background="White" Click="BtnAbonne_Click" Margin="0,50,0,0">
+                    <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
+                        <materialDesign:PackIcon Kind="AccountCheck" Width="40" Height="50"/>
+                        <TextBlock Text="Abonné"/>
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+        </Border>
 
-        <!-- Contenu principal -->
-        <Grid Grid.Row="2">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <!-- Colonne pour le TabControl -->
-                <ColumnDefinition Width="*" />
-                <!-- Colonne pour le Frame -->
-            </Grid.ColumnDefinitions>
-
-            <!-- TabControl stylisé pour ressembler à NavigationRail -->
-            <TabControl
-                x:Name="NavigationTabs"
-                Style="{StaticResource MaterialDesignNavigationRailTabControl}"
-                TabStripPlacement="Left"
-                SelectedIndex="0"
-                SelectionChanged="NavigationTabs_SelectionChanged"
-                VerticalAlignment="Center"
-                Margin="16,0,0,0"
-                Padding="0">
-
-                <!-- Onglet Visiteur -->
-                <TabItem Header="Visiteur" Style="{StaticResource RoundTabButtonStyle}">
-                    <TabItem>
-                        <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
-                            <materialDesign:PackIcon Kind="Account" Width="40" Height="50" />
-                            <TextBlock Text="Visiteur" FontSize="14" Margin="0,8,0,0" />
-                        </StackPanel>
-                    </TabItem>
-                </TabItem>
-
-                <!-- Onglet Abonné -->
-                <TabItem Header="Abonné" Style="{StaticResource RoundTabButtonStyle}">
-                    <TabItem>
-                        <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
-                            <materialDesign:PackIcon Kind="AccountCheck" Width="24" Height="24" />
-                            <TextBlock Text="Abonné" FontSize="14" Margin="0,8,0,0" />
-                        </StackPanel>
-                    </TabItem>
-                </TabItem>
-            </TabControl>
-
-            <!-- Frame pour afficher les vues avec animation -->
-            <Frame
-                x:Name="MainFrame"
-                Grid.Column="1"
-                NavigationUIVisibility="Hidden"
-                Margin="16"
-                Opacity="0">
-                <Frame.Triggers>
-                    <EventTrigger RoutedEvent="Frame.Loaded">
-                        <BeginStoryboard Storyboard="{StaticResource FadeInAnimation}" />
-                    </EventTrigger>
-                </Frame.Triggers>
-            </Frame>
-        </Grid>
-    </Grid>
+        <!-- Zone d'affichage des vues -->
+        <Frame x:Name="MainFrame"
+                   Grid.Column="1"
+                   NavigationUIVisibility="Hidden"
+                   Opacity="0"
+                   HorizontalAlignment="Stretch"
+                   VerticalAlignment="Stretch" Margin="0,0,30,0">
+            <Frame.Triggers>
+                <EventTrigger RoutedEvent="Frame.Loaded">
+                    <BeginStoryboard Storyboard="{StaticResource FadeInAnimation}"/>
+                </EventTrigger>
+            </Frame.Triggers>
+        </Frame>
+    </DockPanel>
 </Window>
