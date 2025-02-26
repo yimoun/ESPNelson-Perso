@@ -1,19 +1,33 @@
-﻿using System.Text;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
 using BornePaiement.ViewModel;
 
 namespace BornePaiement.View
 {
-    public partial class VisiteurPage : UserControl
+    /// <summary>
+    /// Logique d'interaction pour VisiteurView.xaml
+    /// </summary>
+    public partial class VisiteurView : Page
     {
         private StringBuilder _scanBuffer = new StringBuilder(); // Buffeur pour collecter les données du scan
-
-        public VisiteurPage()
+        public VisiteurView()
         {
             InitializeComponent();
+            this.DataContext = new VisiteurVM();
             this.Loaded += VisiteurPage_Loaded; // S'abonner à l'événement Loaded
+
         }
 
         private void VisiteurPage_Loaded(object sender, RoutedEventArgs e)
@@ -26,10 +40,10 @@ namespace BornePaiement.View
         private void HiddenScannerInput_KeyDown(object sender, KeyEventArgs e)
         {
             // Transmettre l'événement clavier à la méthode principale
-            UserControl_KeyDown(sender, e);
+            Page_KeyDown(sender, e);
         }
 
-        private async void UserControl_KeyDown(object sender, KeyEventArgs e)
+        private async void Page_KeyDown(object sender, KeyEventArgs e)
         {
             // Ignorer les touches spéciales
             if (e.Key == Key.LeftShift || e.Key == Key.RightShift ||

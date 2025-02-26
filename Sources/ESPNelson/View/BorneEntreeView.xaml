@@ -23,8 +23,8 @@
         <Border DockPanel.Dock="Top" Width="auto" Height="70" HorizontalAlignment="Center" BorderThickness="0,0,0,1" BorderBrush="LightGray">
             <StackPanel Orientation="Horizontal">
                 <Label  Content="BORNE D'ENTRÉE" Foreground="Blue"  FontSize="50" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                <TextBlock Text="Langue :" FontSize="25" FontWeight="Bold" VerticalAlignment="Center" Margin="20,0,0,0"/>
-                <ComboBox x:Name="languageComboBox" Width="120">
+                <TextBlock Text="Langue :" FontSize="25" FontWeight="Bold" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                <ComboBox x:Name="languageComboBox" Width="120" Margin="0,0,20,0">
                     <ComboBoxItem Content="Français" Tag="fr"/>
                     <ComboBoxItem Content="English" Tag="en"/>
                 </ComboBox>
@@ -34,6 +34,14 @@
         <!-- Panneau de navigation à gauche -->
         <Border Width="150" Padding="10" BorderThickness="0,0,1,0" BorderBrush="LightGray">
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+
+                <!-- Image du logo CIUSSS -->
+                <Image Source="pack://application:,,,/img/logo_ciuss.jpg"
+               Stretch="Fill"
+               HorizontalAlignment="Stretch"
+               VerticalAlignment="Top"
+               Width="Auto"
+               Height="Auto"/>
                 <!-- Bouton Visiteur -->
                 <Button x:Name="btnVisiteur" Width="120" Height="80" Background="White" Click="BtnVisiteur_Click">
                     <StackPanel Orientation="Vertical" HorizontalAlignment="Center">

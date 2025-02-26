@@ -1,13 +1,13 @@
 ﻿<Page x:Class="ESPNelson.View.VisiteurView"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-      xmlns:x="http://schemas.microsoft.com/winfx/xaml"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+      xmlns:local="clr-namespace:ESPNelson.View"
       xmlns:vm="clr-namespace:ESPNelson.ViewModel"
-      Title="VisiteurView"
-      Background="White">
+      Title="VisiteurView">
 
     <Page.DataContext>
-        <vm:VisiteurVM />
+        <vm:VisiteurVM/>
     </Page.DataContext>
 
     <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
@@ -21,7 +21,8 @@
                    Style="{StaticResource MaterialDesignHeadline4TextBlock}"
                    Text="Génération de Ticket Visiteur"
                    HorizontalAlignment="Center"
-                   Margin="0,20,0,10"/>
+                   FontSize="32"
+                   Margin="0,20,0,10" Cursor=""/>
 
         <!-- Contenu principal -->
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
@@ -41,17 +42,10 @@
 
                 <!-- Boutons -->
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                    <Button Command="{Binding GenerateNewTicketCommand}" Margin="10">
+                    <Button Command="{Binding GenerateNewTicketCommand}" VerticalAlignment="Center" Margin="10">
                         <StackPanel Orientation="Horizontal">
                             <materialDesign:PackIcon Kind="Ticket" Width="24" Height="24"/>
                             <TextBlock Text="Générer un ticket"/>
-                        </StackPanel>
-                    </Button>
-
-                    <Button Command="{Binding DownloadTicketPDFCommand}" Margin="10">
-                        <StackPanel Orientation="Horizontal">
-                            <materialDesign:PackIcon Kind="Download" Width="24" Height="24"/>
-                            <TextBlock Text="Télécharger le ticket"/>
                         </StackPanel>
                     </Button>
                 </StackPanel>

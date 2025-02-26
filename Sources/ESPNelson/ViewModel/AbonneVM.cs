@@ -10,40 +10,32 @@ namespace ESPNelson.ViewModel
     {
         [ObservableProperty] private string abonnementId;
 
-        [ObservableProperty] private bool abonnmentValide = false;  // ✅ Pour gérer l'affichage dynamique
+        [ObservableProperty] private bool abonnmentValide = false;
         [ObservableProperty] private bool abonnmentInvalide = false;
         [ObservableProperty] private string abonnementInfo;
 
 
 
-        public AbonneVM()
-        {
-
-        }
-
-
+        public AbonneVM() { }
+        
 
         public async Task VerifierTicketabonnment(string abonnementId)
         {
             if (string.IsNullOrWhiteSpace(abonnementId))
                 return;
-
-            // Récupérer l'abonnement depuis l'API
+           
             var abonnementResponse = await AbonnementProcessor.GetAbonnementAsync(abonnementId);
 
             if (!string.IsNullOrEmpty(abonnementResponse.Message))
             {
-                // Cas d'erreur : abonnement inexistant, expiré ou erreur API
                 AbonnementInfo = abonnementResponse.Message;
                 AbonnmentInvalide = true;
                 AbonnmentValide = false;
 
-                // Afficher un MessageBox pour informer l'utilisateur
                 MessageBox.Show(abonnementResponse.Message, "Erreur d'Abonnement", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             else
             {
-                // ✅ Cas normal : abonnement valide
                 AbonnementInfo = $"✅ Abonnement valide !\n\n" +
                                  $"ID : {abonnementResponse.AbonnementId}\n" +
                                  $"Type : {abonnementResponse.TypeAbonnement}\n" +
@@ -56,8 +48,7 @@ namespace ESPNelson.ViewModel
                 //On catch l'id de l'abonnment pour la suite 
                 abonnementId = abonnementResponse.AbonnementId;
 
-                // ✅ Afficher une confirmation via MessageBox
-                //MessageBox.Show("L'abonnement est valide et actif.", "Abonnement Confirmé", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show("L'abonnement est valide et actif donc la barrière va s'ouvrir.", "Ouverture de Barrière", MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
 

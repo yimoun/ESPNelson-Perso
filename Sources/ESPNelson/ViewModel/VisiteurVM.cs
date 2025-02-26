@@ -30,12 +30,12 @@ namespace ESPNelson.ViewModel
         private BitmapImage barcodeImage;
 
         public IRelayCommand GenerateNewTicketCommand { get; }
-        public IRelayCommand DownloadTicketPDFCommand { get; }
+        //public IRelayCommand DownloadTicketPDFCommand { get; }
 
         public VisiteurVM()
         {
             GenerateNewTicketCommand = new RelayCommand(GenerateNewTicket);
-            DownloadTicketPDFCommand = new RelayCommand(DownloadTicketPDF);
+           // DownloadTicketPDFCommand = new RelayCommand(DownloadTicketPDF);
         }
 
         private async void GenerateNewTicket()
@@ -52,6 +52,9 @@ namespace ESPNelson.ViewModel
                 if (barcodeBitmap != null)
                 {
                     BarcodeImage = ConvertBitmapToBitmapImage(barcodeBitmap);
+
+                    //On gén`re automatiquement le Pdf prêt à être imprimé
+                    DownloadTicketPDF();
                 }
             }
         }

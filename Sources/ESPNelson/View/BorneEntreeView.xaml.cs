@@ -42,31 +42,6 @@ namespace ESPNelson.View
             }
         }
 
-        //private void NavigationTabs_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        //{
-        //    if (NavigationTabs.SelectedItem is TabItem selectedTab)
-        //    {
-        //        // Définir la nouvelle vue
-        //        Page newView = null;
-        //        switch (selectedTab.Header.ToString())
-        //        {
-        //            case "Visiteur":
-        //                newView = new VisiteurView();
-        //                break;
-        //            case "Abonné":
-        //                newView = new AbonneView();
-        //                break;
-        //        }
-
-        //        // Naviguer vers la nouvelle vue avec animation
-        //        if (newView != null && MainFrame != null) // Vérifier que MainFrame n'est pas null
-        //        {
-        //            MainFrame.Navigate(newView); // Utiliser Frame.Navigate pour changer la vue
-        //            StartFadeInAnimation(); // Déclencher l'animation
-        //        }
-        //    }
-        //}
-
         private void StartFadeInAnimation()
         {
             // Récupérer l'animation depuis les ressources

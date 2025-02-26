@@ -32,7 +32,7 @@ namespace ESPNelson.View
 
         private void AbonnePage_Loaded(object sender, RoutedEventArgs e)
         {
-            // Donner le focus au UserControl pour capturer les événements clavier
+            // Donne le focus au UserControl pour capturer les événements clavier
             this.Focusable = true;
             this.Focus();
         }
@@ -55,7 +55,7 @@ namespace ESPNelson.View
                 return;
             }
 
-            if (e.Key == Key.Enter) // 🎯 Lorsque l'utilisateur a scanné son ticket
+            if (e.Key == Key.Enter) //Lorsque l'utilisateur a scanné son ticket
             {
                 await Task.Delay(100); // Délai de 100 ms pour s'assurer que le scan est complet
                 // Transmettre l'ID du ticket au ViewModel

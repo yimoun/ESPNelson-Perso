@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using ESPNelson.ViewModel;
 
 namespace ESPNelson.View
 {
@@ -23,6 +24,7 @@ namespace ESPNelson.View
         public VisiteurView()
         {
             InitializeComponent();
+            this.DataContext = new VisiteurVM();
             
         }
     }

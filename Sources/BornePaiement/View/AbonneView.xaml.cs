@@ -17,22 +17,22 @@ using BornePaiement.ViewModel;
 namespace BornePaiement.View
 {
     /// <summary>
-    /// Logique d'interaction pour AbonnePage.xaml
+    /// Logique d'interaction pour AbonneView.xaml
     /// </summary>
-    public partial class AbonnePage : UserControl
+    public partial class AbonneView : Page
     {
-        private StringBuilder _scanBuffer = new StringBuilder(); // Buffeur pour collecter les données du scan
-
-        public AbonnePage()
+        public AbonneView()
         {
             InitializeComponent();
-            this.DataContext = new  AbonneVM();
+            this.DataContext = new AbonneVM();
             this.Loaded += AbonnePage_Loaded;
         }
 
+        private StringBuilder _scanBuffer = new StringBuilder(); // Buffeur pour collecter les données du scan
+
         private void AbonnePage_Loaded(object sender, RoutedEventArgs e)
         {
-            // Donner le focus au UserControl pour capturer les événements clavier
+            // Donne le focus au UserControl pour capturer les événements clavier
             this.Focusable = true;
             this.Focus();
         }
@@ -40,11 +40,11 @@ namespace BornePaiement.View
         private void HiddenScannerInput_KeyDown(object sender, KeyEventArgs e)
         {
             // Transmettre l'événement clavier à la méthode principale
-            UserControl_KeyDown(sender, e);
+            Page_KeyDown(sender, e);
         }
 
-        private async void UserControl_KeyDown(object sender, KeyEventArgs e)
-        {
+        private async void Page_KeyDown(object sender, KeyEventArgs e)
+            {
             // Ignorer les touches spéciales
             if (e.Key == Key.LeftShift || e.Key == Key.RightShift ||
                 e.Key == Key.LeftCtrl || e.Key == Key.RightCtrl ||
@@ -55,7 +55,7 @@ namespace BornePaiement.View
                 return;
             }
 
-            if (e.Key == Key.Enter) // 🎯 Lorsque l'utilisateur a scanné son ticket
+            if (e.Key == Key.Enter) //Lorsque l'utilisateur a scanné son ticket
             {
                 await Task.Delay(100); // Délai de 100 ms pour s'assurer que le scan est complet
                 // Transmettre l'ID du ticket au ViewModel
