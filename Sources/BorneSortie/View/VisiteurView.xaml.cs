@@ -60,7 +60,7 @@ namespace BorneSortie.View
                 // Transmettre l'ID du ticket au ViewModel
                 if (DataContext is VisiteurVM viewModel)
                 {
-                    viewModel.VerifierTicket(_scanBuffer.ToString());
+                    viewModel.VerifierTicketPaye(_scanBuffer.ToString());
                 }
                 _scanBuffer.Clear(); // Réinitialiser le buffeur après le traitement
             }

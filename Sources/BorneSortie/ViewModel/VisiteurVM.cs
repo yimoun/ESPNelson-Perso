@@ -33,14 +33,6 @@ namespace BorneSortie.ViewModel
         private const string PdfSavePath = "Recus";
         private static readonly string LogoPath = Path.Combine(Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).Parent.Parent.Parent.FullName, "img", "logo_ciuss.jpg");
 
-        [ObservableProperty]
-        private decimal montantTotal;
-
-        [ObservableProperty]
-        private decimal taxes;
-
-        [ObservableProperty]
-        private decimal montantAvecTaxes;
 
         [ObservableProperty]
         private DateTime? tempsArrivee;
@@ -48,76 +40,54 @@ namespace BorneSortie.ViewModel
         [ObservableProperty]
         private DateTime? tempsSortie;
 
-        [ObservableProperty]
-        private string email;
-
-        [ObservableProperty]
-        private string typeAbonnement;
-
-        [ObservableProperty]
-        private bool afficherBoutonTicketAbonnement;
-
 
         public VisiteurVM()
         {
         }
 
-        public async Task VerifierTicket(string ticketId)
+        public async Task VerifierTicketPaye(string ticketId)
         {
             if (string.IsNullOrWhiteSpace(ticketId))
                 return;
 
-            // Appeler l'API pour calculer le montant
-            var (montant, duree, tarification, tempsArrivee, tempsSortie, dureeDepassee, estPaye, estConverti, messageErreur)
-                = await TicketProcessor.CalculerMontantAsync(ticketId);
+            // Appeler l'API pour vérifier le statut du paiement
+            var ticketResponse = await TicketProcessor.GetTicketPayeAsync(ticketId);
 
-            // Afficher une MessageBox pour les cas spécifiques
-            if (estPaye)
+            if (ticketResponse == null)
             {
-                MessageBox.Show("Ce ticket a déjà été payé.", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
-                return;
-            }
-            else if (estConverti)
-            {
-                MessageBox.Show("Ce ticket a déjà été converti en abonnement.", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show("❌ Erreur de communication avec l'API.", "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
-            if (!string.IsNullOrEmpty(messageErreur))
+            if (ticketResponse.Message == "NotFound" || ticketResponse.Message == "BadRequest")
             {
-                // Cas d'erreur (ticket déjà payé, déjà converti, ou autre erreur)
-                TicketInfo = messageErreur;
-                TicketInvalide = true;
+                MessageBox.Show("❌ Ticket introuvable ou invalide. Veuillez réessayer.", "Erreur", MessageBoxButton.OK, MessageBoxImage.Warning);
                 TicketValide = false;
-
-                if (dureeDepassee)
-                {
-                    // Cas de dépassement de durée
-                    TicketInfo = "⛔ Durée de stationnement dépassée ! Contactez l'administration.";
-                    TicketInvalide = true;
-                    TicketValide = false;
-                }
-                else
-                {
-                    // Cas d'erreur inconnue
-                    TicketInfo = "❌ Ticket invalide ou introuvable.";
-                    TicketInvalide = true;
-                    TicketValide = false;
-                }
+                TicketInvalide = true;
+                TicketInfo = "❌ Ticket introuvable.";
+                return;
             }
-            else if (montant >= 0)
+
+            if (ticketResponse.EstConverti)
             {
-                // Cas normal : ticket valide
-                TicketInfo = $"Montant : {montant:C} $\n Temps d'arrivée: {tempsArrivee}\nDurée : {duree}h\nTarif : {tarification}";
-                TicketValide = true;
-                TicketInvalide = false;
-                ticketScanne = ticketId;
-
-                //Rendre visble les deux boutons
-                PeutSimuler = true;
-                PeutSabonner = true;
+                //TicketInfo = $"✅ Paiement validé !\nHeure d'arrivée : {ticketResponse.TempsArrivee}\nHeure de sortie : {ticketResponse.TempsSortie}";
+                MessageBox.Show("Ce ticket a été converti en abonnment donc n'a pas été payé.", "Avertissement", MessageBoxButton.OK, MessageBoxImage.Warning);
+                TicketValide = false;
+                TicketInvalide = true;
+                TicketInfo = "Ticket non payé.";
+                return;
             }
 
+            // ✅ Ticket payé, mise à jour de l'affichage
+            TicketInfo = $"✅ Paiement validé !\nHeure d'arrivée : {ticketResponse.TempsArrivee}\nHeure de sortie : {ticketResponse.TempsSortie}";
+            TicketValide = true;
+            TicketInvalide = false;
+            AfficherBoutonRecu = true;
+
+            // Mise à jour des propriétés pour affichage
+            TempsArrivee = ticketResponse.TempsArrivee;
+            TempsSortie = ticketResponse.TempsSortie;
         }
+
     }
 }

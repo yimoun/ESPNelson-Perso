@@ -107,7 +107,7 @@ namespace BornePaiement.ViewModel
                 var writer = new BarcodeWriterPixelData
                 {
                     Format = BarcodeFormat.CODE_128,
-                    Options = new EncodingOptions { Width = 300, Height = 100, Margin = 5 }
+                    Options = new EncodingOptions { Width = 200, Height = 100 }
                 };
                 var pixelData = writer.Write(text);
                 using (var bitmap = new Bitmap(pixelData.Width, pixelData.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb))
@@ -202,7 +202,7 @@ namespace BornePaiement.ViewModel
                 // Informations de l'hôpital
                 gfx.DrawString("Hôpital de Chicoutimi", fontNormal, XBrushes.Black, new XPoint(20, 130));
 
-                // Dessiner le code-barres en haut et en bas du ticket
+                // Dessiner le code-barres au mileu du ticket
                 using (MemoryStream memory = new MemoryStream())
                 {
                     BarcodeImage.StreamSource.Position = 0;

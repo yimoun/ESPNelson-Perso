@@ -130,7 +130,7 @@ namespace StationnementAPI.Controllers
         private string GenerateAbonnmentId()
         {
             string guid = Guid.NewGuid().ToString("N").ToUpper(); // Supprime les tirets et met en majuscule
-            return guid.Substring(0, 10); // Prend les 10 premiers caractères
+            return guid.Substring(0, 6); // Prend les 10 premiers caractères
         }
 
     }

@@ -29,26 +29,13 @@
             <StackPanel HorizontalAlignment="Center" Width="Auto">
                 <!-- Carte -->
                 <materialDesign:Card Padding="16" Margin="16" HorizontalAlignment="Center" Width="Auto">
-                    <StackPanel>
-                        <TextBlock Style="{StaticResource MaterialDesignSubtitle1TextBlock}"
-                                   Text="{Binding TicketActuel.Id, StringFormat='Numéro du ticket : {0}'}"
-                                   HorizontalAlignment="Center"/>
-                        <TextBlock Style="{StaticResource MaterialDesignBody1TextBlock}"
-                                   Text="{Binding TicketActuel.TempsArrive, StringFormat='Date et heure d\arrivée : {0:dd/MM/yyyy HH:mm:ss}'}"
-                                   HorizontalAlignment="Center"/>
-                        <Image Source="{Binding BarcodeImage}" Width="300" Height="100" HorizontalAlignment="Center"/>
-                    </StackPanel>
-                </materialDesign:Card>
-
-                <!-- Boutons -->
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                    <Button Command="{Binding GenerateNewTicketCommand}" VerticalAlignment="Center" Margin="10">
+                    <Button Command="{Binding GenerateNewTicketCommand}" Width="250" Height="120" VerticalAlignment="Center">
                         <StackPanel Orientation="Horizontal">
                             <materialDesign:PackIcon Kind="Ticket" Width="24" Height="24"/>
-                            <TextBlock Text="Générer un ticket"/>
+                            <TextBlock Text="Générer un ticket" FontSize="20"/>
                         </StackPanel>
                     </Button>
-                </StackPanel>
+                </materialDesign:Card>
             </StackPanel>
         </ScrollViewer>
     </Grid>

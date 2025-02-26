@@ -27,45 +27,65 @@ namespace BorneSortie.View
             this.DataContext = new BorneSortieVM();
 
             // Attendre que la fenêtre soit chargée avant d'initialiser le Frame
-            this.Loaded += OnWindowLoaded;
+            this.Loaded += BorneSortie_Loaded;
         }
 
-        private void OnWindowLoaded(object sender, RoutedEventArgs e)
+        private StringBuilder _scanBuffer = new StringBuilder(); // Buffeur pour collecter les données du scan
+
+        private void BorneSortie_Loaded(object sender, RoutedEventArgs e)
         {
-            // Initialiser le Frame après le chargement de la fenêtre
-            MainFrame.Navigate(new VisiteurView()); // Afficher la vue Visiteur par défaut
-            StartFadeInAnimation(); // Déclencher l'animation initiale
+            // Donne le focus au UserControl pour capturer les événements clavier
+            this.Focusable = true;
+            this.Focus();
         }
 
-        private void BtnVisiteur_Click(object sender, RoutedEventArgs e)
+        private void HiddenScannerInput_KeyDown(object sender, KeyEventArgs e)
         {
-            // Naviguer vers la vue "Visiteur" avec animation
-            NavigateToPage(new VisiteurView());
+            // Transmettre l'événement clavier à la méthode principale
+            Fenetre_KeyDown(sender, e);
         }
 
-        private void BtnAbonne_Click(object sender, RoutedEventArgs e)
+        private async void Fenetre_KeyDown(object sender, KeyEventArgs e)
         {
-            // Naviguer vers la vue "Abonné" avec animation
-            NavigateToPage(new AbonneView());
-        }
-
-        private void NavigateToPage(Page newPage)
-        {
-            if (newPage != null && MainFrame != null) // Vérifier que MainFrame existe
+            // Ignorer les touches spéciales
+            if (e.Key == Key.LeftShift || e.Key == Key.RightShift ||
+                e.Key == Key.LeftCtrl || e.Key == Key.RightCtrl ||
+                e.Key == Key.LeftAlt || e.Key == Key.RightAlt ||
+                e.Key == Key.CapsLock || e.Key == Key.Tab ||
+                e.Key == Key.Escape || e.Key == Key.Back)
             {
-                MainFrame.Navigate(newPage);
-                StartFadeInAnimation(); // Déclencher l'animation après le changement de page
+                return;
+            }
+
+            if (e.Key == Key.Enter) //Lorsque l'utilisateur a scanné son ticket
+            {
+                await Task.Delay(100); // Délai de 100 ms pour s'assurer que le scan est complet
+                // Transmettre l'ID du ticket au ViewModel
+                if (DataContext is AbonneVM viewModel)
+                {
+                    viewModel.VerifierTicketabonnment(_scanBuffer.ToString());
+                }
+                _scanBuffer.Clear(); // Réinitialiser le buffeur après le traitement
+            }
+            else
+            {
+                // Capturer les chiffres (0-9)
+                if (e.Key >= Key.D0 && e.Key <= Key.D9) // Chiffres de 0 à 9
+                {
+                    _scanBuffer.Append(e.Key.ToString().Replace("D", "")); // Supprimer le préfixe "D" pour les chiffres
+                }
+                // Capturer les chiffres du pavé numérique (0-9)
+                else if (e.Key >= Key.NumPad0 && e.Key <= Key.NumPad9) // Chiffres du pavé numérique
+                {
+                    _scanBuffer.Append(e.Key.ToString().Replace("NumPad", "")); // Supprimer le préfixe "NumPad"
+                }
+                // Capturer les lettres (A-Z)
+                else if (e.Key >= Key.A && e.Key <= Key.Z) // Lettres de A à Z
+                {
+                    _scanBuffer.Append(e.Key.ToString()); // Conserver la lettre telle quelle
+                }
             }
         }
 
-        private void StartFadeInAnimation()
-        {
-            // Récupérer l'animation depuis les ressources
-            Storyboard fadeInAnimation = (Storyboard)FindResource("FadeInAnimation");
-            if (fadeInAnimation != null && MainFrame != null) // Vérifier que MainFrame n'est pas null
-            {
-                fadeInAnimation.Begin(MainFrame); // Déclencher l'animation
-            }
-        }
-    }
+    }   
 }

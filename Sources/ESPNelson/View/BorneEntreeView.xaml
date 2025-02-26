@@ -6,7 +6,7 @@
         WindowStartupLocation="CenterScreen"
         Width="640" Height="480"
         MinWidth="640" MinHeight="480"
-        Background="LightGreen"
+        Background="#009A44"
         ResizeMode="CanResize">
 
     <Window.Resources>

@@ -22,13 +22,8 @@
         </Grid.RowDefinitions>
 
         <StackPanel Grid.Row="0" HorizontalAlignment="Center" Width="Auto">
-
-            <!-- Titre -->
             <TextBlock Text="Mode Visiteur" FontSize="32" FontWeight="Bold" TextAlignment="Center" Margin="0,10"/>
-
-            <!-- Instructions pour scanner le ticket -->
             <TextBlock Text="Veuillez scanner votre ticket de stationnement" FontSize="20" FontWeight="Bold" TextAlignment="Center" Margin="0,0,0,10"/>
-
         </StackPanel>
 
 
@@ -42,34 +37,16 @@
                     <StackPanel>
                         <TextBlock Text="{Binding TicketInfo}" FontSize="14" TextAlignment="Center" Margin="0,5"/>
                         <TextBlock Text="⛔ Ticket invalide" FontSize="14" Foreground="Red" TextAlignment="Center" 
-                               Visibility="{Binding TicketInvalide, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-                        <TextBlock Text="✅ Ticket valide" FontSize="14" Foreground="Green" TextAlignment="Center" 
-                               Visibility="{Binding TicketValide, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                                   Visibility="{Binding TicketInvalide, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                        <TextBlock Text="✅ Ticket payé" FontSize="14" Foreground="Green" TextAlignment="Center" 
+                                   Visibility="{Binding TicketValide, Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
-                        <!--Scanner invisible-->
+                        <!-- Scanner invisible -->
                         <TextBox x:Name="HiddenScannerInput"
-                             Visibility="Collapsed"
-                             KeyDown="HiddenScannerInput_KeyDown"/>
+                                 Visibility="Collapsed"
+                                 KeyDown="HiddenScannerInput_KeyDown"/>
                     </StackPanel>
                 </materialDesign:Card>
-
-                <!-- Boutons -->
-                <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
-                    <!-- Bouton pour simuler le paiement -->
-                    <Button Content="Simuler le paiement" Command="{Binding ConfirmerPaiementCommand}" 
-                        Width="200"  Margin="0,20, 0, 0" FontSize="16" 
-                        Visibility="{Binding PeutSimuler, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-
-                    <Button Content="S'abonner" Command="{Binding SouscrireAbonnementCommand}" 
-                        Width="200" Margin="0,20" FontSize="16" 
-                        Visibility="{Binding PeutSabonner, Converter={StaticResource BooleanToVisibilityConverter}}" Cursor="Hand"/>
-
-                    <!-- Bouton pour générer le reçu -->
-                    <Button Content="Générer le reçu" Command="{Binding GenererRecuCommand}" 
-                        Width="200" Margin="0,20" FontSize="16" 
-                        Visibility="{Binding AfficherBoutonRecu, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-                </StackPanel>
-
             </StackPanel>
         </ScrollViewer>
     </Grid>
