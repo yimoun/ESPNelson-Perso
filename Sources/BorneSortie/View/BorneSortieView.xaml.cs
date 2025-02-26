@@ -9,23 +9,22 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using BornePaiement.ViewModel;
-using System.Windows.Media.Animation;
-using BornePaiement.View;
+using BorneSortie.ViewModel;
 
-namespace BornePaiement.View
+namespace BorneSortie.View
 {
     /// <summary>
-    /// Logique d'interaction pour BornePaiementView.xaml
+    /// Logique d'interaction pour BorneSortie.xaml
     /// </summary>
-    public partial class BornePaiementView : Window
+    public partial class BorneSortieView : Window
     {
-        public BornePaiementView()
+        public BorneSortieView()
         {
             InitializeComponent();
-            this.DataContext = new BornePaiementVM();
+            this.DataContext = new BorneSortieVM();
 
             // Attendre que la fenêtre soit chargée avant d'initialiser le Frame
             this.Loaded += OnWindowLoaded;

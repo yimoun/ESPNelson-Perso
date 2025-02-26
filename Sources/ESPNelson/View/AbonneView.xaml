@@ -5,7 +5,8 @@
       xmlns:local="clr-namespace:ESPNelson.View"
       xmlns:vm="clr-namespace:ESPNelson.ViewModel"
       Title="AbonneView"
-      KeyDown="Page_KeyDown">
+      KeyDown="Page_KeyDown"
+      >
     <Page.DataContext>
         <vm:AbonneVM/>
     </Page.DataContext>
@@ -25,7 +26,8 @@
                    Margin="0,20,0,10"/>
 
         <!-- Contenu principal -->
-        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto"
+                      Background="White" Margin="0,0,0,20">
             <StackPanel HorizontalAlignment="Center" Width="Auto">
                 <!-- Carte pour afficher les informations d'abonnement -->
                 <materialDesign:Card  Margin="16" VerticalAlignment="Center" HorizontalAlignment="Center" Width="Auto">

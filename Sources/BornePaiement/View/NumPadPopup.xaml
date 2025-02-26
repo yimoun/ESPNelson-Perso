@@ -1,0 +1,50 @@
+﻿<Window x:Class="BornePaiement.View.NumPadPopup"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        Title="Entrez votre NIP"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize"
+        WindowStyle="None"
+        Width="300" Height="400"
+        Background="LightGreen"
+        BorderBrush="Blue"
+        BorderThickness="5">
+
+    <Window.RenderTransform>
+        <ScaleTransform ScaleX="1" ScaleY="1"/>
+    </Window.RenderTransform>
+
+    <Window.Triggers>
+        <EventTrigger RoutedEvent="Window.Loaded">
+            <BeginStoryboard Storyboard="{StaticResource PopupOpenAnimation}"/>
+        </EventTrigger>
+    </Window.Triggers>
+
+
+    <Grid>
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10"
+                    Background="White">
+            <TextBlock Text="Entrez votre NIP" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center"/>
+            <PasswordBox x:Name="PinBox" FontSize="24" Width="180" MaxLength="3" 
+                         HorizontalAlignment="Center" PasswordChar="●" Margin="0,10"/>
+
+            <UniformGrid Columns="3" Rows="4" HorizontalAlignment="Center">
+                <Button Content="1" Click="NumPad_Click"/>
+                <Button Content="2" Click="NumPad_Click"/>
+                <Button Content="3" Click="NumPad_Click"/>
+                <Button Content="4" Click="NumPad_Click"/>
+                <Button Content="5" Click="NumPad_Click"/>
+                <Button Content="6" Click="NumPad_Click"/>
+                <Button Content="7" Click="NumPad_Click"/>
+                <Button Content="8" Click="NumPad_Click"/>
+                <Button Content="9" Click="NumPad_Click"/>
+                <Button Content="⌫" Click="Delete_Click"/>
+                <Button Content="0" Click="NumPad_Click"/>
+                <Button Content="✔" Click="Validate_Click" Background="Green" Foreground="White"/>
+            </UniformGrid>
+
+            <Button Content="Annuler" Click="Cancel_Click" Background="Red" Foreground="White" Margin="10"/>
+        </StackPanel>
+    </Grid>
+</Window>

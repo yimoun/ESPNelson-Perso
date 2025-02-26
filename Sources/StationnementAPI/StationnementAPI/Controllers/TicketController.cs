@@ -77,6 +77,49 @@ namespace StationnementAPI.Controllers
 
             return ticket;
         }
+
+
+        /// <summary>
+        /// Vérifie si un ticket a été payé et retourne un statut détaillé.
+        /// </summary>
+        /// <param name="id">L'ID du ticket</param>
+        /// <returns>Statut détaillé du ticket</returns>
+        [HttpGet("{id}/verifier-paiement")]
+        public async Task<ActionResult<TicketEstPayeResponse>> VerifierPaiementTicket(string id)
+        {
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                return BadRequest(new TicketEstPayeResponse
+                {
+                    Message = "⛔ L'ID du ticket est invalide."
+                });
+            }
+
+            var ticket = await _context.Tickets.FindAsync(id);
+
+            if (ticket == null)
+            {
+                return NotFound(new TicketEstPayeResponse
+                {
+                    TicketId = id,
+                    Message = "❌ Ticket introuvable."
+                });
+            }
+
+            // Construire la réponse détaillée
+            var response = new TicketEstPayeResponse
+            {
+                TicketId = ticket.Id,
+                EstPaye = ticket.EstPaye,
+                Message = ticket.EstPaye ? "✅ Le ticket a déjà été payé." : "⚠️ Le ticket existe mais n'a pas encore été payé.",
+                TempsArrivee = ticket.TempsArrive,
+                TempsSortie = ticket.TempsSortie
+            };
+
+            return Ok(response);
+        }
+
+
     }
 
 

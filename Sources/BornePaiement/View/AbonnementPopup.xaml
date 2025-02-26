@@ -3,8 +3,9 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:BornePaiement.View"
         xmlns:vm="clr-namespace:BornePaiement.ViewModel"
-        Title="Souscription à un abonnement" Height="300" Width="400"
-        WindowStartupLocation="CenterScreen">
+        Title="Souscription à un abonnement" Height="350" Width="400"
+        WindowStartupLocation="CenterScreen"
+        Background="LightGreen">
     <Grid Margin="20">
         <StackPanel>
             <!-- Champ pour l'email -->
@@ -17,11 +18,14 @@
                      />
 
             <!-- Bouton Confirmer -->
-            <Button Content="Confirmer" FontSize="16" Padding="10,5" HorizontalAlignment="Center"
+            <Button Content="Confirmer" FontSize="20" FontWeight="Bold"
+                    BorderBrush="Blue" BorderThickness="2"  HorizontalAlignment="Center"
                     Command="{Binding ConfirmerCommand}"/>
 
             <!-- Bouton Générer un ticket d'abonnement -->
-            <Button Content="Générer un ticket d'abonnement" FontSize="16" Padding="10,5" HorizontalAlignment="Center"
+            <Button Content="Générer un ticket d'abonnement" FontSize="16" FontWeight="Bold"
+                    BorderBrush="Blue" BorderThickness="2" HorizontalAlignment="Center"
+                    Margin="0,20,0,0"
                     Command="{Binding GenererTicketAbonnementCommand}"
                     Visibility="{Binding AfficherBoutonTicketAbonnement, Converter={StaticResource BooleanToVisibilityConverter}}"/>
         </StackPanel>

@@ -5,11 +5,11 @@ using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using BornePaiement.Model;
-using Microsoft.AspNetCore.Mvc;
+using BorneSortie.Model;
 
 
-namespace BornePaiement.Model
+
+namespace BorneSortie.Model
 {
     public static class AbonnementProcessor
     {

@@ -19,6 +19,8 @@ namespace BornePaiement.ViewModel
         [ObservableProperty] private bool ticketValide = false;  // ✅ Pour gérer l'affichage dynamique
         [ObservableProperty] private bool ticketInvalide = false;
         [ObservableProperty] private string ticketInfo;
+        [ObservableProperty] private bool peutSabonner = false;
+        [ObservableProperty] private bool peutSimuler = false;
 
         private string ticketScanne = ""; // 🔹 Stocke temporairement le scan
 
@@ -116,34 +118,59 @@ namespace BornePaiement.ViewModel
                 TicketValide = true;
                 TicketInvalide = false;
                 ticketScanne = ticketId;
+
+                //Rendre visble les deux boutons
+                PeutSimuler = true;
+                PeutSabonner = true;
             }
             
         }
 
         private async Task ConfirmerPaiement()
         {
-            var (success, message, montantTotal, taxes, montantAvecTaxes, tempsArrivee, tempsSortie) = await TicketProcessor.PayerTicketAsync(ticketScanne);
+            // Ouvrir la fenêtre NumPad
+            var numPadPopup = new NumPadPopup();
+            bool? result = numPadPopup.ShowDialog();
 
-            if (success)
+            // Vérifier si l'utilisateur a confirmé un NIP
+            if (result == true)
             {
-                TicketInfo = $"✅ Paiement effectué !\nMontant : {montantAvecTaxes:C}\nTaxes : {taxes:C}\nDurée : {Math.Round((tempsSortie - tempsArrivee).Value.TotalHours, 2)}h";
-                PaiementEffectue = true;
-                AfficherBoutonRecu = true;
-                // Forcer la mise à jour de la propriété
-                OnPropertyChanged(nameof(AfficherBoutonRecu));
+                if (numPadPopup.EnteredPin == "999")
+                {
+                    // Simuler un paiement réussi
+                    var (success, message, montantTotal, taxes, montantAvecTaxes, tempsArrivee, tempsSortie) = await TicketProcessor.PayerTicketAsync(ticketScanne);
 
-                //Informations à metrre dans le recu de paiement
-                MontantTotal = montantTotal;
-                TempsArrivee = tempsArrivee;    
-                TempsSortie = tempsSortie;
-            }
-            else
-            {
-                TicketInfo = $"❌ Erreur lors du paiement : {message}";
-                PaiementEffectue = false;
-                AfficherBoutonRecu = false;
+                    if (success)
+                    {
+                        TicketInfo = $"✅ Paiement effectué !\nMontant : {montantAvecTaxes:C}\nTaxes : {taxes:C}\nDurée : {Math.Round((tempsSortie - tempsArrivee).Value.TotalHours, 2)}h";
+                        PaiementEffectue = true;
+                        AfficherBoutonRecu = true;
+
+                        PeutSabonner = false; //Le payement étant effectué, il ne doit oavoir la possibilité de s'abonner
+                        PeutSimuler = false;    //Ne pas lui donner une autre occasion de simuler 
+
+                        // Informations pour le reçu
+                        MontantTotal = montantTotal;
+                        TempsArrivee = tempsArrivee;
+                        TempsSortie = tempsSortie;
+                    }
+                    else
+                    {
+                        TicketInfo = $"❌ Erreur lors du paiement : {message}";
+                        PaiementEffectue = false;
+                        AfficherBoutonRecu = false;
+
+                        PeutSabonner = true;
+                        PeutSimuler = true;
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("❌ NIP incorrect. Veuillez réessayer.", "Erreur", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
             }
         }
+
 
 
         private void GenererRecu()

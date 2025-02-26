@@ -6,9 +6,9 @@
       xmlns:vm="clr-namespace:BornePaiement.ViewModel"
       Title="AbonneView"
       KeyDown="Page_KeyDown">
-    <!--<Page.DataContext>
+    <Page.DataContext>
         <vm:AbonneVM/>
-    </Page.DataContext>-->
+    </Page.DataContext>
 
     <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
@@ -21,14 +21,16 @@
                    Style="{StaticResource MaterialDesignHeadline4TextBlock}"
                    Text="Scanner votre ticket d'Abonné"
                    HorizontalAlignment="Center"
-                   FontSize="32"
+                   FontSize="30"
+                   FontWeight="Bold"
                    Margin="0,20,0,10"/>
 
         <!-- Contenu principal -->
-        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto"
+                      Background="White" Margin="0,0,0,20">
             <StackPanel HorizontalAlignment="Center" Width="Auto">
                 <!-- Carte pour afficher les informations d'abonnement -->
-                <materialDesign:Card Padding="16" Margin="16" VerticalAlignment="Center" HorizontalAlignment="Center" Width="Auto">
+                <materialDesign:Card  Margin="16" VerticalAlignment="Center" HorizontalAlignment="Center" Width="Auto">
                     <StackPanel>
                         <TextBlock Style="{StaticResource MaterialDesignSubtitle1TextBlock}"
                                    Text="{Binding AbonnementInfo}"
