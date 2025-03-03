@@ -19,19 +19,8 @@ namespace BorneSortie.ViewModel
         [ObservableProperty] private bool ticketValide = false;  // ✅ Pour gérer l'affichage dynamique
         [ObservableProperty] private bool ticketInvalide = false;
         [ObservableProperty] private string ticketInfo;
-        [ObservableProperty] private bool peutSabonner = false;
-        [ObservableProperty] private bool peutSimuler = false;
 
         private string ticketScanne = ""; // 🔹 Stocke temporairement le scan
-
-        [ObservableProperty]
-        private bool paiementEffectue = false;
-
-        [ObservableProperty]
-        private bool afficherBoutonRecu = false;
-
-        private const string PdfSavePath = "Recus";
-        private static readonly string LogoPath = Path.Combine(Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).Parent.Parent.Parent.FullName, "img", "logo_ciuss.jpg");
 
 
         [ObservableProperty]

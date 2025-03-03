@@ -61,9 +61,9 @@ namespace BorneSortie.View
             {
                 await Task.Delay(100); // Délai de 100 ms pour s'assurer que le scan est complet
                 // Transmettre l'ID du ticket au ViewModel
-                if (DataContext is AbonneVM viewModel)
+                if (DataContext is BorneSortieVM viewModel)
                 {
-                    viewModel.VerifierTicketabonnment(_scanBuffer.ToString());
+                    viewModel.VerifierTicketPaye(_scanBuffer.ToString());
                 }
                 _scanBuffer.Clear(); // Réinitialiser le buffeur après le traitement
             }

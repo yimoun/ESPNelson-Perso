@@ -53,7 +53,7 @@
 
                 <!-- Contenu principal -->
                     <!-- Carte pour afficher les informations d'abonnement -->
-                <StackPanel Grid.Row="1" Background="White" Width="Auto">
+                <StackPanel Grid.Row="1" Background="White" Width="Auto" Margin="10,0,10,10">
                     <!-- Cas d'un ticket de stationnement scanné-->
                     <TextBlock Text="{Binding TicketInfo}" FontSize="14" TextAlignment="Center" Margin="0,5"/>
                     <TextBlock Text="⛔ Ticket invalide" FontSize="14" Foreground="Red" TextAlignment="Center" 

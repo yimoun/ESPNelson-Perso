@@ -7,7 +7,8 @@
         Width="640" Height="480"
         MinWidth="640" MinHeight="480"
         Background="#009A44"
-        ResizeMode="CanResize">
+        ResizeMode="CanResize"
+        KeyDown="Page_KeyDown">
 
     <Window.Resources>
         <!-- Animation pour la transition -->
@@ -31,47 +32,87 @@
             </StackPanel>
         </Border>
 
-        <!-- Panneau de navigation à gauche -->
-        <Border Width="150" Padding="10" BorderThickness="0,0,1,0" BorderBrush="LightGray">
-            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+        <!-- mode visiteur uniquement -->
+        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
 
-                <!-- Image du logo CIUSSS -->
-                <Image Source="../img/logo_ciuss.jpg"
-               Stretch="Fill"
-               HorizontalAlignment="Stretch"
-               VerticalAlignment="Top"
-               Width="Auto"
-               Height="Auto"/>
-                <!-- Bouton Visiteur -->
-                <Button x:Name="btnVisiteur" Width="120" Height="80" Background="White" Click="BtnVisiteur_Click">
-                    <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
-                        <materialDesign:PackIcon Kind="Account" Width="40" Height="50"/>
-                        <TextBlock Text="Visiteur"/>
-                    </StackPanel>
-                </Button>
+            <StackPanel Grid.Row="0" HorizontalAlignment="Center" Width="Auto"  Height="75">
 
-                <!-- Bouton Abonné -->
-                <Button x:Name="btnAbonne" Width="120" Height="80" Background="White" Click="BtnAbonne_Click" Margin="0,50,0,0">
-                    <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
-                        <materialDesign:PackIcon Kind="AccountCheck" Width="40" Height="50"/>
-                        <TextBlock Text="Abonné"/>
-                    </StackPanel>
-                </Button>
+                <!-- Titre -->
+                <TextBlock Text="Mode Visiteur" FontSize="32" FontWeight="Bold" TextAlignment="Center" />
+
+                <!-- Instructions pour scanner le ticket -->
+                <TextBlock Text="Veuillez scanner votre ticket de stationnement" FontSize="20" FontWeight="Bold" TextAlignment="Center"/>
+
             </StackPanel>
-        </Border>
 
-        <!-- Zone d'affichage des vues -->
-        <Frame x:Name="MainFrame"
-                   Grid.Column="1"
-                   NavigationUIVisibility="Hidden"
-                   Opacity="0"
-                   HorizontalAlignment="Stretch"
-                   VerticalAlignment="Stretch" Margin="0,0,30,0">
-            <Frame.Triggers>
-                <EventTrigger RoutedEvent="Frame.Loaded">
-                    <BeginStoryboard Storyboard="{StaticResource FadeInAnimation}"/>
-                </EventTrigger>
-            </Frame.Triggers>
-        </Frame>
+
+            <!-- Contenu principal -->
+          
+                <Grid Grid.Row="1" Background="White" Margin="0,10" >
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <!-- Colonne pour la carte d'informations -->
+                        <ColumnDefinition Width="Auto"/>
+                        <!-- Colonne pour les boutons -->
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Carte pour afficher les informations du ticket -->
+                    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Left">
+                        <TextBlock Text="{Binding TicketInfo}" FontSize="20" TextAlignment="Center" Margin="0,0,0,5"/>
+                        <TextBlock Text="⛔ Ticket invalide" FontSize="20" Foreground="Red" TextAlignment="Center" 
+                        Visibility="{Binding TicketInvalide, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                            <TextBlock Text="✅ Ticket valide" FontSize="20" Foreground="Green" TextAlignment="Center" 
+                        Visibility="{Binding TicketValide, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+                        <!-- Scanner invisible -->
+                        <TextBox x:Name="HiddenScannerInput" Visibility="Collapsed" KeyDown="HiddenScannerInput_KeyDown"/>
+                    </StackPanel>
+
+                    <!-- Boutons -->
+                    <StackPanel Grid.Column="1" Orientation="Vertical" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,20,20,0">
+                        <!-- Bouton pour simuler le paiement -->
+                    <Button Command="{Binding ConfirmerPaiementCommand}"
+                                BorderBrush="#009A44" BorderThickness="5"
+                                Width="200" Height="100" Margin="0,10" FontSize="16" 
+                                Visibility="{Binding PeutSimuler, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                Style="{StaticResource MaterialDesignRaisedButton}">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="CreditCard" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                                <TextBlock Text="Simuler le paiement" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+
+                        <!-- Bouton pour s'abonner -->
+                        <Button Command="{Binding SouscrireAbonnementCommand}" 
+                                BorderBrush="#009A44" BorderThickness="5"
+                                Width="200" Height="100" Margin="0,10" FontSize="17" 
+                                Visibility="{Binding PeutSabonner, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                Style="{StaticResource MaterialDesignRaisedButton}">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="AccountPlus" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                                <TextBlock Text="S'abonner" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+
+                        <!-- Bouton pour générer le reçu -->
+                        <Button Command="{Binding GenererRecuCommand}" 
+                                BorderBrush="#009A44" BorderThickness="5"
+                                VerticalAlignment="Center"
+                                Width="200" Height="100" Margin="0,10" FontSize="16" 
+                                Visibility="{Binding AfficherBoutonRecu, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                Style="{StaticResource MaterialDesignRaisedButton}">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="Receipt" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                                <TextBlock Text="Générer le reçu" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+          
+        </Grid>
     </DockPanel>
 </Window>
