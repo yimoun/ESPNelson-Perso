@@ -142,7 +142,7 @@ namespace StationnementAPI.Controllers
             {
                 TicketId = ticket.Id,
                 Montant = montantAvecTaxes,
-                DatePaiement = ticket.TempsSortie.Value
+                DatePaiement = ticket.TempsSortie.Value,
             };
 
             _context.Paiements.Add(paiement);

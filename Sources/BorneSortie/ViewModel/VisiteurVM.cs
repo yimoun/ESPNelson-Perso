@@ -71,7 +71,6 @@ namespace BorneSortie.ViewModel
             TicketInfo = $"✅ Paiement validé !\nHeure d'arrivée : {ticketResponse.TempsArrivee}\nHeure de sortie : {ticketResponse.TempsSortie}";
             TicketValide = true;
             TicketInvalide = false;
-            AfficherBoutonRecu = true;
 
             // Mise à jour des propriétés pour affichage
             TempsArrivee = ticketResponse.TempsArrivee;

@@ -40,7 +40,7 @@ namespace BorneSortie.Model
                     return new AbonnementResponse
                     {
                         Message = messageErreur,
-                        AbonnementId = null,
+                        AbonnementId = string.Empty,
                         TypeAbonnement = null,
                         DateDebut = DateTime.MinValue,
                         DateFin = DateTime.MinValue,

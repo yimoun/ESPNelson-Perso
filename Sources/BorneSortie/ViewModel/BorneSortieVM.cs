@@ -1,4 +1,5 @@
 ﻿using BorneSortie.Model;
+using BorneSortie.Models;
 using BorneSortie.View;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -35,46 +36,49 @@ namespace BorneSortie.ViewModel
             if (string.IsNullOrWhiteSpace(ticketId))
                 return;
 
-            // Appeler l'API pour vérifier le statut du paiement
-            var ticketResponse = await TicketProcessor.GetTicketPayeAsync(ticketId);
+            string messageTicket = "";
+            string messageAbonnement = "";
 
-            // Récupérer l'abonnement depuis l'API
-            var abonnementResponse = await AbonnementProcessor.GetAbonnementAsync(abonnementId);
+            //Double appel pour vérifier s'il s'agit d'un abonnement ou d'un ticket de stationnement valide
+            TicketEstPayeResponse ticketEstPayeResponse = await TicketProcessor.GetTicketPayeAsync(ticketId);
 
-            if (ticketResponse == null)
+            if(ticketEstPayeResponse.TicketId != string.Empty)
             {
-                MessageBox.Show("❌ Erreur de communication avec l'API.", "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
+                if (ticketEstPayeResponse.EstPaye == false)
+                {
+                    // ❌ Ticket payé, mise à jour de l'affichage
+                    TicketInfo = $"❌ Paiement non validé !\n ce ticket existe bien mais n'a pas été payé";
+                    TicketValide = false;
+                    TicketInvalide = true;
+
+                    return;
+                }
+
+                // ✅ Ticket payé, mise à jour de l'affichage
+                TicketInfo = $"✅ Paiement validé !\nHeure d'arrivée : {ticketEstPayeResponse.TempsArrivee}\nHeure de payement : {ticketEstPayeResponse.TempsSortie}";
+                TicketValide = true;
+                TicketInvalide = false;
+
                 return;
             }
-
-            if (ticketResponse.Message == "NotFound" || ticketResponse.Message == "BadRequest")
+            else
             {
-                MessageBox.Show("❌ Ticket introuvable ou invalide. Veuillez réessayer.", "Erreur", MessageBoxButton.OK, MessageBoxImage.Warning);
-                TicketValide = false;
-                TicketInvalide = true;
-                TicketInfo = "❌ Ticket introuvable.";
-                return;
+                AbonnementResponse abonnementEstPayeResponse = await AbonnementProcessor.GetAbonnementAsync(ticketId);
+
+                if(abonnementEstPayeResponse.AbonnementId != string.Empty)
+                {
+                    // ✅ Ticket payé, mise à jour de l'affichage
+                    AbonnementInfo = $"✅ Abonnement valide !\n\r vous pouvez sortir";
+                    AbonnmentValide = true;
+                    AbonnmentInvalide = false;
+                }
+                else
+                {
+                    messageAbonnement = abonnementEstPayeResponse.Message;
+                    messageTicket = ticketEstPayeResponse.Message;
+                    MessageBox.Show("❌" + messageTicket + "\r\n\t\tOU\r\n" + messageAbonnement, "Erreur", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
             }
-
-            if (ticketResponse.EstConverti)
-            {
-                //TicketInfo = $"✅ Paiement validé !\nHeure d'arrivée : {ticketResponse.TempsArrivee}\nHeure de sortie : {ticketResponse.TempsSortie}";
-                MessageBox.Show("Ce ticket a été converti en abonnment donc n'a pas été payé.", "Avertissement", MessageBoxButton.OK, MessageBoxImage.Warning);
-                TicketValide = false;
-                TicketInvalide = true;
-                TicketInfo = "Ticket non payé.";
-                return;
-            }
-
-            // ✅ Ticket payé, mise à jour de l'affichage
-            TicketInfo = $"✅ Paiement validé !\nHeure d'arrivée : {ticketResponse.TempsArrivee}\nHeure de sortie : {ticketResponse.TempsSortie}";
-            TicketValide = true;
-            TicketInvalide = false;
-            AfficherBoutonRecu = true;
-
-            // Mise à jour des propriétés pour affichage
-            TempsArrivee = ticketResponse.TempsArrivee;
-            TempsSortie = ticketResponse.TempsSortie;
         }
     }
 

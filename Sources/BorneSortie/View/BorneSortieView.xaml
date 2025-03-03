@@ -49,25 +49,26 @@
                     <RowDefinition Height="4*"/>
                 </Grid.RowDefinitions>
 
-                <TextBlock TextWrapping="Wrap" Text="Scanner votre ticket de stationnment ou d'abonnement" FontSize="22" FontWeight="Bold" TextAlignment="Center" Margin="0,10"/>
+                <TextBlock TextWrapping="Wrap" Text="Scanner votre ticket de stationnment ou d'abonnement"
+                           FontSize="22" FontWeight="Bold" TextAlignment="Center" />
 
                 <!-- Contenu principal -->
-                    <!-- Carte pour afficher les informations d'abonnement -->
-                <StackPanel Grid.Row="1" Background="White" Width="Auto" Margin="10,0,10,10">
+                <StackPanel Grid.Row="1" Background="White" Width="500" 
+                            HorizontalAlignment="Center" VerticalAlignment="Center">
                     <!-- Cas d'un ticket de stationnement scanné-->
-                    <TextBlock Text="{Binding TicketInfo}" FontSize="14" TextAlignment="Center" Margin="0,5"/>
-                    <TextBlock Text="⛔ Ticket invalide" FontSize="14" Foreground="Red" TextAlignment="Center" 
+                    <TextBlock Text="{Binding TicketInfo}" FontSize="20" TextAlignment="Center" Margin="0,5"/>
+                    <TextBlock Text="⛔ Ticket invalide" FontSize="20" Foreground="Red" TextAlignment="Center" 
                             Visibility="{Binding TicketInvalide, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                     <TextBlock Text="✅ Ticket payé" FontSize="14" Foreground="Green" TextAlignment="Center" 
                             Visibility="{Binding TicketValide, Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
+                    <!-- Cas d'un ticket d'abonnement scanné-->
                     <TextBlock Style="{StaticResource MaterialDesignSubtitle1TextBlock}"
                                Text="{Binding AbonnementInfo}"
                                Visibility="{Binding AbonnmentValide, Converter={StaticResource BooleanToVisibilityConverter}}"
                                TextAlignment="Center"
                                Margin="0,5"/>
 
-                    <!-- Cas d'un ticket d'abonnement scanné-->
                     <TextBlock Text="⛔ Ticket invalide"
                     Style="{StaticResource MaterialDesignBody1TextBlock}"
                     Foreground="Red"
