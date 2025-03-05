@@ -6,7 +6,8 @@
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:local="clr-namespace:Administration.View"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800"
+        Title="MainWindow" Height="640" Width="800"
+         MinWidth="640" MinHeight="800"
         Background="#009A44"  WindowStartupLocation="CenterScreen"
         ResizeMode="CanResize">
 
@@ -53,7 +54,7 @@
                     <!-- Bouton tableau de bord" -->
                     <Button x:Name="btnTableauBord" Width="120" Height="100" Background="Blue" Click="BtnTableauBord_Click">
                         <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
-                            <materialDesign:PackIcon Kind="Account" Width="40" Height="50"/>
+                            <materialDesign:PackIcon Kind="ChartPie" Width="40" Height="50"/>
                             <TextBlock TextWrapping="Wrap" Text="tableau de bord"/>
                         </StackPanel>
                     </Button>
@@ -61,7 +62,7 @@
                     <!-- Bouton Console de gestion -->
                     <Button x:Name="btnGestion" Width="120" Height="100" Background="Blue" Click="BtnGestion_Click" Margin="0,50,0,0">
                         <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
-                            <materialDesign:PackIcon Kind="AccountCheck" Width="40" Height="50"/>
+                            <materialDesign:PackIcon Kind="AlarmPanelOutline" Width="40" Height="50" />
                             <TextBlock TextWrapping="Wrap" Text="Console de gestion"/>
                         </StackPanel>
                     </Button>
@@ -69,7 +70,7 @@
                     <!-- Bouton section rapports -->
                     <Button x:Name="btnRapports" Width="120" Height="100" Background="Blue" Click="BtnRapports_Click" Margin="0,50,0,0">
                         <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
-                            <materialDesign:PackIcon Kind="AccountCheck" Width="40" Height="50"/>
+                            <materialDesign:PackIcon Kind="ChartBox" Width="40" Height="50"/>
                             <TextBlock TextWrapping="Wrap" Text="section rapports"/>
                         </StackPanel>
                     </Button>
