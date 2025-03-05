@@ -1,0 +1,27 @@
+﻿<Window x:Class="Administration.View.TarificationDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        mc:Ignorable="d"
+        Title="Gestion Tarification" Height="500" Width="400">
+
+    <Grid Margin="20">
+        <StackPanel>
+            <TextBlock Text="Prix :" />
+            <TextBox Text="{Binding Tarification.Prix}" Margin="0,0,0,10"/>
+
+            <TextBlock Text="Durée Min (minutes) :" />
+            <TextBox Text="{Binding Tarification.DureeMin}" Margin="0,0,0,10"/>
+
+            <TextBlock Text="Durée Max (minutes) :" />
+            <TextBox Text="{Binding Tarification.DureeMax}" Margin="0,0,0,20"/>
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <Button Content="Enregistrer" Command="{Binding EnregistrerCommand}" Margin="0,0,50,0"/>
+                <Button Content="Annuler" Command="{Binding AnnulerCommand}"/>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Window>

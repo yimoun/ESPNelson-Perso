@@ -15,6 +15,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Administration.ViewModel;
 using System.Windows.Media.Animation;
+using Microsoft.EntityFrameworkCore;
 
 namespace Administration.View
 {
@@ -48,7 +49,10 @@ namespace Administration.View
 
         public void AfficherTableauBord()
         {
-            MainFrame.Navigate(new TableauBordView());
+            TableauBordVM tableauBordVM = new TableauBordVM();
+            TableauBordView tableauBordPage = new TableauBordView { DataContext = tableauBordVM };
+
+            MainFrame.Navigate(tableauBordPage);
             NavButtonsPanel.Visibility = Visibility.Visible;
             btnDeconnexion.Visibility = Visibility.Visible;
         }
@@ -67,14 +71,18 @@ namespace Administration.View
 
         private void BtnGestion_Click(object sender, RoutedEventArgs e)
         {
-            
-            NavigateToPage(new GestionView());
+            GestionVM gestionVM = new GestionVM();
+            GestionView gestionPage = new GestionView { DataContext = gestionVM };
+
+            NavigateToPage(gestionPage);
         }
 
         private void BtnRapports_Click(object sender, RoutedEventArgs e)
         {
+            RapportsVM rapportsVM = new RapportsVM();
+            RapportsView rapportsView = new RapportsView { DataContext = rapportsVM };  
 
-            NavigateToPage(new RapportsView());
+            NavigateToPage(rapportsView);
         }
 
         public void NavigateToPage(Page newPage)

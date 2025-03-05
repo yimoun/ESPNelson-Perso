@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Administration.Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,22 +11,27 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Administration.ViewModel;
 
 namespace Administration.View
 {
     /// <summary>
-    /// Logique d'interaction pour TableauBordView.xaml
+    /// Logique d'interaction pour TarificationDialog.xaml
     /// </summary>
-    public partial class TableauBordView : Page
+    public partial class TarificationDialog : Window
     {
-        public TableauBordView()
+        public TarificationDialog(Tarification tarification, bool estNouvelle)
         {
             InitializeComponent();
-            DataContext = new TableauBordVM();
-
+            DataContext = new TarificationDialogVM(tarification, CloseDialogWithResult);
         }
+
+        private void CloseDialogWithResult(bool result)
+        {
+            this.DialogResult = result;
+            this.Close();
+        }
+
     }
 }

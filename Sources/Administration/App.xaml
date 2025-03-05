@@ -19,6 +19,7 @@
             <helpers:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
             <helpers:BooleanToInverseVisibilityConverter x:Key="BooleanToInverseVisibilityConverter" />
             <helpers:StringToVisibilityConverter x:Key="StringToVisibilityConverter" />
+            <helpers:NullToBooleanConverter x:Key="NullToBooleanConverter" />
 
 
             <Style TargetType="Page">

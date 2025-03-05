@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Administration.ViewModel;
 
 namespace Administration.View
 {
@@ -23,6 +24,7 @@ namespace Administration.View
         public RapportsView()
         {
             InitializeComponent();
+            DataContext = new RapportsVM();
         }
     }
 }

@@ -5,6 +5,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:Administration.View"
       xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+      xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="TableauBordView">
@@ -17,20 +18,122 @@
 
         <!-- Titre -->
         <TextBlock Grid.Row="0"
-                 Style="{StaticResource MaterialDesignHeadline4TextBlock}"
                  Text="TABLEAU DE BORD"
-                 HorizontalAlignment="Center"
                  FontSize="32"
-                 Margin="0,20,0,10" Cursor=""/>
+                 FontWeight="Bold"
+                 HorizontalAlignment="Center"
+                 Margin="0,20,0,10"/>
+
+        
+
+        <Border DockPanel.Dock="Top" Background="DarkBlue" Height="60">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <TextBlock Text="TABLEAU DE BORD" Foreground="White" 
+                           FontSize="24" FontWeight="Bold" VerticalAlignment="Center"
+                            HorizontalAlignment="Center" />
+
+                <Button Content="Actualiser" Command="{Binding RefreshCommand}"
+                        HorizontalAlignment="Right" Margin="30,0,0,0" />
+            </StackPanel>
+            
+        </Border>
+
 
         <!-- Contenu principal -->
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-            <StackPanel HorizontalAlignment="Center" Width="Auto">
-                <!-- Carte -->
-                <materialDesign:Card Padding="16" Margin="16" HorizontalAlignment="Center" Width="Auto">
-                    
-                </materialDesign:Card>
-            </StackPanel>
+            <materialDesign:Card Padding="16" Margin="16" HorizontalAlignment="Center" Width="700">
+
+                <StackPanel>
+
+                    <!-- Section Etat du stationnement -->
+                    <TextBlock FontSize="16">
+                        <Run Text="Jour: " />
+                        <Run Text="{Binding DateDuJour}" />
+                    </TextBlock>
+
+                    <TextBlock FontSize="16">
+                        <Run Text="Heure: " />
+                        <Run Text="{Binding HeureActuelle}" />
+                    </TextBlock>
+                    <Grid Margin="0,10,0,10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition Width="3*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Places disponibles/occupées -->
+                        <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                            <TextBlock FontSize="16">
+                                <Run Text="Places occupées: " />
+                                <Run Text="{Binding PlacesOccupees}"
+                            />
+                         
+                            </TextBlock>
+
+                            <TextBlock FontSize="16">
+                                <Run Text="Places disponibles: " />
+                                <Run Text="{Binding PlacesDisponibles}" 
+                            />
+                            
+                            </TextBlock>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="1">
+                            <StackPanel Visibility="{Binding AfficherDiagramme, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                <!-- Diagramme en tarte -->
+                                <lvc:PieChart Series="{Binding EtatStationnementSeries}" Width="200" Height="200">
+                                    <lvc:PieChart.LegendLocation>Bottom</lvc:PieChart.LegendLocation>
+                                </lvc:PieChart>
+                            </StackPanel>
+
+                            <TextBlock Text="{Binding MessageAlerte}" Foreground="Red" FontWeight="Bold"
+                             TextAlignment="Center" Visibility="{Binding AfficherDiagramme, Converter={StaticResource BooleanToInverseVisibilityConverter}}"
+                            />
+                        </StackPanel>
+
+                        
+
+                        
+
+                    </Grid>
+
+                    <!-- Section Graphique des tendances -->
+                    <TextBlock Text="Graphique des tendances des revenus des 7 derniers jours" FontWeight="Bold" Margin="0,20,0,10"/>
+
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,10">
+                        <RadioButton Content="Tickets seulement" IsChecked="{Binding FiltreTickets}" Margin="10,0"/>
+                        <RadioButton Content="Abonnements seulement" IsChecked="{Binding FiltreAbonnements}" Margin="10,0"/>
+                        <RadioButton Content="Tous (par défaut)" IsChecked="{Binding FiltreTous}" Margin="10,0"/>
+                    </StackPanel>
+
+
+                    <!-- Graphique des revenus -->
+                    <Grid Height="300" HorizontalAlignment="Stretch">
+                        <lvc:CartesianChart Series="{Binding RevenusSeries}"
+                                LegendLocation="Top"
+                                Margin="10"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch">
+                            <lvc:CartesianChart.AxisX>
+                                <lvc:Axis Title="Date" Labels="{Binding JoursLabels}" LabelsRotation="30"
+                                          MaxValue="7" MinValue="0" FontWeight="Bold" Foreground="#009A44">
+                                    <lvc:Axis.Separator>
+                                        <lvc:Separator Step="1"/>
+                                    </lvc:Axis.Separator>
+                                </lvc:Axis>
+                            </lvc:CartesianChart.AxisX>
+
+
+
+                            <lvc:CartesianChart.AxisY>
+                                <lvc:Axis Title="Revenus ($)" LabelFormatter="{Binding YFormatter}"/>
+                            </lvc:CartesianChart.AxisY>
+                        </lvc:CartesianChart>
+                    </Grid>
+
+                </StackPanel>
+
+            </materialDesign:Card>
         </ScrollViewer>
     </Grid>
 </Page>

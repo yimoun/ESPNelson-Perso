@@ -3,12 +3,134 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:local="clr-namespace:Administration.View"
+      xmlns:md="http://materialdesigninxaml.net/winfx/xaml/controls"
+      xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
       mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800"
       Title="GestionView">
+    
+    
 
-    <Grid>
-        
-    </Grid>
+    <DockPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <!-- Barre contenant le titre de la page en haut -->
+        <Border DockPanel.Dock="Top" Background="DarkBlue" Height="60">
+            <TextBlock Text="CONSOLE DE GESTION" Foreground="White" 
+                       FontSize="24" FontWeight="Bold" VerticalAlignment="Center"
+                       HorizontalAlignment="Center" Padding="10"/>
+        </Border>
+
+        <materialDesign:Card DockPanel.Dock="Top" Margin="10">
+            <TabControl
+                materialDesign:NavigationRailAssist.ShowSelectionBackground="True"
+                SnapsToDevicePixels="True"
+                Style="{StaticResource MaterialDesignNavigationRailTabControl}"
+                TabStripPlacement="Left"
+                Padding="10">
+
+                <!-- Onglet Utilisateurs -->
+                <TabItem>
+                    <TabItem.Header>
+                        <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
+                            <materialDesign:PackIcon Kind="AccountGroup" Width="50" Height="40"/>
+                            <TextBlock Text="Utilisateurs" FontWeight="Bold" HorizontalAlignment="Center"/>
+                        </StackPanel>
+                    </TabItem.Header>
+
+                    <StackPanel Margin="16">
+                        <TextBlock Text="Liste des administrateurs" FontWeight="Bold" FontSize="20" 
+                                   HorizontalAlignment="Center"/>
+
+                        <DataGrid ItemsSource="{Binding Administrateurs}" 
+                                  SelectedItem="{Binding UtilisateurSelectionne}" 
+                                  AutoGenerateColumns="False"
+                                  Style="{StaticResource MaterialDesignDataGrid}" 
+                                  HorizontalAlignment="Center"
+                                  VerticalAlignment="Center"
+                                  Height="200"
+                                  IsReadOnly="True"
+                                  SelectionMode="Single"
+                                  AlternatingRowBackground="{DynamicResource MaterialDesignPaper}">
+
+                            <!-- Colonne Nom utilisateur -->
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Nom utilisateur" 
+                            Binding="{Binding NomUtilisateur}" 
+                            Width="2*" />
+
+                                <!-- Colonne Email -->
+                                <DataGridTextColumn Header="Email" 
+                            Binding="{Binding Email}" 
+                            Width="3*" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+
+
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0">
+                            <Button Content="Ajouter" Command="{Binding AjouterUtilisateurCommand}" 
+                                    Style="{StaticResource MaterialDesignOutlinedButton}"/>
+
+                            <Button Content="Modifier" Command="{Binding ModifierUtilisateurCommand}" 
+                                    Style="{StaticResource MaterialDesignOutlinedButton}" 
+                                    Visibility="{Binding BoutonsVisible, Converter={StaticResource BooleanToVisibilityConverter}}" Margin="10,0,0,0"/>
+
+                            <Button Content="Supprimer" Command="{Binding SupprimerUtilisateurCommand}" 
+                                    Style="{StaticResource MaterialDesignOutlinedButton}" 
+                                    Visibility="{Binding BoutonsVisible, Converter={StaticResource BooleanToVisibilityConverter}}" Margin="10,0,0,0"/>
+                        </StackPanel>
+                    </StackPanel>
+
+                </TabItem>
+
+                <!-- Onglet Tarifications -->
+                <TabItem>
+                    <TabItem.Header>
+                        <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
+                            <materialDesign:PackIcon Kind="CashMultiple" Width="40" Height="40"/>
+                            <TextBlock Text="Tarifications" FontWeight="Bold" HorizontalAlignment="Center"/>
+                        </StackPanel>
+                    </TabItem.Header>
+
+                    <StackPanel Orientation="Vertical" Margin="16">
+                        <DataGrid ItemsSource="{Binding Tarifications}" 
+                                  SelectedItem="{Binding TarificationSelectionnee}"
+                                  AutoGenerateColumns="False"
+                                  Style="{StaticResource MaterialDesignDataGrid}"
+                                  Height="200"
+                                  HorizontalAlignment="Center"
+                                  Margin="10">
+
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Niveau" Binding="{Binding Niveau}" Width="*"/>
+                                <DataGridTextColumn Header="Prix (en $)" Binding="{Binding Prix}" Width="*"/>
+                                <DataGridTextColumn Header="Durée Min (heure)" Binding="{Binding DureeMin}" Width="*"/>
+                                <DataGridTextColumn Header="Durée Max (heure)" Binding="{Binding DureeMax}" Width="*"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+
+
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0">
+                            <Button Content="Modifier" Command="{Binding ModifierTarificationCommand}" 
+                                    IsEnabled="{Binding TarificationSelectionnee, Converter={StaticResource NullToBooleanConverter}}" Margin="5"/>
+                        </StackPanel>
+                    </StackPanel>
+                </TabItem>
+
+                <!-- Onglet Configurations -->
+                <TabItem>
+                    <TabItem.Header>
+                        <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
+                            <materialDesign:PackIcon Kind="CogOutline" Width="40" Height="40"/>
+                            <TextBlock Text="Configurations" FontWeight="Bold" HorizontalAlignment="Center"/>
+                        </StackPanel>
+                    </TabItem.Header>
+
+                    <StackPanel Margin="20">
+                        <TextBlock Style="{StaticResource MaterialDesignHeadline5TextBlock}" 
+                                   Text="Paramètres de configuration"/>
+                        <TextBlock Text="Gérez ici les paramètres globaux du système, y compris la capacité maximale, les taxes et autres options."/>
+                    </StackPanel>
+                </TabItem>
+
+            </TabControl>
+        </materialDesign:Card>
+    </DockPanel>
 </Page>
