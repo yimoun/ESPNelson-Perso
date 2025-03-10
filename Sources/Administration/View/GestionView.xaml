@@ -92,6 +92,8 @@
                     <StackPanel Orientation="Vertical" Margin="16">
                         <DataGrid ItemsSource="{Binding Tarifications}" 
                                   SelectedItem="{Binding TarificationSelectionnee}"
+                                  IsReadOnly="True"
+                                  SelectionMode="Single"
                                   AutoGenerateColumns="False"
                                   Style="{StaticResource MaterialDesignDataGrid}"
                                   Height="200"
@@ -125,8 +127,37 @@
 
                     <StackPanel Margin="20">
                         <TextBlock Style="{StaticResource MaterialDesignHeadline5TextBlock}" 
-                                   Text="Paramètres de configuration"/>
-                        <TextBlock Text="Gérez ici les paramètres globaux du système, y compris la capacité maximale, les taxes et autres options."/>
+                   Text="Paramètres de configuration"/>
+                        <TextBlock Text="C'est la configuration la plus récente qui est appliquée à tous le système" FontWeight="Bold"/>
+
+                        <DataGrid ItemsSource="{Binding Configurations}" 
+                                  SelectedItem="{Binding ConfigurationSelectionnee}"
+                                  IsReadOnly="True"
+                                  SelectionMode="Single"
+                                  AutoGenerateColumns="False"
+                                  Style="{StaticResource MaterialDesignDataGrid}"
+                                  Height="200"
+                                  HorizontalAlignment="Stretch"
+                                  Margin="10">
+
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Capacité max" Binding="{Binding CapaciteMax}" Width="*"/>
+                                <DataGridTextColumn Header="Taxe fédérale" Binding="{Binding TaxeFederal, StringFormat='{}{0:C}'}"  Width="*"/>
+                                <DataGridTextColumn Header="Taxe provinciale" Binding="{Binding TaxeProvincial, StringFormat='{}{0:C}'}"  Width="*"/>
+                                <DataGridTextColumn Header="Date de modification" Binding="{Binding DateModification, StringFormat='dd/MM/yyyy HH:mm'}" Width="*"/>
+                                <DataGridTextColumn Header="Faite par" Binding="{Binding Utilisateur.NomUtilisateur, TargetNullValue='Admin supprimé'}" Width="*"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0">
+                            <Button Content="Ajouter" Command="{Binding AjouterConfigurationCommand}" 
+                                    Style="{StaticResource MaterialDesignOutlinedButton}"/>
+
+                            <Button Content="Supprimer" Command="{Binding SupprimerConfigurationCommand}" 
+                                    Style="{StaticResource MaterialDesignOutlinedButton}" 
+                                    Visibility="{Binding ConfigurationSelectionnee, Converter={StaticResource NullToBooleanConverter}}"
+                                    Margin="10,0,0,0"/> 
+                        </StackPanel>
                     </StackPanel>
                 </TabItem>
 

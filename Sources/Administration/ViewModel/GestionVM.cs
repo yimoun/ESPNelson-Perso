@@ -5,6 +5,7 @@ using Administration.View;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MaterialDesignThemes.Wpf;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -29,7 +30,13 @@ namespace Administration.ViewModel
         private Tarification tarificationSelectionnee;
 
         [ObservableProperty]
-        private bool boutonsVisible;  // Pour afficher Modifier/Supprimer
+        private bool boutonsVisible;
+
+        [ObservableProperty]
+        private ObservableCollection<Configuration> configurations;
+
+        [ObservableProperty]
+        private Configuration? configurationSelectionnee;
 
         public GestionVM()
         {
@@ -38,6 +45,7 @@ namespace Administration.ViewModel
 
             ChargerUtilisateurs();
             ChargerTarifications();
+            ChargerConfigurations();
         }
 
         private void ChargerUtilisateurs()
@@ -54,6 +62,79 @@ namespace Administration.ViewModel
         {
             Tarifications = new ObservableCollection<Tarification>(_dbContext.Tarifications.ToList());
         }
+
+        private void ChargerConfigurations()
+        {
+            var configs = _dbContext.Configurations
+                .Include(c => c.Utilisateur) 
+                .ToList();
+
+            Configurations = new ObservableCollection<Configuration>(configs);
+        }
+
+        [RelayCommand]
+        private void AjouterConfiguration()
+        {
+            var nouvelleConfiguration = new Configuration
+            {
+                DateModification = DateTime.Now,
+                UtilisateurId = App.Current.User.Id
+            };
+
+            if (AfficherDialogConfiguration(nouvelleConfiguration))
+            {
+                _dbContext.Configurations.Add(nouvelleConfiguration);
+                _dbContext.SaveChanges();
+                ChargerConfigurations();
+            }
+        }
+
+        [RelayCommand]
+        private void SupprimerConfiguration()
+        {
+            // Vérifie si aucune configuration n'est sélectionnée
+            if (ConfigurationSelectionnee == null)
+                return;
+
+            // Vérifie si c'est la seule configuration dans la liste
+            if (Configurations.Count == 1)
+            {
+                MessageBox.Show("Impossible de supprimer la dernière configuration. Le système a besoin d'au moins une configuration.", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+
+            // Demande une confirmation avant de supprimer
+            if (MessageBox.Show("Confirmer la suppression de cette configuration ?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+            {
+                _dbContext.Configurations.Remove(ConfigurationSelectionnee);
+                _dbContext.SaveChanges();
+                ChargerConfigurations();
+            }
+        }
+
+        private bool AfficherDialogConfiguration(Configuration configuration)
+        {
+            var vm = new ConfigurationDialogVM
+            {
+                CapaciteMax = configuration.CapaciteMax,
+                TaxeFederal = configuration.TaxeFederal,
+                TaxeProvincial = configuration.TaxeProvincial
+            };
+
+            var dialog = new ConfigurationDialog(vm);
+            if (dialog.ShowDialog() == true)
+            {
+                // Mettre à jour la configuration avec les valeurs saisies
+                configuration.CapaciteMax = vm.CapaciteMax;
+                configuration.TaxeFederal = vm.TaxeFederal;
+                configuration.TaxeProvincial = vm.TaxeProvincial;
+                return true;
+            }
+            return false;
+        }
+
+
 
         partial void OnUtilisateurSelectionneChanged(Utilisateur? value)
         {

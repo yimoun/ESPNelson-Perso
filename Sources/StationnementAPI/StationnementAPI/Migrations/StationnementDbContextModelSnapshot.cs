@@ -94,6 +94,20 @@ namespace StationnementAPI.Migrations
                     b.Property<decimal>("Montant")
                         .HasColumnType("decimal(10,2)");
 
+                    b.Property<int>("TarificationDureeMax")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TarificationDureeMin")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TarificationNiveau")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<decimal>("TarificationPrix")
+                        .HasColumnType("decimal(10,2)");
+
                     b.Property<string>("TicketId")
                         .HasColumnType("varchar(255)");
 

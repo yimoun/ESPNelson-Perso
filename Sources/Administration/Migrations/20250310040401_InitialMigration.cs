@@ -155,7 +155,12 @@ namespace Administration.Migrations
                     AbonnementId = table.Column<string>(type: "varchar(255)", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Montant = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
-                    DatePaiement = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                    DatePaiement = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    TarificationNiveau = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    TarificationPrix = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
+                    TarificationDureeMin = table.Column<int>(type: "int", nullable: false),
+                    TarificationDureeMax = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {

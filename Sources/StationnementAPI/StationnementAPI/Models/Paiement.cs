@@ -11,15 +11,26 @@ namespace StationnementAPI.Models
 
         public string? TicketId { get; set; }
 
-        [Column(TypeName = "varchar(255)")] // ✅ S'assure que MySQL traite bien cette colonne comme un string
+        [Column(TypeName = "varchar(255)")]
         public string? AbonnementId { get; set; }
 
         [Required]
         [Column(TypeName = "decimal(10,2)")]
-        public decimal Montant { get; set; } // Calculé à partir de la tarification applicable
+        public decimal Montant { get; set; } // Montant total payé (déjà calculé avec les taxes)
 
         [Required]
-        public DateTime DatePaiement { get; set; } = DateTime.UtcNow; // Enregistre l'instant du paiement
+        public DateTime DatePaiement { get; set; } = DateTime.UtcNow;
+
+        // Détails de la tarification appliquée au moment du paiement
+        [MaxLength(50)]
+        public string TarificationNiveau { get; set; } // Niveau de tarification
+
+        [Column(TypeName = "decimal(10,2)")]
+        public decimal TarificationPrix { get; set; } // Prix appliqué
+
+        public int TarificationDureeMin { get; set; } // Durée minimale appliquée
+
+        public int TarificationDureeMax { get; set; } // Durée maximale appliquée
 
         [ForeignKey("TicketId")]
         public Ticket Ticket { get; set; }

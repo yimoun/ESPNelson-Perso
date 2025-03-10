@@ -93,10 +93,13 @@ namespace StationnementAPI.Controllers
                 MontantAvecTaxes = montantAvecTaxes,
                 DureeStationnement = Math.Round(dureeStationnement, 2),
                 TarificationAppliquee = tarification.Niveau,
+                TarificationPrix = tarification.Prix,
+                TarificationDureeMin = tarification.DureeMin,
+                TarificationDureeMax = tarification.DureeMax,
                 TempsArrivee = ticket.TempsArrive,
                 TempsSortie = tempsSortie,
-                EstPaye = ticket.EstPaye,   
-                EstConverti = ticket.EstConverti,   
+                EstPaye = ticket.EstPaye,
+                EstConverti = ticket.EstConverti,
                 TaxeFederal = configuration.TaxeFederal,
                 TaxeProvincial = configuration.TaxeProvincial
             });
@@ -134,6 +137,11 @@ namespace StationnementAPI.Controllers
             decimal taxes = (decimal)montantResult.GetType().GetProperty("Taxes")?.GetValue(montantResult);
             decimal montantAvecTaxes = (decimal)montantResult.GetType().GetProperty("MontantAvecTaxes")?.GetValue(montantResult);
 
+            string tarificationNiveau = (string)montantResult.GetType().GetProperty("TarificationAppliquee")?.GetValue(montantResult);
+            decimal tarificationPrix = (decimal)montantResult.GetType().GetProperty("TarificationPrix")?.GetValue(montantResult);
+            int tarificationDureeMin = (int)montantResult.GetType().GetProperty("TarificationDureeMin")?.GetValue(montantResult);
+            int tarificationDureeMax = (int)montantResult.GetType().GetProperty("TarificationDureeMax")?.GetValue(montantResult);
+
             // Mettre à jour le statut du ticket et enregistrer le paiement
             ticket.EstPaye = true;
             ticket.TempsSortie = DateTime.UtcNow;
@@ -143,6 +151,10 @@ namespace StationnementAPI.Controllers
                 TicketId = ticket.Id,
                 Montant = montantAvecTaxes,
                 DatePaiement = ticket.TempsSortie.Value,
+                TarificationNiveau = tarificationNiveau,
+                TarificationPrix = tarificationPrix,
+                TarificationDureeMin = tarificationDureeMin,
+                TarificationDureeMax = tarificationDureeMax
             };
 
             _context.Paiements.Add(paiement);
@@ -155,7 +167,8 @@ namespace StationnementAPI.Controllers
                 Taxes = taxes,
                 MontantAvecTaxes = montantAvecTaxes,
                 TempsArrivee = ticket.TempsArrive,
-                TempsSortie = ticket.TempsSortie
+                TempsSortie = ticket.TempsSortie,
+                TarificationAppliquee = tarificationNiveau
             });
         }
     }
