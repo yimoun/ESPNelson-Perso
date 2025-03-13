@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using BorneSortie.Resources;
 
 namespace BorneSortie.ViewModel
 {
@@ -17,11 +18,14 @@ namespace BorneSortie.ViewModel
     {
         [ObservableProperty] private bool ticketValide = false;  // ✅ Pour gérer l'affichage dynamique
         [ObservableProperty] private bool ticketInvalide = false;
-        [ObservableProperty] private string ticketInfo;
+        [ObservableProperty] private string ticketInfo = string.Empty;
 
         [ObservableProperty] private bool abonnmentValide = false;  // ✅ Pour gérer l'affichage dynamique
         [ObservableProperty] private bool abonnmentInvalide = false;
-        [ObservableProperty] private string abonnementInfo;
+        [ObservableProperty] private string abonnementInfo = string.Empty;
+
+        [ObservableProperty] public bool hasScanned = false; 
+
 
         [ObservableProperty] private string abonnementId;
 
@@ -46,18 +50,26 @@ namespace BorneSortie.ViewModel
             {
                 if (ticketEstPayeResponse.EstPaye == false)
                 {
-                    // ❌ Ticket payé, mise à jour de l'affichage
-                    TicketInfo = $"❌ Paiement non validé !\n ce ticket existe bien mais n'a pas été payé";
-                    TicketValide = false;
+                    // ❌ Ticket non payé, mise à jour de l'affichage
+                    TicketInfo = string.Format(Resource.UnpaidTicket).Replace("\n", Environment.NewLine);
                     TicketInvalide = true;
+                    TicketValide = false;   
+                    HasScanned = true;
 
                     return;
                 }
 
-                // ✅ Ticket payé, mise à jour de l'affichage
-                TicketInfo = $"✅ Paiement validé !\nHeure d'arrivée : {ticketEstPayeResponse.TempsArrivee}\nHeure de payement : {ticketEstPayeResponse.TempsSortie}";
-                TicketValide = true;
-                TicketInvalide = false;
+                else
+                {
+                    // ✅ Ticket payé, mise à jour de l'affichage
+                    TicketInfo = string.Format(Resource.ValidPaiment).Replace("\n", Environment.NewLine);
+                    TicketValide = true;
+                    TicketInvalide = false;
+
+                    HasScanned = true;
+                }
+
+               
 
                 return;
             }
@@ -68,7 +80,7 @@ namespace BorneSortie.ViewModel
                 if(abonnementEstPayeResponse.AbonnementId != string.Empty)
                 {
                     // ✅ Ticket payé, mise à jour de l'affichage
-                    AbonnementInfo = $"✅ Abonnement valide !\n\r vous pouvez sortir";
+                    AbonnementInfo = string.Format(Resource.ValidSubscription).Replace("\n", Environment.NewLine);
                     AbonnmentValide = true;
                     AbonnmentInvalide = false;
                 }
@@ -76,11 +88,40 @@ namespace BorneSortie.ViewModel
                 {
                     messageAbonnement = abonnementEstPayeResponse.Message;
                     messageTicket = ticketEstPayeResponse.Message;
-                    MessageBox.Show("❌" + messageTicket + "\r\n\t\tOU\r\n" + messageAbonnement, "Erreur", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    MessageBox.Show(string.Format(Resource.ErrorSubscriptionTicket.Replace("\n", Environment.NewLine), messageTicket, messageAbonnement), "Erreur", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
             }
         }
+
+        /// <summary>
+        /// Méthode pour rafraîchir TicketInfo et AbonnementInfo après le changement de langue
+        /// </summary>
+        public void UpdateTicketInfoLanguage()
+        {
+            if (TicketValide)
+            {
+                TicketInfo = string.Format(Resource.ValidPaiment).Replace("\n", Environment.NewLine);
+            }
+            else if (TicketInvalide)
+            {
+                TicketInfo = string.Format(Resource.UnpaidTicket).Replace("\n", Environment.NewLine);
+            }
+            else
+            {
+                TicketInfo = string.Empty;
+            }
+
+            if(AbonnmentValide)
+            {
+                AbonnementInfo = string.Format(Resource.ValidSubscription).Replace("\n", Environment.NewLine);
+            }
+            else
+            {
+                //à revoir quand l'abonnement n'est pas valid
+            }
+        }
+
     }
 
-    
+
 }

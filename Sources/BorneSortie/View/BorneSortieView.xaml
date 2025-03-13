@@ -18,9 +18,12 @@
         <!-- Barre supérieure pour la sélection de la langue -->
         <Border DockPanel.Dock="Top" Width="auto" Height="70" HorizontalAlignment="Center" BorderThickness="0,0,0,1" BorderBrush="LightGray">
             <StackPanel Orientation="Horizontal">
-                <Label  Content="BORNE DE SORTIE" Foreground="Blue"  FontSize="40" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                <TextBlock Text="Langue :" FontSize="25" FontWeight="Bold" VerticalAlignment="Center" Margin="10,0,0,0"/>
-                <ComboBox x:Name="languageComboBox" Width="100" Margin="0,0,20,0">
+                <Label x:Name="label_ExitStation" Foreground="Blue"  FontSize="40" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                <Label x:Name="label_Language"  FontSize="25" FontWeight="Bold" VerticalAlignment="Center" Margin="10,0,0,0"
+                        />
+                <ComboBox x:Name="languageComboBox" 
+                          SelectionChanged="LanguageComboBox_SelectionChanged" Width="100" Margin="0,0,20,0"
+                         >
                     <ComboBoxItem Content="Français" Tag="fr"/>
                     <ComboBoxItem Content="English" Tag="en"/>
                 </ComboBox>
@@ -33,11 +36,11 @@
 
                 <!-- Image du logo CIUSSS -->
                 <Image Source="../img/logo_ciuss.jpg"
-            Stretch="Fill"
-            HorizontalAlignment="Stretch"
-            VerticalAlignment="Center"
-            Width="Auto"
-            Height="200"/>
+                       Stretch="Fill"
+                       HorizontalAlignment="Stretch"
+                       VerticalAlignment="Center"
+                       Width="Auto"
+                       Height="200"/>
             </StackPanel>
         </Border>
 
@@ -49,33 +52,47 @@
                     <RowDefinition Height="4*"/>
                 </Grid.RowDefinitions>
 
-                <TextBlock TextWrapping="Wrap" Text="Scanner votre ticket de stationnment ou d'abonnement"
-                           FontSize="22" FontWeight="Bold" TextAlignment="Center" />
+                <TextBlock x:Name="label_ScanningInstructions"
+                             TextWrapping="WrapWithOverflow" 
+                             FontSize="22" FontWeight="Bold" 
+                             TextAlignment="Center" 
+                             HorizontalAlignment="Stretch"
+                             VerticalAlignment="Center"/> 
+
+
 
                 <!-- Contenu principal -->
-                <StackPanel Grid.Row="1" Background="White" Width="500" 
-                            HorizontalAlignment="Center" VerticalAlignment="Center">
+                <StackPanel Grid.Row="1" Background="White" Width="600" 
+                            HorizontalAlignment="Stretch" VerticalAlignment="Center" >
                     <!-- Cas d'un ticket de stationnement scanné-->
-                    <TextBlock Text="{Binding TicketInfo}" FontSize="20" TextAlignment="Center" Margin="0,5"/>
-                    <TextBlock Text="⛔ Ticket invalide" FontSize="20" Foreground="Red" TextAlignment="Center" 
+                    <TextBlock Text="{Binding TicketInfo, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  
+                               TextWrapping="WrapWithOverflow"
+                               FontSize="19" 
+                               MinHeight="50"
+                               HorizontalAlignment="Stretch"
+                               TextAlignment="Left"
+                               Visibility="{Binding HasScanned, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+
+                    <TextBlock x:Name="label_InvalidTicket" FontSize="20" Foreground="Red" TextAlignment="Center" 
                             Visibility="{Binding TicketInvalide, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-                    <TextBlock Text="✅ Ticket payé" FontSize="14" Foreground="Green" TextAlignment="Center" 
+                    <TextBlock x:Name="label_PaidTicket" FontSize="18" Foreground="Green" TextAlignment="Center" 
                             Visibility="{Binding TicketValide, Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
                     <!-- Cas d'un ticket d'abonnement scanné-->
                     <TextBlock Style="{StaticResource MaterialDesignSubtitle1TextBlock}"
-                               Text="{Binding AbonnementInfo}"
+                               Text="{Binding AbonnementInfo, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                Visibility="{Binding AbonnmentValide, Converter={StaticResource BooleanToVisibilityConverter}}"
                                TextAlignment="Center"
                                Margin="0,5"/>
 
-                    <TextBlock Text="⛔ Ticket invalide"
+                    <TextBlock x:Name="label_InvalidSeasonTicket"
                     Style="{StaticResource MaterialDesignBody1TextBlock}"
                     Foreground="Red"
                     TextAlignment="Center"
                     Visibility="{Binding AbonnmentInvalide, Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
-                    <TextBlock Text="✅ Ticket valide"
+                    <TextBlock x:Name="label_ValidSeasonTicket"
                     Style="{StaticResource MaterialDesignBody1TextBlock}"
                     Foreground="Green"
                     TextAlignment="Center"
