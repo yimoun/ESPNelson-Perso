@@ -151,6 +151,7 @@ namespace BorneSortie.View
         }
 
         private async void Fenetre_KeyDown(object sender, KeyEventArgs e)
+        
         {
             // Ignorer les touches spéciales
             if (e.Key == Key.LeftShift || e.Key == Key.RightShift ||

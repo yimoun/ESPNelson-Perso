@@ -61,7 +61,7 @@ namespace BorneSortie.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à ❌ {0}---OU---{1}.
+        ///   Recherche une chaîne localisée semblable à ❌Ticket non reconnu par ce système.
         /// </summary>
         internal static string ErrorSubscriptionTicket {
             get {

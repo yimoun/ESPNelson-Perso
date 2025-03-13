@@ -79,48 +79,42 @@ namespace BornePaiement.ViewModel
                 return;
             }
 
-            //Afficher le clavier pour simuler le paiement
-            // Ouvrir la fenêtre NumPad
+            // Simuler le paiement via le NIP
             var numPadPopup = new NumPadPopup();
             bool? result = numPadPopup.ShowDialog();
 
-            // Vérifier si l'utilisateur a confirmé un NIP
-            if (result == true)
+            if (result == true && numPadPopup.EnteredPin == "999")
             {
-                if (numPadPopup.EnteredPin == "999")
+                var (success, message, abonnement) = await AbonnementProcessor.SouscrireAbonnementAsync(_ticketScanne, Email, TypeAbonnement);
+
+                if (success)
                 {
-                    var (success, message, abonnement) = await TicketProcessor.SouscrireAbonnementAsync(_ticketScanne, Email, TypeAbonnement);
+                    MessageBox.Show($"Abonnement souscrit avec succès !\nType : {abonnement.TypeAbonnement}\nDate de début : {abonnement.DateDebut:dd/MM/yyyy}\nDate de fin : {abonnement.DateFin:dd/MM/yyyy}\nMontant : {abonnement.MontantPaye:C}", "Succès", MessageBoxButton.OK, MessageBoxImage.Information);
 
-                    if (success)
+                    PeutAfficherBoutonGenerer = true;
+                    PeutSimuler = false;
+                    InfoAbonnementVisible = false;
+
+                    // Stocker les informations pour générer le ticket
+                    dateDebut = abonnement.DateDebut;
+                    dateFin = abonnement.DateFin;
+                    abonnementId = abonnement.AbonnementId;
+
+                    // Générer le code-barres
+                    Bitmap barcodeBitmap = GenerateBarcode(abonnementId);
+                    if (barcodeBitmap != null)
                     {
-                        MessageBox.Show($"Abonnement souscrit avec succès !\nType : {abonnement.TypeAbonnement}\nDate de début : {abonnement.DateDebut:dd/MM/yyyy}\nDate de fin : {abonnement.DateFin:dd/MM/yyyy}\nMontant : {abonnement.MontantPaye:C}", "Succès", MessageBoxButton.OK, MessageBoxImage.Information);
-
-                        PeutAfficherBoutonGenerer = true;
-                        PeutSimuler = false;
-                        InfoAbonnementVisible = false;
-
-                        //Les infos à mettre dans le ticket d'abonnment qui sera généré
-                        dateDebut = abonnement.DateDebut;
-                        dateFin = abonnement.DateFin;
-                        abonnementId = abonnement.AbonnementId;
-
-
-                        //pour l'insérer par la suite dans le ticket d'abonnment
-                        Bitmap barcodeBitmap = GenerateBarcode(abonnementId);
-                        if (barcodeBitmap != null)
-                        {
-                            BarcodeImage = ConvertBitmapToBitmapImage(barcodeBitmap);
-                        }
-                    }
-                    else
-                    {
-                        MessageBox.Show($"Erreur lors de la souscription : {message}", "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
+                        BarcodeImage = ConvertBitmapToBitmapImage(barcodeBitmap);
                     }
                 }
                 else
                 {
-                    MessageBox.Show("❌ NIP incorrect. Veuillez réessayer.", "Erreur", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    MessageBox.Show($"Erreur lors de la souscription : {message}", "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
+            }
+            else
+            {
+                MessageBox.Show("❌ NIP incorrect. Veuillez réessayer.", "Erreur", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
 

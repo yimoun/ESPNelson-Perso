@@ -83,12 +83,16 @@ namespace BorneSortie.ViewModel
                     AbonnementInfo = string.Format(Resource.ValidSubscription).Replace("\n", Environment.NewLine);
                     AbonnmentValide = true;
                     AbonnmentInvalide = false;
+
+                    TicketInfo = string.Empty;  //POur éviter des encombrement d'affichage
                 }
                 else
                 {
-                    messageAbonnement = abonnementEstPayeResponse.Message;
-                    messageTicket = ticketEstPayeResponse.Message;
-                    MessageBox.Show(string.Format(Resource.ErrorSubscriptionTicket.Replace("\n", Environment.NewLine), messageTicket, messageAbonnement), "Erreur", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    MessageBox.Show(string.Format(Resource.ErrorSubscriptionTicket.Replace("\n", Environment.NewLine)), "Erreur", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    
+                    //HasScanned = true; //Juste pour pouvoir afficher ce message via cette variable
+                    //TicketInfo = string.Format(Resource.ErrorSubscriptionTicket.Replace("\n", Environment.NewLine));
+                   
                 }
             }
         }
@@ -113,6 +117,7 @@ namespace BorneSortie.ViewModel
 
             if(AbonnmentValide)
             {
+                TicketInfo = string.Empty;  //POur éviter des encombrement d'affichage
                 AbonnementInfo = string.Format(Resource.ValidSubscription).Replace("\n", Environment.NewLine);
             }
             else
