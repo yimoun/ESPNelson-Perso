@@ -4,6 +4,7 @@ using Administration.Model;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Win32;
 using PdfSharp.Drawing;
 using PdfSharp.Pdf;
 using System;
@@ -28,6 +29,9 @@ namespace Administration.ViewModel
 
         [ObservableProperty]
         private DateTime dateFin = DateTime.Now; // Date de fin par défaut
+
+        [ObservableProperty]
+        private string rapportInformations; // Propriété pour stocker les informations du rapport
 
         private const string PdfSavePath = "Rapports";
         private static readonly string LogoPath = Path.Combine(Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).Parent.Parent.Parent.FullName, "img", "logo_ciuss.jpg");
@@ -58,9 +62,38 @@ namespace Administration.ViewModel
             // Générer le rapport
             var rapport = GenererRapportRevenus(DateDebut, DateFin);
 
-            // Afficher les résultats dans l'interface (à implémenter)
-            // Par exemple, vous pouvez stocker les résultats dans des propriétés ObservableProperty
-            // et les afficher dans un DataGrid ou un TextBlock.
+            // Afficher les résultats dans l'interface
+            RapportInformations = FormatRapportInformations(rapport);
+        }
+
+
+        private string FormatRapportInformations((Dictionary<string, int> TicketsParTarification, Dictionary<string, decimal> RevenusParTarification, decimal TotalRevenus,
+           List<(Configuration Config, decimal Revenus)> RevenusParConfiguration, decimal RevenusAbonnements) rapport)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            sb.AppendLine($"Rapport de revenus du {DateDebut:dd/MM/yyyy} au {DateFin:dd/MM/yyyy}");
+            sb.AppendLine();
+
+            sb.AppendLine("Tickets par tarification:");
+            foreach (var kvp in rapport.TicketsParTarification)
+            {
+                sb.AppendLine($"{kvp.Key}: {kvp.Value} tickets, Revenu: {rapport.RevenusParTarification[kvp.Key]:C}");
+            }
+            sb.AppendLine();
+
+            if(rapport.TicketsParTarification.Count == 0)
+            {
+                sb.AppendLine($"Il ya pas de tickets payés pour cette période");
+            }
+
+            sb.AppendLine($"Total des revenus: {rapport.TotalRevenus:C}");
+            sb.AppendLine($"Revenus des abonnements: {rapport.RevenusAbonnements:C}");
+            sb.AppendLine($"Total intégrant les taxes: {rapport.TotalRevenus + rapport.RevenusAbonnements:C}");
+
+            // Convertir en UTF-8 si nécessaire
+            byte[] utf8Bytes = Encoding.UTF8.GetBytes(sb.ToString());
+            return Encoding.UTF8.GetString(utf8Bytes);
         }
 
         private void ExporterRapport()
@@ -165,122 +198,138 @@ namespace Administration.ViewModel
         }
 
         public void ExporterRapportEnPDF(Dictionary<string, int> ticketsParTarification, Dictionary<string, decimal> revenusParTarification, decimal totalRevenus,
-    List<(Configuration Config, decimal Revenus)> revenusParConfiguration, decimal revenusAbonnements)
+     List<(Configuration Config, decimal Revenus)> revenusParConfiguration, decimal revenusAbonnements)
         {
-            if (!Directory.Exists(PdfSavePath))
-                Directory.CreateDirectory(PdfSavePath);
-
-            string pdfFilePath = Path.Combine(PdfSavePath, $"Rapport_{DateDebut:yyyyMMdd}_{DateFin:yyyyMMdd}.pdf");
-
-            // Créer un nouveau document PDF
-            PdfDocument document = new PdfDocument();
-            PdfPage page = document.AddPage();
-            XGraphics gfx = XGraphics.FromPdfPage(page);
-
-            // Définir les polices
-            XFont fontTitre = new XFont("Arial", 40);
-            XFont fontSousTitre = new XFont("Arial", 20);
-            XFont fontTexte = new XFont("Arial", 12);
-            XFont fontTableHeader = new XFont("Arial", 12);
-            XFont fontTableContent = new XFont("Arial", 12);
-
-            // Définir les marges
-            double margeGauche = 50;
-            double margeHaut = 50;
-            double margeDroite = 50;
-            double margeBas = 50;
-            double largeurPage = page.Width;
-            double hauteurPage = page.Height;
-
-            // Position verticale actuelle
-            double y = margeHaut;
-
-            // Ajouter l'en-tête
-            gfx.DrawString("Hôpital de Chicoutimi", fontTitre, XBrushes.Black, new XPoint((largeurPage - gfx.MeasureString("Hôpital de Chicoutimi", fontTitre).Width) / 2, y));
-            y += 40;
-
-            if (File.Exists(LogoPath))
+            // Créer un nouveau document PDF en mémoire
+            using (MemoryStream stream = new MemoryStream())
             {
-                XImage image = XImage.FromFile(LogoPath);
-                double largeurImage = 150; // Ajustez la largeur de l'image
-                double hauteurImage = image.PixelHeight * (largeurImage * 2 / image.PixelWidth);
-                gfx.DrawImage(image, (largeurPage - largeurImage) / 2, y, largeurImage, hauteurImage);
-                y += hauteurImage + 20;
-            }
+                PdfDocument document = new PdfDocument();
+                PdfPage page = document.AddPage();
+                XGraphics gfx = XGraphics.FromPdfPage(page);
 
-            // Ajouter le titre du rapport
-            string titreRapport = $"Rapport de revenus du {DateDebut:dd/MM/yyyy} au {DateFin:dd/MM/yyyy}";
-            gfx.DrawString(titreRapport, fontSousTitre, XBrushes.Black, new XPoint((largeurPage - gfx.MeasureString(titreRapport, fontSousTitre).Width) / 2, y));
-            y += 40;
+                // Définir les polices
+                XFont fontTitre = new XFont("Arial", 40);
+                XFont fontSousTitre = new XFont("Arial", 20);
+                XFont fontTexte = new XFont("Arial", 12);
+                XFont fontTableHeader = new XFont("Arial", 12);
+                XFont fontTableContent = new XFont("Arial", 12);
 
-            // Ajouter le tableau des tickets payés par type de tarification
-            double largeurColonne1 = 200; // Largeur de la colonne "Type de tarification"
-            double largeurColonne2 = 150; // Largeur de la colonne "Nombre de tickets"
-            double largeurColonne3 = 150; // Largeur de la colonne "Revenu total"
+                // Définir les marges
+                double margeGauche = 50;
+                double margeHaut = 50;
+                double margeDroite = 50;
+                double margeBas = 50;
+                double largeurPage = page.Width;
+                double hauteurPage = page.Height;
 
-            // Calculer la largeur totale du tableau
-            double largeurTotaleTableau = largeurColonne1 + largeurColonne2 + largeurColonne3;
+                // Position verticale actuelle
+                double y = margeHaut;
 
-            // Calculer la marge gauche pour centrer le tableau
-            double margeGaucheCentree = (largeurPage - largeurTotaleTableau) / 2;
+                // Ajouter l'en-tête
+                gfx.DrawString("Hôpital de Chicoutimi", fontTitre, XBrushes.Black, new XPoint((largeurPage - gfx.MeasureString("Hôpital de Chicoutimi", fontTitre).Width) / 2, y));
+                y += 40;
 
-            // En-tête du tableau
-            gfx.DrawString("Type de tarification", fontTableHeader, XBrushes.Black, new XPoint(margeGaucheCentree, y));
-            gfx.DrawString("Nombre de tickets", fontTableHeader, XBrushes.Black, new XPoint(margeGaucheCentree + largeurColonne1, y));
-            gfx.DrawString("Revenu total", fontTableHeader, XBrushes.Black, new XPoint(margeGaucheCentree + largeurColonne1 + largeurColonne2, y));
-            y += 20;
+                if (File.Exists(LogoPath))
+                {
+                    XImage image = XImage.FromFile(LogoPath);
+                    double largeurImage = 150; // Ajustez la largeur de l'image
+                    double hauteurImage = image.PixelHeight * (largeurImage * 2 / image.PixelWidth);
+                    gfx.DrawImage(image, (largeurPage - largeurImage) / 2, y, largeurImage, hauteurImage);
+                    y += hauteurImage + 20;
+                }
 
-            // Ligne de séparation
-            gfx.DrawLine(XPens.Black, margeGaucheCentree, y, margeGaucheCentree + largeurTotaleTableau, y);
-            y += 10;
+                // Ajouter le titre du rapport
+                string titreRapport = $"Rapport de revenus du {DateDebut:dd/MM/yyyy} au {DateFin:dd/MM/yyyy}";
+                gfx.DrawString(titreRapport, fontSousTitre, XBrushes.Black, new XPoint((largeurPage - gfx.MeasureString(titreRapport, fontSousTitre).Width) / 2, y));
+                y += 40;
 
-            // Contenu du tableau
-            foreach (var kvp in ticketsParTarification)
-            {
-                gfx.DrawString(kvp.Key, fontTableContent, XBrushes.Black, new XPoint(margeGaucheCentree, y));
-                gfx.DrawString(kvp.Value.ToString(), fontTableContent, XBrushes.Black, new XPoint(margeGaucheCentree + largeurColonne1, y));
-                gfx.DrawString($"{revenusParTarification[kvp.Key]:C}", fontTableContent, XBrushes.Black, new XPoint(margeGaucheCentree + largeurColonne1 + largeurColonne2, y));
+                // Ajouter le tableau des tickets payés par type de tarification
+                double largeurColonne1 = 200; // Largeur de la colonne "Type de tarification"
+                double largeurColonne2 = 150; // Largeur de la colonne "Nombre de tickets"
+                double largeurColonne3 = 150; // Largeur de la colonne "Revenu total"
+
+                // Calculer la largeur totale du tableau
+                double largeurTotaleTableau = largeurColonne1 + largeurColonne2 + largeurColonne3;
+
+                // Calculer la marge gauche pour centrer le tableau
+                double margeGaucheCentree = (largeurPage - largeurTotaleTableau) / 2;
+
+                // En-tête du tableau
+                gfx.DrawString("Type de tarification", fontTableHeader, XBrushes.Black, new XPoint(margeGaucheCentree, y));
+                gfx.DrawString("Nombre de tickets", fontTableHeader, XBrushes.Black, new XPoint(margeGaucheCentree + largeurColonne1, y));
+                gfx.DrawString("Revenu total", fontTableHeader, XBrushes.Black, new XPoint(margeGaucheCentree + largeurColonne1 + largeurColonne2, y));
                 y += 20;
+
+                // Ligne de séparation
+                gfx.DrawLine(XPens.Black, margeGaucheCentree, y, margeGaucheCentree + largeurTotaleTableau, y);
+                y += 10;
+
+                // Contenu du tableau
+                foreach (var kvp in ticketsParTarification)
+                {
+                    gfx.DrawString(kvp.Key, fontTableContent, XBrushes.Black, new XPoint(margeGaucheCentree, y));
+                    gfx.DrawString(kvp.Value.ToString(), fontTableContent, XBrushes.Black, new XPoint(margeGaucheCentree + largeurColonne1, y));
+                    gfx.DrawString($"{revenusParTarification[kvp.Key]:C}", fontTableContent, XBrushes.Black, new XPoint(margeGaucheCentree + largeurColonne1 + largeurColonne2, y));
+                    y += 20;
+                }
+
+                // Ligne de séparation
+                gfx.DrawLine(XPens.Black, margeGaucheCentree, y, margeGaucheCentree + largeurTotaleTableau, y);
+                y += 10;
+
+                // Calculer le total des tickets et des revenus
+                int totalTickets = ticketsParTarification.Values.Sum();
+                decimal totalRevenusTarification = revenusParTarification.Values.Sum();
+
+                // Ajouter une ligne pour le total
+                gfx.DrawString("Total", fontTableContent, XBrushes.Black, new XPoint(margeGaucheCentree, y + 30));
+                gfx.DrawString(totalTickets.ToString(), fontTableContent, XBrushes.Black, new XPoint(margeGaucheCentree + largeurColonne1, y + 30));
+                gfx.DrawString($"{totalRevenusTarification:C}", fontTableContent, XBrushes.Black, new XPoint(margeGaucheCentree + largeurColonne1 + largeurColonne2, y + 30));
+                y += 20;
+
+                // Ajouter le total des revenus
+                gfx.DrawString($"Total des revenus: {totalRevenus:C}", fontTexte, XBrushes.Black, new XPoint(margeGaucheCentree, y + 80));
+                y += 20;
+
+                // Ajouter les revenus des abonnements
+                gfx.DrawString($"Revenus des abonnements: {revenusAbonnements:C}", fontTexte, XBrushes.Black, new XPoint(margeGaucheCentree, y + 80));
+                y += 20;
+
+                // Ajouter le total intégrant les taxes
+                decimal totalAvecTaxes = totalRevenus + revenusAbonnements;
+                gfx.DrawString($"Total intégrant les taxes: {totalAvecTaxes:C}", fontTexte, XBrushes.Black, new XPoint(margeGaucheCentree, y + 80));
+                y += 40;
+
+                // Ajouter le pied de page avec la pagination
+                string piedDePage = "Page 1 - Nelson Junior YN";
+                gfx.DrawString(piedDePage, fontTexte, XBrushes.Black, new XPoint((largeurPage - gfx.MeasureString(piedDePage, fontTexte).Width) / 2, hauteurPage - margeBas));
+
+                // Sauvegarder le document dans le MemoryStream
+                document.Save(stream, false);
+
+                //// Ouvrir le PDF directement dans le lecteur par défaut
+                //string tempFilePath = Path.GetTempFileName(); // Créer un fichier temporaire
+                //File.WriteAllBytes(tempFilePath, stream.ToArray()); // Écrire le PDF dans le fichier temporaire
+                //Process.Start(new ProcessStartInfo(tempFilePath) { UseShellExecute = true }); // Ouvrir le fichier
+
+
+                // Proposer à l'utilisateur de sauvegarder le fichier
+                SaveFileDialog saveFileDialog = new SaveFileDialog
+                {
+                    Filter = "Fichiers PDF (*.pdf)|*.pdf", // Filtre pour les fichiers PDF
+                    FileName = $"Rapport_{DateDebut:yyyyMMdd}_{DateFin:yyyyMMdd}.pdf", // Nom par défaut du fichier
+                    Title = "Enregistrer le rapport PDF" // Titre de la boîte de dialogue
+                };
+
+                if (saveFileDialog.ShowDialog() == true) // Si l'utilisateur clique sur "Enregistrer"
+                {
+                    // Écrire le PDF dans le fichier sélectionné
+                    File.WriteAllBytes(saveFileDialog.FileName, stream.ToArray());
+
+                    // Ouvrir le fichier PDF avec le programme par défaut
+                    Process.Start(new ProcessStartInfo(saveFileDialog.FileName) { UseShellExecute = true });
+                }
             }
-
-            // Ligne de séparation
-            gfx.DrawLine(XPens.Black, margeGaucheCentree, y, margeGaucheCentree + largeurTotaleTableau, y);
-            y += 10;
-
-            // Calculer le total des tickets et des revenus
-            int totalTickets = ticketsParTarification.Values.Sum();
-            decimal totalRevenusTarification = revenusParTarification.Values.Sum();
-
-            // Ajouter une ligne pour le total
-            gfx.DrawString("Total", fontTableContent, XBrushes.Black, new XPoint(margeGaucheCentree, y + 30));
-            gfx.DrawString(totalTickets.ToString(), fontTableContent, XBrushes.Black, new XPoint(margeGaucheCentree + largeurColonne1, y + 30));
-            gfx.DrawString($"{totalRevenusTarification:C}", fontTableContent, XBrushes.Black, new XPoint(margeGaucheCentree + largeurColonne1 + largeurColonne2, y + 30));
-            y += 20;
-
-           
-
-            // Ajouter le total des revenus
-            gfx.DrawString($"Total des revenus: {totalRevenus:C}", fontTexte, XBrushes.Black, new XPoint(margeGaucheCentree, y + 80));
-            y += 20;
-
-            // Ajouter les revenus des abonnements
-            gfx.DrawString($"Revenus des abonnements: {revenusAbonnements:C}", fontTexte, XBrushes.Black, new XPoint(margeGaucheCentree, y + 80));
-            y += 20;
-
-            // Ajouter le total intégrant les taxes
-            decimal totalAvecTaxes = totalRevenus + revenusAbonnements;
-            gfx.DrawString($"Total intégrant les taxes: {totalAvecTaxes:C}", fontTexte, XBrushes.Black, new XPoint(margeGaucheCentree, y + 80));
-            y += 40;
-
-            // Ajouter le pied de page avec la pagination
-            string piedDePage = "Page 1 - Nelson Junior YN";
-            gfx.DrawString(piedDePage, fontTexte, XBrushes.Black, new XPoint((largeurPage - gfx.MeasureString(piedDePage, fontTexte).Width) / 2, hauteurPage - margeBas));
-
-            // Sauvegarder le document
-            document.Save(pdfFilePath);
-
-            // Ouvrir le fichier PDF
-            Process.Start(new ProcessStartInfo(pdfFilePath) { UseShellExecute = true });
         }
 
 

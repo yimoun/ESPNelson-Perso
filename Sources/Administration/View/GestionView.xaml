@@ -22,16 +22,16 @@
             <TabControl
                 materialDesign:NavigationRailAssist.ShowSelectionBackground="True"
                 SnapsToDevicePixels="True"
-                Style="{StaticResource MaterialDesignNavigationRailTabControl}"
+        
                 TabStripPlacement="Left"
                 Padding="10">
 
                 <!-- Onglet Utilisateurs -->
-                <TabItem>
-                    <TabItem.Header>
-                        <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
-                            <materialDesign:PackIcon Kind="AccountGroup" Width="50" Height="40"/>
-                            <TextBlock Text="Utilisateurs" FontWeight="Bold" HorizontalAlignment="Center"/>
+                <TabItem Width="155" Height="150" BorderThickness="0,0,1,0" BorderBrush="LightGray" VerticalAlignment="Center" Margin="0, 20">
+                    <TabItem.Header >
+                        <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Width="100" >
+                            <materialDesign:PackIcon Kind="AccountGroup" Width="50" Height="50" HorizontalAlignment="Center"/>
+                            <TextBlock  TextWrapping="Wrap" Text="tableau de bord" HorizontalAlignment="Center"/>
                         </StackPanel>
                     </TabItem.Header>
 
@@ -81,11 +81,11 @@
                 </TabItem>
 
                 <!-- Onglet Tarifications -->
-                <TabItem>
+                <TabItem Width="155" Height="150" BorderThickness="0,0,1,0" BorderBrush="LightGray" VerticalAlignment="Center" Margin="0, 20">
                     <TabItem.Header>
                         <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
-                            <materialDesign:PackIcon Kind="CashMultiple" Width="40" Height="40"/>
-                            <TextBlock Text="Tarifications" FontWeight="Bold" HorizontalAlignment="Center"/>
+                            <materialDesign:PackIcon Kind="CashMultiple" Width="40" Height="50" HorizontalAlignment="Center"/>
+                            <TextBlock Text="Tarifications"  TextWrapping="Wrap" FontWeight="Bold" HorizontalAlignment="Center"/>
                         </StackPanel>
                     </TabItem.Header>
 
@@ -117,11 +117,11 @@
                 </TabItem>
 
                 <!-- Onglet Configurations -->
-                <TabItem>
+                <TabItem Width="155" Height="150" BorderThickness="0,0,1,0" BorderBrush="LightGray" VerticalAlignment="Center" Margin="0, 20">
                     <TabItem.Header>
                         <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
-                            <materialDesign:PackIcon Kind="CogOutline" Width="40" Height="40"/>
-                            <TextBlock Text="Configurations" FontWeight="Bold" HorizontalAlignment="Center"/>
+                            <materialDesign:PackIcon Kind="CogOutline" Width="40" Height="50" HorizontalAlignment="Center"/>
+                            <TextBlock Text="Configurations" TextWrapping="Wrap" FontWeight="Bold" HorizontalAlignment="Center"/>
                         </StackPanel>
                     </TabItem.Header>
 

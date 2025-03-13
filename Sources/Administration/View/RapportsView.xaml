@@ -7,23 +7,59 @@
       xmlns:local="clr-namespace:Administration.View"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
-      Title="RapportsView">
+      Title="RapportsView"
+      Background="#F5F5F5">
 
-    <Grid>
-
-        <StackPanel>
-            <!-- Date de début -->
+    <DockPanel LastChildFill="True" Margin="10">
+        <StackPanel DockPanel.Dock="Left" Width="250" Margin="0,0,20,0" VerticalAlignment="Center">
             <DatePicker materialDesign:HintAssist.Hint="Date de début"
-                SelectedDate="{Binding DateDebut, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        SelectedDate="{Binding DateDebut, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        Style="{StaticResource MaterialDesignOutlinedDatePicker}"
+                        FontSize="14"
+                        Margin="0,0,0,60"/>
 
-            <!-- Date de fin -->
             <DatePicker materialDesign:HintAssist.Hint="Date de fin"
-                SelectedDate="{Binding DateFin, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        SelectedDate="{Binding DateFin, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        Style="{StaticResource MaterialDesignOutlinedDatePicker}"
+                        FontSize="14"
+                        Margin="0,0,0,60"/>
 
-            <!-- Boutons -->
-            <Button Content="Générer le rapport" Command="{Binding GenererRapportCommand}"/>
-            <Button Content="Exporter en PDF" Command="{Binding ExporterRapportCommand}"/>
+            <Button Content="Générer le rapport" 
+                    Command="{Binding GenererRapportCommand}" 
+                    Style="{StaticResource MaterialDesignRaisedButton}"
+                    FontSize="20"
+                    Margin="0,0,0,50"
+                    Height="75"
+                    Background="Blue" 
+                Foreground="White"/>
+
+            <Button Content="Exporter en PDF" 
+                    Command="{Binding ExporterRapportCommand}" 
+                    Style="{StaticResource MaterialDesignRaisedButton}"
+                    FontSize="20"
+                    Height="75"
+                    Background="#009A44" 
+                    Foreground="White"/>
         </StackPanel>
 
-    </Grid>
+        <!-- Colonne de droite : Informations du rapport -->
+        <Border DockPanel.Dock="Right" 
+                Background="White" 
+                CornerRadius="5" 
+                Padding="20"
+                Margin="10"
+                BorderBrush="#DDDDDD"
+                BorderThickness="1">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <TextBlock Text="{Binding RapportInformations}" 
+                           FontFamily="Arial" 
+                           FontWeight="Bold"
+                           FontSize="20" 
+                           TextWrapping="Wrap"
+                           TextAlignment="Center"
+                           LineHeight="50"
+                           />
+            </ScrollViewer>
+        </Border>
+    </DockPanel>
 </Page>
