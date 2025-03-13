@@ -153,6 +153,10 @@
   <data name="TicketNumber" xml:space="preserve">
     <value>Ticket number:</value>
   </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="ValidSubscription" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
+  </data>
   <data name="ValidTicket" xml:space="preserve">
     <value>Valid ticket</value>
   </data>

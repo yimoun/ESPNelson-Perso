@@ -169,6 +169,15 @@ namespace ESPNelson.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Abonnbement valid.
+        /// </summary>
+        internal static string ValidSubscription {
+            get {
+                return ResourceManager.GetString("ValidSubscription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Ticket valide.
         /// </summary>
         internal static string ValidTicket {

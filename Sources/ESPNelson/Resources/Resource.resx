@@ -153,6 +153,9 @@
   <data name="TicketNumber" xml:space="preserve">
     <value>Numéro de ticket:</value>
   </data>
+  <data name="ValidSubscription" xml:space="preserve">
+    <value>Abonnbement valid</value>
+  </data>
   <data name="ValidTicket" xml:space="preserve">
     <value>Ticket valide</value>
   </data>

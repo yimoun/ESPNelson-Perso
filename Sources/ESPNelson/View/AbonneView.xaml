@@ -29,28 +29,32 @@
                       Background="White" Margin="0,0,0,20">
             <StackPanel HorizontalAlignment="Center" Width="Auto">
                 <!-- Carte pour afficher les informations d'abonnement -->
-                <materialDesign:Card  Margin="16" VerticalAlignment="Center" HorizontalAlignment="Center" Width="Auto">
-                    <StackPanel>
-                        <StackPanel Visibility="{Binding AbonnmentValide, Converter={StaticResource BooleanToVisibilityConverter}}" HorizontalAlignment="Center">
-                            <!-- Titre (Statut de l'abonnement) -->
-                            <TextBlock x:Name="label_ValidTicketSubscription" Style="{StaticResource MaterialDesignHeadline5TextBlock}"
-                                       Text="{Binding AbonnementInfo}"
-                                       TextAlignment="Center"
-                                       FontWeight="Bold"
-                                       Margin="0,5"/>
-                        </StackPanel>
+               
+                    <StackPanel Orientation="Vertical"  HorizontalAlignment="Center" >
+                       
+                        <TextBlock x:Name="label_ValidTicketSubscription" Style="{StaticResource MaterialDesignHeadline5TextBlock}"
+                                    Text="{Binding AbonnementInfo}"
+                                    TextAlignment="Center"
+                                    FontWeight="Bold"
+                                    Margin="0,50"
+                                    HorizontalAlignment="Center"
+                                    FontSize="40"
+                                    Visibility="{Binding AbonnmentValide, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                    
 
                         <!-- Messages de validité -->
                         <TextBlock x:Name="label_InvalidTicket"
                                    Style="{StaticResource MaterialDesignBody1TextBlock}"
                                    Foreground="Red"
                                    TextAlignment="Center"
+                                   FontSize="20"
                                    Visibility="{Binding AbonnmentInvalide, Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
                         <TextBlock x:Name="label_ValidTicket"
                                    Style="{StaticResource MaterialDesignBody1TextBlock}"
                                    Foreground="Green"
                                    TextAlignment="Center"
+                                    FontSize="30"
                                    Visibility="{Binding AbonnmentValide, Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
                         <!-- Scanner invisible -->
@@ -58,7 +62,7 @@
                                  Visibility="Collapsed"
                                  KeyDown="HiddenScannerInput_KeyDown"/>
                     </StackPanel>
-                </materialDesign:Card>
+               
             </StackPanel>
         </ScrollViewer>
     </Grid>
