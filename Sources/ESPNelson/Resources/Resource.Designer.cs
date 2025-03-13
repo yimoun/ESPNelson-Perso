@@ -61,20 +61,20 @@ namespace ESPNelson.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Date et heure d&apos;arrivée:.
-        /// </summary>
-        internal static string ArrivalDateTime {
-            get {
-                return ResourceManager.GetString("ArrivalDateTime", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Recherche une chaîne localisée semblable à Télécharger le ticket.
         /// </summary>
         internal static string DownloadTicket {
             get {
                 return ResourceManager.GetString("DownloadTicket", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à BORNE D&apos;ENTRÉE.
+        /// </summary>
+        internal static string EntryStation {
+            get {
+                return ResourceManager.GetString("EntryStation", resourceCulture);
             }
         }
         
@@ -88,11 +88,74 @@ namespace ESPNelson.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Sélectionner la langue.
+        ///   Recherche une chaîne localisée semblable à Ticket invalide.
+        /// </summary>
+        internal static string InvalidTicket {
+            get {
+                return ResourceManager.GetString("InvalidTicket", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Langue.
         /// </summary>
         internal static string Language {
             get {
                 return ResourceManager.GetString("Language", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à L&apos;abonnement est valide et actif, la barrière va s&apos;ouvrir..
+        /// </summary>
+        internal static string OpenBarrierMessage {
+            get {
+                return ResourceManager.GetString("OpenBarrierMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Scanner votre ticket d&apos;Abonné.
+        /// </summary>
+        internal static string ScanningInstructions {
+            get {
+                return ResourceManager.GetString("ScanningInstructions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Abonné.
+        /// </summary>
+        internal static string Subscriber {
+            get {
+                return ResourceManager.GetString("Subscriber", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Date de fin: .
+        /// </summary>
+        internal static string SubscriptionEndDate {
+            get {
+                return ResourceManager.GetString("SubscriptionEndDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Date de début:.
+        /// </summary>
+        internal static string SubscriptionStartDate {
+            get {
+                return ResourceManager.GetString("SubscriptionStartDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Type d&apos;abonnement :.
+        /// </summary>
+        internal static string SubscriptionType {
+            get {
+                return ResourceManager.GetString("SubscriptionType", resourceCulture);
             }
         }
         
@@ -106,11 +169,29 @@ namespace ESPNelson.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Borne d&apos;entrée.
+        ///   Recherche une chaîne localisée semblable à Ticket valide.
         /// </summary>
-        internal static string Title {
+        internal static string ValidTicket {
             get {
-                return ResourceManager.GetString("Title", resourceCulture);
+                return ResourceManager.GetString("ValidTicket", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Visiteur.
+        /// </summary>
+        internal static string Visitor {
+            get {
+                return ResourceManager.GetString("Visitor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Génération de Ticket Visiteur.
+        /// </summary>
+        internal static string VisitorTicketGeneration {
+            get {
+                return ResourceManager.GetString("VisitorTicketGeneration", resourceCulture);
             }
         }
     }

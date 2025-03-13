@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using ESPNelson.Resources;
 using ESPNelson.ViewModel;
 
 namespace ESPNelson.View
@@ -25,7 +26,15 @@ namespace ESPNelson.View
         {
             InitializeComponent();
             this.DataContext = new VisiteurVM();
-            
+
+            LoadLabels();
+
+        }
+
+        public void LoadLabels()
+        {
+            label_VisitorTicketGeneration.Content = Resource.VisitorTicketGeneration;
+            label_GenerateTicket.Content = Resource.GenerateTicket; 
         }
     }
 }

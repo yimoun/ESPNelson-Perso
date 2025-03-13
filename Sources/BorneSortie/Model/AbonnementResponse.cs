@@ -11,9 +11,6 @@ namespace BorneSortie.Model
     {
         public string Message { get; set; }
 
-        /*pour forcer la correspondance dans le noms de propriétés, pour éviter des erreurs de désérialisation
-         * dans le cas où les noms des propriétés ne sont pas les meme avec ceux de l'objet retourné par L'API
-         * */
         [JsonPropertyName("AbonnementId")]
         public string AbonnementId { get; set; }
         public string TypeAbonnement { get; set; }

@@ -14,27 +14,70 @@ using BorneSortie.Resources;
 
 namespace BorneSortie.ViewModel
 {
+    /// <summary>
+    ///ViewModel pour gérer l'affichage et la vérification des tickets et abonnements.
+    /// Utilise l'architecture MVVM et CommunityToolkit.MVVM.
+    /// </summary>
     public partial class BorneSortieVM : ObservableObject
     {
-        [ObservableProperty] private bool ticketValide = false;  // ✅ Pour gérer l'affichage dynamique
+        /// <summary>
+        /// Indique si le ticket est valide (affichage dynamique).
+        /// </summary>
+        [ObservableProperty] private bool ticketValide = false;
+
+        /// <summary>
+        /// Indique si le ticket est invalide (affichage dynamique).
+        /// </summary>
         [ObservableProperty] private bool ticketInvalide = false;
+
+
+        /// <summary>
+        /// Contient les informations du ticket scanné.
+        /// </summary>
         [ObservableProperty] private string ticketInfo = string.Empty;
 
-        [ObservableProperty] private bool abonnmentValide = false;  // ✅ Pour gérer l'affichage dynamique
+        /// <summary>
+        /// Indique si l'abonnement est valide (affichage dynamique).
+        /// </summary>
+        [ObservableProperty] private bool abonnmentValide = false;
+
+        /// <summary>
+        /// Indique si l'abonnement est invalide (affichage dynamique).
+        /// </summary>
         [ObservableProperty] private bool abonnmentInvalide = false;
+
+        /// <summary>
+        /// Contient les informations de l'abonnement scanné.
+        /// </summary>
         [ObservableProperty] private string abonnementInfo = string.Empty;
 
-        [ObservableProperty] public bool hasScanned = false; 
+
+        /// <summary>
+        /// Indique si un ticket ou un abonnement a été scanné.
+        /// </summary>
+        [ObservableProperty] public bool hasScanned = false;
 
 
+        /// <summary>
+        /// Contient l'ID de l'abonnement en cours de vérification.
+        /// </summary>
         [ObservableProperty] private string abonnementId;
 
-        private string ticketScanne = ""; // 🔹 Stocke temporairement le scan
+        /// <summary>
+        /// Stocke temporairement l'Id du ticket scanné.
+        /// </summary>
+        private string ticketScanne = "";
 
 
 
         public BorneSortieVM() { }
 
+        /// <summary>
+        /// Vérifie si un ticket a été payé ou s'il s'agit d'un abonnement valide.
+        /// Met à jour les informations d'affichage en fonction du résultat.
+        /// </summary>
+        /// <param name="ticketId">Identifiant du ticket scanné.</param>
+        /// <returns></returns>
         public async Task VerifierTicketPaye(string ticketId)
         {
             if (string.IsNullOrWhiteSpace(ticketId))

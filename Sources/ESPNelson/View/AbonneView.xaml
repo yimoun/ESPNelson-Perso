@@ -18,9 +18,8 @@
         </Grid.RowDefinitions>
 
         <!-- Titre -->
-        <TextBlock Grid.Row="0"
+        <TextBlock Grid.Row="0" x:Name="label_ScanningInstructions"
                    Style="{StaticResource MaterialDesignHeadline4TextBlock}"
-                   Text="Scanner votre ticket d'Abonné"
                    HorizontalAlignment="Center"
                    FontSize="32"
                    Margin="0,20,0,10"/>
@@ -32,20 +31,23 @@
                 <!-- Carte pour afficher les informations d'abonnement -->
                 <materialDesign:Card  Margin="16" VerticalAlignment="Center" HorizontalAlignment="Center" Width="Auto">
                     <StackPanel>
-                        <TextBlock Style="{StaticResource MaterialDesignSubtitle1TextBlock}"
-                                   Text="{Binding AbonnementInfo}"
-                                   Visibility="{Binding AbonnmentValide, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                   TextAlignment="Center"
-                                   Margin="0,5"/>
+                        <StackPanel Visibility="{Binding AbonnmentValide, Converter={StaticResource BooleanToVisibilityConverter}}" HorizontalAlignment="Center">
+                            <!-- Titre (Statut de l'abonnement) -->
+                            <TextBlock x:Name="label_ValidTicketSubscription" Style="{StaticResource MaterialDesignHeadline5TextBlock}"
+                                       Text="{Binding AbonnementInfo}"
+                                       TextAlignment="Center"
+                                       FontWeight="Bold"
+                                       Margin="0,5"/>
+                        </StackPanel>
 
                         <!-- Messages de validité -->
-                        <TextBlock Text="⛔ Ticket invalide"
+                        <TextBlock x:Name="label_InvalidTicket"
                                    Style="{StaticResource MaterialDesignBody1TextBlock}"
                                    Foreground="Red"
                                    TextAlignment="Center"
                                    Visibility="{Binding AbonnmentInvalide, Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
-                        <TextBlock Text="✅ Ticket valide"
+                        <TextBlock x:Name="label_ValidTicket"
                                    Style="{StaticResource MaterialDesignBody1TextBlock}"
                                    Foreground="Green"
                                    TextAlignment="Center"

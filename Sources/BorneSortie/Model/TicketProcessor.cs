@@ -13,6 +13,13 @@ namespace BorneSortie.Model
 {
     public static class TicketProcessor
     {
+        /// <summary>
+        /// Vérifie si un ticket a été payé en interrogeant l'API.
+        /// Effectue une requête HTTP GET et retourne un objet `TicketEstPayeResponse`.
+        /// En cas d'erreur, un message explicatif est retourné.
+        /// </summary>
+        /// <param name="ticketId">Identifiant unique du ticket</param>
+        /// <returns>Un objet `TicketEstPayeResponse` contenant le statut du paiement.</returns>
         public static async Task<TicketEstPayeResponse> GetTicketPayeAsync(string ticketId)
         {
             using (HttpResponseMessage response = await APIHelper.APIClient.GetAsync($"tickets/{ticketId}/verifier-paiement"))
@@ -40,8 +47,6 @@ namespace BorneSortie.Model
                         EstPaye = false,
                         EstConverti = false,
                         Message = messageErreur,
-                        TempsArrivee = null,
-                        TempsSortie = null,
                     };
                 }
             }

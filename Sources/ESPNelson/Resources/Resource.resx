@@ -117,22 +117,49 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ArrivalDateTime" xml:space="preserve">
-    <value>Date et heure d'arrivée:</value>
-  </data>
   <data name="DownloadTicket" xml:space="preserve">
     <value>Télécharger le ticket</value>
+  </data>
+  <data name="EntryStation" xml:space="preserve">
+    <value>BORNE D'ENTRÉE</value>
   </data>
   <data name="GenerateTicket" xml:space="preserve">
     <value>Générer un ticket</value>
   </data>
+  <data name="InvalidTicket" xml:space="preserve">
+    <value>Ticket invalide</value>
+  </data>
   <data name="Language" xml:space="preserve">
-    <value>Sélectionner la langue</value>
+    <value>Langue</value>
+  </data>
+  <data name="OpenBarrierMessage" xml:space="preserve">
+    <value>L'abonnement est valide et actif, la barrière va s'ouvrir.</value>
+  </data>
+  <data name="ScanningInstructions" xml:space="preserve">
+    <value>Scanner votre ticket d'Abonné</value>
+  </data>
+  <data name="Subscriber" xml:space="preserve">
+    <value>Abonné</value>
+  </data>
+  <data name="SubscriptionEndDate" xml:space="preserve">
+    <value>Date de fin: </value>
+  </data>
+  <data name="SubscriptionStartDate" xml:space="preserve">
+    <value>Date de début:</value>
+  </data>
+  <data name="SubscriptionType" xml:space="preserve">
+    <value>Type d'abonnement :</value>
   </data>
   <data name="TicketNumber" xml:space="preserve">
     <value>Numéro de ticket:</value>
   </data>
-  <data name="Title" xml:space="preserve">
-    <value>Borne d'entrée</value>
+  <data name="ValidTicket" xml:space="preserve">
+    <value>Ticket valide</value>
+  </data>
+  <data name="Visitor" xml:space="preserve">
+    <value>Visiteur</value>
+  </data>
+  <data name="VisitorTicketGeneration" xml:space="preserve">
+    <value>Génération de Ticket Visiteur</value>
   </data>
 </root>

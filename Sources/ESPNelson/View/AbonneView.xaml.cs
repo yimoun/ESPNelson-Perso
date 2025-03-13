@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using ESPNelson.Resources;
 using ESPNelson.ViewModel;
 
 namespace ESPNelson.View
@@ -26,7 +27,20 @@ namespace ESPNelson.View
             InitializeComponent();
             this.DataContext = new AbonneVM();
             this.Loaded += AbonnePage_Loaded;
+
+            LoadLabels();
         }
+
+        
+        public void LoadLabels()
+        {
+            label_ScanningInstructions.Text = Resource.ScanningInstructions;
+            label_InvalidTicket.Text = Resource.InvalidTicket;  
+            label_ValidTicket.Text = Resource.ValidTicket;
+            label_ValidTicketSubscription.Text = Resource.ValidTicket;
+        }
+
+
 
         private StringBuilder _scanBuffer = new StringBuilder(); // Buffeur pour collecter les données du scan
 

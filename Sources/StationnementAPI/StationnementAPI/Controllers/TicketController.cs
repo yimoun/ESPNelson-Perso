@@ -113,8 +113,6 @@ namespace StationnementAPI.Controllers
                 EstPaye = ticket.EstPaye,
                 EstConverti = ticket.EstConverti,
                 Message = ticket.EstPaye ? "✅ Le ticket a déjà été payé." : "⚠️ Le ticket existe mais n'a pas encore été payé.",
-                TempsArrivee = ticket.TempsArrive,
-                TempsSortie = ticket.TempsSortie
             };
 
             return Ok(response);

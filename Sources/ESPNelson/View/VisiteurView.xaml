@@ -17,9 +17,8 @@
         </Grid.RowDefinitions>
 
         <!-- Titre -->
-        <TextBlock Grid.Row="0"
-                   Style="{StaticResource MaterialDesignHeadline4TextBlock}"
-                   Text="Génération de Ticket Visiteur"
+        <Label x:Name="label_VisitorTicketGeneration" Grid.Row="0"
+                   Style="{StaticResource MaterialDesignLabel}"
                    HorizontalAlignment="Center"
                    FontSize="32"
                    Margin="0,20,0,10" Cursor=""/>
@@ -32,7 +31,7 @@
                     <Button Command="{Binding GenerateNewTicketCommand}" Width="250" Height="120" VerticalAlignment="Center">
                         <StackPanel Orientation="Horizontal">
                             <materialDesign:PackIcon Kind="Ticket" Width="24" Height="24"/>
-                            <TextBlock Text="Générer un ticket" FontSize="20"/>
+                            <Label x:Name="label_GenerateTicket"  FontSize="20"/>
                         </StackPanel>
                     </Button>
                 </materialDesign:Card>

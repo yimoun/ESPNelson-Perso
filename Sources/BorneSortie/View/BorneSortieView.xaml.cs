@@ -21,11 +21,19 @@ using BorneSortie.ViewModel;
 namespace BorneSortie.View
 {
     /// <summary>
-    /// Logique d'interaction pour BorneSortie.xaml
+    /// Logique d'interaction pour BorneSortie.xaml: Gère l'affichage des informations de sortie, la sélection de la langue
+    /// et la vérification des tickets via un scanner.
     /// </summary>
     public partial class BorneSortieView : Window
     {
+        /// <summary>
+        /// Langue actuelle de l'application.
+        /// </summary>
         private string _language;
+
+        /// <summary>
+        /// Obtient ou définit la langue de l'application; Met à jour les ressources linguistiques et recharge les labels.
+        /// </summary>
         public string Language
         {
             get { return _language; }
@@ -42,6 +50,9 @@ namespace BorneSortie.View
             }
         }
 
+        /// <summary>
+        /// Constructeur de la fenêtre `BorneSortieView`: Initialise le contexte de données, la langue et les labels.
+        /// </summary>
         public BorneSortieView()
         {
             InitializeComponent();
@@ -58,9 +69,9 @@ namespace BorneSortie.View
             SelectLanguage();
         }
 
+
         /// <summary>
-        ///Pour que la langue actuelle(celle configurée dans le fichier App.Config) soit automatiquement sélectionnée 
-        ///dans le comboBox Dès l'ouverture de la fenêtre
+        ///Sélectionne automatiquement la langue configurée dans `App.Config` au démarrage de l'application.
         /// </summary>
         private void SelectLanguage()
         {
@@ -81,8 +92,8 @@ namespace BorneSortie.View
         /// <summary>
         ///cette fonction met à jour la langue de l'application en fonction de la sélection de l'utilisateur dans le ComboBox
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">Objet source de l'événement</param>
+        /// <param name="e">Arguments de l'événement</param>
         private void LanguageComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (languageComboBox.SelectedItem is ComboBoxItem selectedItem)
@@ -117,13 +128,23 @@ namespace BorneSortie.View
 
 
 
-
+        /// <summary>
+        /// Événement permettant de notifier un changement de propriété.
+        /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
+
+        /// <summary>
+        /// Notifie un changement de propriété pour la mise à jour de l'interface.
+        /// </summary>
+        /// <param name="propertyName">Nom de la propriété modifiée</param>
         protected void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
+        /// <summary>
+        /// Charge les labels et met à jour leur texte en fonction de la langue sélectionnée.
+        /// </summary>
         private void LoadLabels()
         {
             label_Language.Content = Resource.Language;
@@ -132,11 +153,19 @@ namespace BorneSortie.View
             label_InvalidTicket.Text = Resource.InvalidTicket;  
             label_PaidTicket.Text = Resource.PaidTicket;    
             label_InvalidSeasonTicket.Text = Resource.InvalidSeasonTicket;
-            //label_ValidPaiement.Text = Resource.ValidPaiment;
+           
         }
 
-        private StringBuilder _scanBuffer = new StringBuilder(); // Buffeur pour collecter les données du scan
+        /// <summary>
+        /// Buffeur pour stocker les données du scanner avant traitement.
+        /// </summary>
+        private StringBuilder _scanBuffer = new StringBuilder();
 
+        /// <summary>
+        /// Événement déclenché après le chargement de la fenêtre. Définit le focus sur la fenêtre pour capturer les événements clavier.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void BorneSortie_Loaded(object sender, RoutedEventArgs e)
         {
             // Donne le focus au UserControl pour capturer les événements clavier
@@ -144,12 +173,23 @@ namespace BorneSortie.View
             this.Focus();
         }
 
+
+        /// <summary>
+        /// Capture les entrées clavier du scanner et les transmet pour traitement.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void HiddenScannerInput_KeyDown(object sender, KeyEventArgs e)
         {
-            // Transmettre l'événement clavier à la méthode principale
+            // Redirige l'événement vers la méthode principale de gestion des touches
             Fenetre_KeyDown(sender, e);
         }
 
+        /// <summary>
+        /// Gère les entrées clavier et interprète les scans de tickets.
+        /// </summary>
+        /// <param name="sender">Objet source de l'événement</param>
+        /// <param name="e">Arguments de l'événement</param>
         private async void Fenetre_KeyDown(object sender, KeyEventArgs e)
         
         {
@@ -178,17 +218,17 @@ namespace BorneSortie.View
                 // Capturer les chiffres (0-9)
                 if (e.Key >= Key.D0 && e.Key <= Key.D9) // Chiffres de 0 à 9
                 {
-                    _scanBuffer.Append(e.Key.ToString().Replace("D", "")); // Supprimer le préfixe "D" pour les chiffres
+                    _scanBuffer.Append(e.Key.ToString().Replace("D", "")); // Supprime le préfixe "D" pour les chiffres
                 }
                 // Capturer les chiffres du pavé numérique (0-9)
                 else if (e.Key >= Key.NumPad0 && e.Key <= Key.NumPad9) // Chiffres du pavé numérique
                 {
-                    _scanBuffer.Append(e.Key.ToString().Replace("NumPad", "")); // Supprimer le préfixe "NumPad"
+                    _scanBuffer.Append(e.Key.ToString().Replace("NumPad", "")); // Supprime le préfixe "NumPad"
                 }
                 // Capturer les lettres (A-Z)
                 else if (e.Key >= Key.A && e.Key <= Key.Z) // Lettres de A à Z
                 {
-                    _scanBuffer.Append(e.Key.ToString()); // Conserver la lettre telle quelle
+                    _scanBuffer.Append(e.Key.ToString()); // Conserve la lettre telle quelle
                 }
             }
         }

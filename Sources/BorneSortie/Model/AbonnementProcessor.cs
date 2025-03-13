@@ -13,6 +13,13 @@ namespace BorneSortie.Model
 {
     public static class AbonnementProcessor
     {
+        /// <summary>
+        /// Récupère les informations d'un abonnement actif à partir de son ID.
+        /// Effectue une requête HTTP GET vers l'API et retourne un objet `AbonnementResponse`.
+        /// En cas d'erreur, un message approprié est retourné.
+        /// </summary>
+        /// <param name="abonnementId">Identifiant unique de l'abonnement</param>
+        /// <returns>>Un objet `AbonnementResponse` contenant les informations de l'abonnement.</returns>
         public static async Task<AbonnementResponse> GetAbonnementAsync(string abonnementId)
         {
             using (HttpResponseMessage response = await APIHelper.APIClient.GetAsync($"abonnements/actifs/{abonnementId}"))

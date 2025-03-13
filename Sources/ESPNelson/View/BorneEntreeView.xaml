@@ -22,9 +22,10 @@
         <!-- Barre supérieure pour la sélection de la langue -->
         <Border DockPanel.Dock="Top" Width="auto" Height="70" HorizontalAlignment="Center" BorderThickness="0,0,0,1" BorderBrush="LightGray">
             <StackPanel Orientation="Horizontal">
-                <Label  Content="BORNE D'ENTRÉE" Foreground="Blue"  FontSize="50" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                <TextBlock Text="Langue :" FontSize="25" FontWeight="Bold" VerticalAlignment="Center" Margin="10,0,0,0"/>
-                <ComboBox x:Name="languageComboBox" Width="120" Margin="0,0,20,0">
+                <Label x:Name="label_EntryStation" Foreground="Blue"  FontSize="50" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                <Label x:Name="label_Language" FontSize="25" FontWeight="Bold" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                <ComboBox x:Name="languageComboBox" 
+                            SelectionChanged="LanguageComboBox_SelectionChanged" Width="100" Margin="10,0,0,0" Background="White" FontSize="20">
                     <ComboBoxItem Content="Français" Tag="fr"/>
                     <ComboBoxItem Content="English" Tag="en"/>
                 </ComboBox>
@@ -43,18 +44,18 @@
                Width="Auto"
                Height="Auto"/>
                 <!-- Bouton Visiteur -->
-                <Button x:Name="btnVisiteur" Width="120" Height="80" Background="White" Click="BtnVisiteur_Click">
+                <Button x:Name="btnVisiteur" Width="150" Height="100" Background="White" Click="BtnVisiteur_Click">
                     <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
                         <materialDesign:PackIcon Kind="Account" Width="40" Height="50"/>
-                        <TextBlock Text="Visiteur"/>
+                        <Label x:Name="label_Visitor" FontSize="20" />
                     </StackPanel>
                 </Button>
 
                 <!-- Bouton Abonné -->
-                <Button x:Name="btnAbonne" Width="120" Height="80" Background="White" Click="BtnAbonne_Click" Margin="0,50,0,0">
+                <Button x:Name="btnAbonne" Width="150" Height="100" Background="White" Click="BtnAbonne_Click" Margin="0,50,0,0">
                     <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
-                        <materialDesign:PackIcon Kind="AccountCheck" Width="40" Height="50"/>
-                        <TextBlock Text="Abonné"/>
+                        <materialDesign:PackIcon Kind="AccountCheck" Width="40" Height="50" HorizontalAlignment="Center"/>
+                        <Label x:Name="label_Subscriber" FontSize="20" HorizontalAlignment="Center"/>
                     </StackPanel>
                 </Button>
             </StackPanel>
