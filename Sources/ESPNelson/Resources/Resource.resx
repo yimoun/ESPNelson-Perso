@@ -156,8 +156,8 @@
   <data name="ValidSubscription" xml:space="preserve">
     <value>Abonnbement valid</value>
   </data>
-  <data name="ValidTicket" xml:space="preserve">
-    <value>Ticket valide</value>
+  <data name="ValidTicketSubscription" xml:space="preserve">
+    <value>Abonnement valide</value>
   </data>
   <data name="Visitor" xml:space="preserve">
     <value>Visiteur</value>

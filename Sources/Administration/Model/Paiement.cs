@@ -23,14 +23,14 @@ namespace Administration.Model
 
         // Détails de la tarification appliquée au moment du paiement
         [MaxLength(50)]
-        public string TarificationNiveau { get; set; } // Niveau de tarification
+        public string? TarificationNiveau { get; set; } // Niveau de tarification
 
         [Column(TypeName = "decimal(10,2)")]
-        public decimal TarificationPrix { get; set; } // Prix appliqué
+        public decimal? TarificationPrix { get; set; } // Prix appliqué
 
-        public int TarificationDureeMin { get; set; } // Durée minimale appliquée
+        public int?TarificationDureeMin { get; set; } // Durée minimale appliquée
 
-        public int TarificationDureeMax { get; set; } // Durée maximale appliquée
+        public int? TarificationDureeMax { get; set; } // Durée maximale appliquée
 
         [ForeignKey("TicketId")]
         public Ticket Ticket { get; set; }

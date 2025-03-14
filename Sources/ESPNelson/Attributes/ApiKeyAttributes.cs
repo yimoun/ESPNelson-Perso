@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace ESPNelson.Attributes
 {
     /// <summary>
-    /// Filtre que les requêtes à l'API contiennent une clé valide
+    /// Attribut de filtrage permettant de sécuriser l'accès à l'API en vérifiant une clé API valide.
     /// </summary>
 
     [AttributeUsage(AttributeTargets.Class)]
@@ -17,6 +17,12 @@ namespace ESPNelson.Attributes
     {
         private const string APIKEYNAME = "ApiKey";
 
+        /// <summary>
+        /// Vérifie si la requête contient une clé API valide avant d'exécuter l'action.
+        /// </summary>
+        /// <param name="context">Contexte d'exécution de l'action</param>
+        /// <param name="next">Délégué pour exécuter l'action suivante si l'authentification réussit</param>
+        /// <returns></returns>
         public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
             if (!context.HttpContext.Request.Headers.TryGetValue(APIKEYNAME, out var extractedApiKey))

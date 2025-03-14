@@ -103,7 +103,7 @@ namespace ESPNelson.View
                     // Mise à jour des textes de la VM de AbonneView
                     if (abonneView.DataContext is AbonneVM viewModel)
                     {
-                        viewModel.AbonnementInfo = Resource.ValidTicket;
+                        viewModel.AbonnementInfo = Resource.ValidTicketSubscription;
 
                         //voir aussi le dynamisme dans la traduction du message d'ouverture de la barrière
 

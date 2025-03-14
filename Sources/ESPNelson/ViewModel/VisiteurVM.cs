@@ -116,22 +116,29 @@ namespace ESPNelson.ViewModel
             using (PdfDocument document = new PdfDocument())
             {
                 PdfPage page = document.AddPage();
-                page.Width = XUnit.FromMillimeter(80); // Format ticket de stationnement
-                page.Height = XUnit.FromMillimeter(150);
+                page.Width = XUnit.FromMillimeter(90); // Format ticket de stationnement
+                page.Height = XUnit.FromMillimeter(170);
                 XGraphics gfx = XGraphics.FromPdfPage(page);
-                XFont fontTitle = new XFont("Arial", 12);
-                XFont fontNormal = new XFont("Arial", 10);
+                XFont fontTitle = new XFont("Arial", 15);
+                XFont fontNormal = new XFont("Arial", 12);
 
-                // Charger et dessiner le logo
+                // Charge et dessiner le logo
                 if (File.Exists(LogoPath))
                 {
                     XImage logo = XImage.FromFile(LogoPath);
-                    gfx.DrawImage(logo, (page.Width.Point - 150) / 2, (page.Height.Point / 2) - 90, 150, 150);
+                    gfx.DrawImage(logo, (page.Width.Point - 150) / 2, (page.Height.Point / 2) - 110, 150, 150);
                 }
 
+               
+                gfx.DrawString("Hôpital de Chicoutimi", fontTitle, XBrushes.DarkBlue, 
+                    new XPoint((page.Width.Point - gfx.MeasureString("Hôpital de Chicoutimi", fontTitle).Width) / 2, ((page.Height.Point / 2) - 100) * 2));
 
+               
+                gfx.DrawString($"ID du ticket: {TicketActuel.Id}", fontNormal, XBrushes.DarkGreen, 
+                    new XPoint((page.Width.Point - gfx.MeasureString($"ID du ticket: {TicketActuel.Id}", fontNormal).Width) / 2, ((page.Height.Point / 2) - 100) * 2 + 40));
 
-                gfx.DrawString($"Date et Heure d'Arrivée: {TicketActuel.TempsArrive:dd/MM/yyyy HH:mm:ss}", fontNormal, XBrushes.DarkBlue, new XPoint((page.Width.Point - gfx.MeasureString($"Date et Heure d'Arrivée: {TicketActuel.TempsArrive:dd/MM/yyyy HH:mm:ss}", fontNormal).Width) / 2, (page.Height.Point / 2) + 60));
+                gfx.DrawString($"Date et Heure d'Arrivée: {TicketActuel.TempsArrive:dd/MM/yyyy HH:mm:ss}", fontNormal, XBrushes.DarkBlue, 
+                    new XPoint((page.Width.Point - gfx.MeasureString($"Date et Heure d'Arrivée: {TicketActuel.TempsArrive:dd/MM/yyyy HH:mm:ss}", fontNormal).Width) / 2, ((page.Height.Point / 2) - 100) * 2 + 70));
 
                 // Dessiner le code-barres en haut et en bas du ticket
                 using (MemoryStream memory = new MemoryStream())

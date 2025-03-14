@@ -28,10 +28,10 @@
             <StackPanel HorizontalAlignment="Center" Width="Auto">
                 <!-- Carte -->
                 <materialDesign:Card Padding="16" Margin="16" HorizontalAlignment="Center" Width="Auto">
-                    <Button Command="{Binding GenerateNewTicketCommand}" Width="250" Height="120" VerticalAlignment="Center">
+                    <Button Command="{Binding GenerateNewTicketCommand}" Width="300" Height="150" VerticalAlignment="Center">
                         <StackPanel Orientation="Horizontal">
-                            <materialDesign:PackIcon Kind="Ticket" Width="24" Height="24"/>
-                            <Label x:Name="label_GenerateTicket"  FontSize="20"/>
+                            <materialDesign:PackIcon Kind="Ticket" Width="24" Height="24" VerticalAlignment="Center"/>
+                            <Label x:Name="label_GenerateTicket"  FontSize="30"/>
                         </StackPanel>
                     </Button>
                 </materialDesign:Card>

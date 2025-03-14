@@ -33,31 +33,26 @@
                     <StackPanel Orientation="Vertical"  HorizontalAlignment="Center" >
                        
                         <TextBlock x:Name="label_ValidTicketSubscription" Style="{StaticResource MaterialDesignHeadline5TextBlock}"
-                                    Text="{Binding AbonnementInfo}"
+                                    Text="{Binding AbonnementInfo}" TextWrapping="Wrap"
                                     TextAlignment="Center"
                                     FontWeight="Bold"
                                     Margin="0,50"
+                                    Foreground="#009A44"
                                     HorizontalAlignment="Center"
                                     FontSize="40"
                                     Visibility="{Binding AbonnmentValide, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                     
 
-                        <!-- Messages de validité -->
-                        <TextBlock x:Name="label_InvalidTicket"
+                        <!-- Messages d'invalidité -->
+                    <TextBlock x:Name="label_InvalidTicket"
                                    Style="{StaticResource MaterialDesignBody1TextBlock}"
                                    Foreground="Red"
-                                   TextAlignment="Center"
-                                   FontSize="20"
+                                   VerticalAlignment="Center" 
+                                   FontSize="50"
+                                   FontWeight="Bold"
+                                   Margin="0,70"
                                    Visibility="{Binding AbonnmentInvalide, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-
-                        <TextBlock x:Name="label_ValidTicket"
-                                   Style="{StaticResource MaterialDesignBody1TextBlock}"
-                                   Foreground="Green"
-                                   TextAlignment="Center"
-                                    FontSize="30"
-                                   Visibility="{Binding AbonnmentValide, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-
-                        <!-- Scanner invisible -->
+                    <!-- Scanner invisible -->
                         <TextBox x:Name="HiddenScannerInput"
                                  Visibility="Collapsed"
                                  KeyDown="HiddenScannerInput_KeyDown"/>

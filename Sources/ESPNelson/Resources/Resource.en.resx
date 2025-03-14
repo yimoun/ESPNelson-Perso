@@ -157,8 +157,8 @@
   <data name="ValidSubscription" type="System.Resources.ResXNullRef, System.Windows.Forms">
     <value />
   </data>
-  <data name="ValidTicket" xml:space="preserve">
-    <value>Valid ticket</value>
+  <data name="ValidTicketSubscription" xml:space="preserve">
+    <value>Valid subscription ticket</value>
   </data>
   <data name="Visitor" xml:space="preserve">
     <value>Visitor</value>

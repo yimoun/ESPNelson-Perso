@@ -35,9 +35,9 @@ namespace ESPNelson.View
         public void LoadLabels()
         {
             label_ScanningInstructions.Text = Resource.ScanningInstructions;
-            label_InvalidTicket.Text = Resource.InvalidTicket;  
-            label_ValidTicket.Text = Resource.ValidTicket;
-            label_ValidTicketSubscription.Text = Resource.ValidTicket;
+            label_InvalidTicket.Text = Resource.InvalidTicket;
+            label_ValidTicketSubscription.Text = Resource.ValidTicketSubscription;
+            label_ValidTicketSubscription.Text = Resource.ValidTicketSubscription;
         }
 
 

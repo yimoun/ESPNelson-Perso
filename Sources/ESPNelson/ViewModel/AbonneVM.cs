@@ -51,7 +51,7 @@ namespace ESPNelson.ViewModel
                 AbonnmentInvalide = false;
 
                 // Mise à jour des labels avec les données dynamiques et les libellés localisés
-                AbonnementInfo = Resource.ValidTicket;
+                AbonnementInfo = Resource.ValidTicketSubscription;
                 
 
                 //On catch l'id de l'abonnment pour la suite 
@@ -68,12 +68,12 @@ namespace ESPNelson.ViewModel
             if (AbonnmentValide)
             {
                 // Mise à jour des labels avec les données dynamiques et les libellés localisés
-                AbonnementInfo = Resource.ValidTicket;
+                AbonnementInfo = Resource.ValidTicketSubscription;
 
             }
             else
             {
-                AbonnementInfo = Resource.ValidTicket;
+                AbonnementInfo = string.Empty;
             }
         }
 
