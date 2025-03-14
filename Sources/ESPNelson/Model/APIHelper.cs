@@ -6,17 +6,26 @@ namespace ESPNelson.Model
 {
 
     /// <summary>
-    /// Initialisation du client HTTP au démarrage, définition de l'URL de base de StationnmentAPI et ajout des en-têtes JSON
+    /// Classe permettant d'initialiser un client HTTP pour interagir avec l'API de stationnement.
     /// </summary>
     public static class APIHelper
     {
+        /// <summary>
+        /// Client HTTP utilisé pour envoyer des requêtes à l'API.
+        /// </summary>
         public static HttpClient APIClient { get; private set; }
 
+        /// <summary>
+        /// Constructeur statique initialisant automatiquement le client HTTP.
+        /// </summary>
         static APIHelper()
         {
-            InitializeClient(); // Initialisation automatique
+            InitializeClient(); 
         }
 
+        /// <summary>
+        /// Initialise le client HTTP avec l'URL de base et les en-têtes nécessaires.
+        /// </summary>
         public static void InitializeClient()
         {
             if (APIClient == null)

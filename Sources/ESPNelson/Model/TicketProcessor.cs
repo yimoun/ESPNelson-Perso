@@ -6,10 +6,17 @@ using System.Threading.Tasks;
 
 namespace ESPNelson.Model
 {
+    /// <summary>
+    /// Classe permettant la gestion des tickets, y compris leur génération via l'API.
+    /// </summary>
     public static class TicketProcessor
     {
         private const string ApiKey = "CLE_API_BORNE_ENTREE";
 
+        /// <summary>
+        /// Envoie une requête à l'API pour générer un nouveau ticket.
+        /// </summary>
+        /// <returns>Un objet `Ticket` contenant les informations du ticket généré, ou `null` en cas d'échec.</returns>
         public static async Task<Ticket> GenerateTicketAsync()
         {
             try
@@ -33,13 +40,11 @@ namespace ESPNelson.Model
                 }
                 else
                 {
-                    Console.WriteLine($"Erreur API : {response.StatusCode}");
                     return null;
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Erreur de connexion à l’API : {ex.Message}");
                 return null;
             }
         }

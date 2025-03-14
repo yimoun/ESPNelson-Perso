@@ -61,6 +61,15 @@ namespace ESPNelson.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à erreur de connexion à l&apos;API.
+        /// </summary>
+        internal static string ConnectionErrorAPI {
+            get {
+                return ResourceManager.GetString("ConnectionErrorAPI", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Télécharger le ticket.
         /// </summary>
         internal static string DownloadTicket {

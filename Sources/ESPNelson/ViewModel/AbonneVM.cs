@@ -7,6 +7,9 @@ using ESPNelson.Resources;
 
 namespace ESPNelson.ViewModel
 {
+    /// <summary>
+    /// ViewModel pour la gestion des abonnés et de leurs abonnements.
+    /// </summary>
     public partial class AbonneVM : ObservableObject
     {
         [ObservableProperty] private string abonnementId;
@@ -14,18 +17,19 @@ namespace ESPNelson.ViewModel
         [ObservableProperty] private bool abonnmentValide = false;
         [ObservableProperty] private bool abonnmentInvalide = false;
 
+        /// <summary>
+        /// Réponse d'abonnement contenant les détails après vérification.
+        /// </summary>
         public AbonnementResponse AbonnementResponse { get; set; } = new AbonnementResponse();
 
         [ObservableProperty] private string abonnementInfo = string.Empty;
         
 
-
-
         public AbonneVM() { }
 
 
         /// <summary>
-        ///  Vérifie si un abonnement est valide et met à jour l'affichage sous forme de labels distincts.
+        ///  Vérifie si un abonnement est valide et met à jour l'affichage en conséquence.
         /// </summary>
         /// <param name="abonnementId">ID de l'abonnement scanné</param>
         /// <returns></returns>
@@ -35,6 +39,8 @@ namespace ESPNelson.ViewModel
                 return;
            
              AbonnementResponse = await AbonnementProcessor.GetAbonnementAsync(abonnementId);
+            
+           
 
             if (!string.IsNullOrEmpty(AbonnementResponse.Message))
             {
@@ -42,8 +48,7 @@ namespace ESPNelson.ViewModel
                 AbonnmentInvalide = true;
                 AbonnmentValide = false;
 
-                //MessageBox.Show(abonnementResponse.Message, "Erreur d'Abonnement", MessageBoxButton.OK, MessageBoxImage.Error);
-                //MessageBox.Show(Resource.InvalidTicket, Resource.Subscriber, MessageBoxButton.OK, MessageBoxImage.Error);
+                
             }
             else
             {
@@ -57,12 +62,17 @@ namespace ESPNelson.ViewModel
                 //On catch l'id de l'abonnment pour la suite 
                 abonnementId = AbonnementResponse.AbonnementId;
 
-                //MessageBox.Show("L'abonnement est valide et actif donc la barrière va s'ouvrir.", "Ouverture de Barrière", MessageBoxButton.OK, MessageBoxImage.Information);
-                // Message d'ouverture de la barrière traduit
+                
                 MessageBox.Show(Resource.OpenBarrierMessage, Resource.Subscriber, MessageBoxButton.OK, MessageBoxImage.Information);
             }
+
+           
         }
 
+
+        /// <summary>
+        /// Met à jour l'affichage des informations d'abonnement après un changement de langue.
+        /// </summary>
         public void UpdateTicketInfoLanguage()
         {
             if (AbonnmentValide)

@@ -15,9 +15,13 @@ using System.Windows.Media.Imaging;
 using System.Windows;
 using ZXing.Common;
 using ZXing;
+using ESPNelson.Resources;
 
 namespace ESPNelson.ViewModel
 {
+    /// <summary>
+    /// ViewModel pour la gestion des visiteurs et de la génération des tickets.
+    /// </summary>
     public partial class VisiteurVM : ObservableObject
     {
         private const string PdfSavePath = "Tickets";
@@ -35,9 +39,11 @@ namespace ESPNelson.ViewModel
         public VisiteurVM()
         {
             GenerateNewTicketCommand = new RelayCommand(GenerateNewTicket);
-           // DownloadTicketPDFCommand = new RelayCommand(DownloadTicketPDF);
         }
 
+        /// <summary>
+        /// Génère un nouveau ticket et son code-barres, puis crée automatiquement un fichier PDF prêt à être imprimé.
+        /// </summary>
         private async void GenerateNewTicket()
         {
             var nouveauTicket = await TicketProcessor.GenerateTicketAsync();
@@ -57,8 +63,20 @@ namespace ESPNelson.ViewModel
                     DownloadTicketPDF();
                 }
             }
+            else
+            {
+                MessageBox.Show(Resource.ConnectionErrorAPI, Resource.ConnectionErrorAPI, MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+                
         }
 
+
+        /// <summary>
+        /// Génère un code-barres à partir d'un texte donné.
+        /// </summary>
+        /// <param name="text">Texte à encoder</param>
+        /// <returns>Un objet `Bitmap` contenant le code-barres</returns>
         private Bitmap GenerateBarcode(string text)
         {
             try
@@ -85,6 +103,12 @@ namespace ESPNelson.ViewModel
             }
         }
 
+
+        /// <summary>
+        /// Convertit un `Bitmap` en `BitmapImage` pour affichage dans l'interface.
+        /// </summary>
+        /// <param name="bitmap">un objet de type `Bitmap`</param>
+        /// <returns>un objet de type `BitmapImage`</returns>
         private BitmapImage ConvertBitmapToBitmapImage(Bitmap bitmap)
         {
             using (MemoryStream memory = new MemoryStream())
@@ -101,6 +125,10 @@ namespace ESPNelson.ViewModel
             }
         }
 
+
+        /// <summary>
+        /// Écrit dans un fichier PDF les informations du ticket et ouvre ce fichier pour impression
+        /// </summary>
         private void DownloadTicketPDF()
         {
             if (TicketActuel == null || BarcodeImage == null)
