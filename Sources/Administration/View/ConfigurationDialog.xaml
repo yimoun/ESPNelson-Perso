@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Administration.View"
         mc:Ignorable="d"
         Title="Nouvelle Configuration" Height="300" Width="400"
-        WindowStartupLocation="CenterOwner">
+       WindowStartupLocation="CenterScreen">
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>

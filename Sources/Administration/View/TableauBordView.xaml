@@ -32,12 +32,14 @@
                            FontSize="24" FontWeight="Bold" VerticalAlignment="Center"
                             HorizontalAlignment="Center" />
 
-                <Button Content="Actualiser" Command="{Binding RefreshCommand}"
-
-                        HorizontalAlignment="Right" Margin="30,0,0,0">
-                    
+                <Button Width="120" Height="100" Margin="20,0" 
+                        Background="#009A44" Foreground="White" 
+                        VerticalAlignment="Center"
+                        Command="{Binding RefreshCommand}"
+                        ToolTip="Actualiser">
+                    <materialDesign:PackIcon Kind="Update"  Width="40" Height="50" />
                 </Button>
-                
+
             </StackPanel>
             
         </Border>

@@ -13,7 +13,7 @@ namespace StationnementAPI.Data.Context
         public DbSet<Abonnement> Abonnements { get; set; }
         public DbSet<Paiement> Paiements { get; set; }
         public DbSet<Configuration> Configurations { get; set; }
-        public DbSet<Rapport> Rapports { get; set; } 
+       
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -24,7 +24,6 @@ namespace StationnementAPI.Data.Context
             modelBuilder.Entity<Abonnement>().ToTable("Abonnement");
             modelBuilder.Entity<Paiement>().ToTable("Paiement");
             modelBuilder.Entity<Configuration>().ToTable("Configuration");
-            modelBuilder.Entity<Rapport>().ToTable("Rapport"); 
 
             // Définition des relations
             modelBuilder.Entity<Abonnement>()
@@ -48,12 +47,6 @@ namespace StationnementAPI.Data.Context
             modelBuilder.Entity<Ticket>()
                .Property(t => t.TempsArrive)
                .HasDefaultValueSql("CURRENT_TIMESTAMP");
-
-            modelBuilder.Entity<Rapport>()
-                .HasOne(r => r.Utilisateur)
-                .WithMany()
-                .HasForeignKey(r => r.UtilisateurId)
-                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Utilisateur>()
                 .HasIndex(u => u.Email)

@@ -17,9 +17,6 @@ namespace ESPNelson.View
         /// </summary>
         private string _language;
 
-        private AbonneView abonneView;
-        private VisiteurView visiteurView = new VisiteurView();
-
         /// <summary>
         /// Obtient ou définit la langue de l'application; Met à jour les ressources linguistiques et recharge les labels.
         /// </summary>
@@ -38,6 +35,10 @@ namespace ESPNelson.View
                 }
             }
         }
+
+        private AbonneView abonneView;
+        private VisiteurView visiteurView = new VisiteurView();
+
 
         public BorneEntreeView()
         {

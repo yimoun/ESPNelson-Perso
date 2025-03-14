@@ -18,13 +18,13 @@ namespace Administration.ViewModel
         private readonly AdministrationContext _dbContext;
 
         [ObservableProperty]
-        private ObservableCollection<Utilisateur> administrateurs;
+        private ObservableCollection<Utilisateur> administrateurs = new ObservableCollection<Utilisateur>();
 
         [ObservableProperty]
         private Utilisateur? utilisateurSelectionne;
 
         [ObservableProperty]
-        private ObservableCollection<Tarification> tarifications;
+        private ObservableCollection<Tarification> tarifications = new ObservableCollection<Tarification>();
 
         [ObservableProperty]
         private Tarification tarificationSelectionnee;
@@ -33,7 +33,7 @@ namespace Administration.ViewModel
         private bool boutonsVisible;
 
         [ObservableProperty]
-        private ObservableCollection<Configuration> configurations;
+        private ObservableCollection<Configuration> configurations = new ObservableCollection<Configuration>();
 
         [ObservableProperty]
         private Configuration? configurationSelectionnee;
@@ -94,7 +94,10 @@ namespace Administration.ViewModel
         {
             // Vérifie si aucune configuration n'est sélectionnée
             if (ConfigurationSelectionnee == null)
+            {
+                MessageBox.Show("Veuillez sélectionner la configuration à supprimer", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
+            }
 
             // Vérifie si c'est la seule configuration dans la liste
             if (Configurations.Count == 1)

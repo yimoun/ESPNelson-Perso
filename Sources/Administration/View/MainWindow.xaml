@@ -24,18 +24,27 @@
         <!-- Barre supérieure pour la sélection de la langue et la déconnexion -->
         <Border DockPanel.Dock="Top" Width="auto" Height="70" HorizontalAlignment="Center" BorderThickness="0,0,0,1" BorderBrush="LightGray">
             <StackPanel Orientation="Horizontal">
-                <Label  Content="LOGICIEL D'ADMINISTRATION" Foreground="Blue"  FontSize="50" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                <TextBlock Text="Langue :" FontSize="25" FontWeight="Bold" VerticalAlignment="Center" Margin="10,0,0,0"/>
-                <ComboBox x:Name="languageComboBox" Width="120" Margin="0,0,20,0">
+                <Label  Content="ADMINISTRATION" Foreground="Blue"  FontSize="50" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                <Label x:Name="label_Language" FontSize="25" FontWeight="Bold" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                <ComboBox x:Name="languageComboBox" 
+                          SelectionChanged="LanguageComboBox_SelectionChanged" Width="100" Margin="10,0,0,0" Background="White" FontSize="20">
                     <ComboBoxItem Content="Français" Tag="fr"/>
                     <ComboBoxItem Content="English" Tag="en"/>
                 </ComboBox>
 
                 <!-- Bouton Déconnexion (caché au début) -->
-                <Button x:Name="btnDeconnexion" Content="Déconnexion"
+                <!--<Button x:Name="btnDeconnexion" Content="Déconnexion"
                         Click="BtnDeconnexion_Click"
                         VerticalAlignment="Center" Margin="20,0,0,0"
-                        Visibility="Collapsed"/>
+                        Visibility="Collapsed"/>-->
+
+                <Button x:Name="btnDeconnexion" 
+                        VerticalAlignment="Center" Margin="10,0,0,0"
+                        Click="BtnDeconnexion_Click"
+                        ToolTip="Déconnexion"
+                        >
+                    <materialDesign:PackIcon Kind="Logout" />
+                </Button>
             </StackPanel>
         </Border>
 
@@ -55,7 +64,7 @@
                     <Button x:Name="btnTableauBord" Width="120" Height="100" Background="Blue" Click="BtnTableauBord_Click">
                         <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
                             <materialDesign:PackIcon Kind="ChartPie" Width="40" Height="50"/>
-                            <TextBlock TextWrapping="Wrap" Text="tableau de bord"/>
+                            <TextBlock x:Name="label_Dashboard" TextWrapping="Wrap"/>
                         </StackPanel>
                     </Button>
 
@@ -63,7 +72,7 @@
                     <Button x:Name="btnGestion" Width="120" Height="100" Background="Blue" Click="BtnGestion_Click" Margin="0,50,0,0">
                         <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
                             <materialDesign:PackIcon Kind="AlarmPanelOutline" Width="40" Height="50" />
-                            <TextBlock TextWrapping="Wrap" Text="Console de gestion"/>
+                            <TextBlock x:Name="label_Management" TextWrapping="Wrap"/>
                         </StackPanel>
                     </Button>
 
@@ -71,7 +80,7 @@
                     <Button x:Name="btnRapports" Width="120" Height="100" Background="Blue" Click="BtnRapports_Click" Margin="0,50,0,0">
                         <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
                             <materialDesign:PackIcon Kind="ChartBox" Width="40" Height="50"/>
-                            <TextBlock TextWrapping="Wrap" Text="section rapports"/>
+                            <TextBlock x:Name="label_reports" TextWrapping="Wrap"/>
                         </StackPanel>
                     </Button>
                 </StackPanel>

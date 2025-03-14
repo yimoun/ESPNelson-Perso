@@ -64,10 +64,10 @@ namespace StationnementAPI.Controllers
 
 
         /// <summary>
-        /// Par exemple à la borne de sortie pour valider si un ticket a été payé
+        /// Pour récupérer un ticket via son ID
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
+        /// <param name="id">Id du ticket</param>
+        /// <returns>un objet de type ticket</returns>
         [HttpGet("{id}")]
         public async Task<ActionResult<Ticket>> GetTicket(string id)
         {
@@ -83,7 +83,7 @@ namespace StationnementAPI.Controllers
         /// Vérifie si un ticket a été payé et retourne un statut détaillé.
         /// </summary>
         /// <param name="id">L'ID du ticket</param>
-        /// <returns>Statut détaillé du ticket</returns>
+        /// <returns>un objet qui détail les infos de payement du ticket</returns>
         [HttpGet("{id}/verifier-paiement")]
         public async Task<ActionResult<TicketEstPayeResponse>> VerifierPaiementTicket(string id)
         {
